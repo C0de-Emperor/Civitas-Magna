@@ -429,8 +429,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 0
-  <width>k__BackingField: 100
-  <height>k__BackingField: 100
+  <width>k__BackingField: 200
+  <height>k__BackingField: 200
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
 --- !u!114 &664016685
@@ -448,18 +448,19 @@ MonoBehaviour:
   hexGrid: {fileID: 664016684}
   noiseScale: 4
   octaves: 5
-  persistance: 0.48
+  persistance: 0.901
   lacunarity: 2
   seed: 0
   offset: {x: 0, y: 0}
+  seaLevel: 0.45
   biomes:
-  - height: 0.45
+  - height: 0.4
     terrainType: {fileID: 11400000, guid: 2baed7175d496d84eada734d16a8564a, type: 2}
-  - height: 0.5
+  - height: 0.45
     terrainType: {fileID: 11400000, guid: 12672032b0cb37c4ca5aeb7b979bfb22, type: 2}
-  - height: 0.65
+  - height: 0.6
     terrainType: {fileID: 11400000, guid: 9ea959d4cbb5c1a499896eb9fcbbbb78, type: 2}
-  - height: 0.8
+  - height: 0.75
     terrainType: {fileID: 11400000, guid: 19101f31b79841c40a6e1495c513c9c0, type: 2}
   - height: 1
     terrainType: {fileID: 11400000, guid: 103ba90da1abed1449217c63ac38e23f, type: 2}

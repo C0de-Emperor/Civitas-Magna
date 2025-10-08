@@ -15,6 +15,8 @@ public class MapGenerator : MonoBehaviour
     public float lacunarity = 2f;
     public int seed = 0;
     public Vector2 offset = Vector2.zero;
+    [Header("Water Level (0-1)")]
+    [Range(0f, 1f)] public float seaLevel = 0.45f;
 
     [Header("Biomes")]
     public List<TerrainHeight> biomes = new List<TerrainHeight>();
@@ -32,7 +34,7 @@ public class MapGenerator : MonoBehaviour
         }
         instance = this;
 
-        //seed = UnityEngine.Random.Range(0, 10000);
+        seed = UnityEngine.Random.Range(-10000, 10000);
 
         hexGrid = GetComponent<HexGrid>();
 
@@ -52,10 +54,10 @@ public class MapGenerator : MonoBehaviour
             // --- 1 Grande échelle : les continents ---
             float[,] continentNoise = Noise.GenerateNoiseMap(
                 width, height,
-                noiseScale * 2.5f,  // très grand = continents larges
+                noiseScale * 7f,  // très grand = continents larges
                 seed - 200,
-                3,                   // peu d’octaves = formes douces
-                0.5f,
+                2,                   // peu d’octaves = formes douces
+                persistance,
                 2f,
                 offset
             );
@@ -63,43 +65,64 @@ public class MapGenerator : MonoBehaviour
             // --- 2 Petite échelle : les détails de terrain ---
             float[,] detailNoise = Noise.GenerateNoiseMap(
                 width, height,
-                noiseScale * 0.1f,    // petits motifs = relief local
+                noiseScale * 0.4f,    // petits motifs = relief local
                 seed + 100,
                 octaves,
-                persistance,
+                persistance * 2f,
                 lacunarity,
                 offset
             );
 
             TerrainType[,] terrainMap = new TerrainType[width, height];
-            Color[] colorMap = new Color[width * height];
 
             // --- 3 Combine les deux bruits intelligemment ---
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    // continents dominent, détails ajustent localement
-                    float combined = Mathf.Clamp01(
-                        continentNoise[x, y] * 0.75f + detailNoise[x, y] * 0.25f
-                    );
+                    float c = continentNoise[x, y];
+                    float d = detailNoise[x, y];
 
-                    TerrainType chosen = biomes[biomes.Count - 1].terrainType;
-                    foreach (var biome in biomes)
+                    TerrainType chosen;
+
+                    // === 1 Océan profond ===
+                    if (c < seaLevel - 0.05f)
                     {
-                        if (combined <= biome.height)
+                        chosen = biomes[0].terrainType; // Ocean
+                    }
+                    // === 2 Zone côtière (sable, plage, marais, etc.) ===
+                    else if (c < seaLevel)
+                    {
+                        // on est dans la bande de transition (10% autour du niveau de la mer)
+                        chosen = biomes[1].terrainType;
+                    }
+                    // === 3 Terre ferme ===
+                    else
+                    {
+                        // On calcule un bruit local basé sur le détail
+                        float local = Mathf.Clamp01(d);
+
+                        // On cherche le biome terrestre correspondant (sans toucher à l’eau/sable)
+                        chosen = biomes[biomes.Count - 1].terrainType;
+                        foreach (var biome in biomes)
                         {
-                            chosen = biome.terrainType;
-                            break;
+                            // on ignore les biomes d'eau et de sable ici
+                            if (biome.height <= 0.45f) continue; // par exemple: eau/sable
+
+                            if (local <= biome.height)
+                            {
+                                chosen = biome.terrainType;
+                                break;
+                            }
                         }
                     }
 
                     terrainMap[x, y] = chosen;
-                    colorMap[y * width + x] = chosen.color;
+                    //colorMap[y * width + x] = chosen.color;
                 }
             }
 
-            // --- 4 Retour au thread principal ---
+            // Retour sur le main thread
             MainThreadDispatcher.instance.Enqueue(() =>
             {
                 List<HexCell> cells = new List<HexCell>();
@@ -110,9 +133,8 @@ public class MapGenerator : MonoBehaviour
                         HexCell cell = new HexCell();
                         cell.SetCoordinates(new Vector2(x, y), hexGrid.orientation);
                         cell.terrainhight = Mathf.Clamp01(
-                        continentNoise[x, y] * 0.75f + detailNoise[x, y] * 0.25f
-                    );
-
+                            continentNoise[x, y] * 0.5f + detailNoise[x, y] * 0.5f
+                        );
                         cell.hexSize = hexGrid.hexSize;
                         cell.SetTerrainType(terrainMap[x, y]);
                         cells.Add(cell);
@@ -127,8 +149,6 @@ public class MapGenerator : MonoBehaviour
         else
             generateAction.Invoke();
     }
-
-
 }
 
 [System.Serializable]
