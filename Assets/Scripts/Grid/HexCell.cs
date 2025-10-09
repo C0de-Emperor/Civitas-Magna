@@ -10,7 +10,7 @@ public class HexCell
     [field:SerializeField] public HexGrid grid {  get; set; }
     [field:SerializeField] public float hexSize {  get; set; }
     [field:SerializeField] public TerrainType terrainType {  get; private set; }
-    [field:SerializeField] public float terrainhight {  get; set; }
+    [field:SerializeField] public float terrainHigh {  get; set; }
     [field:SerializeField] public Vector2 offsetCoordinates {  get; set; }
     [field:SerializeField] public Vector3 cubeCoordinates {  get; private set; }
     [field:SerializeField] public Vector2 axialCoordinates {  get; private set; }
@@ -59,7 +59,7 @@ public class HexCell
         {
             prop = UnityEngine.Object.Instantiate(
                 terrainType.prop,
-                centrePosition + new Vector3(0, terrainhight, 0),
+                centrePosition + new Vector3(0, terrainHigh, 0),
                 Quaternion.identity,
                 grid.transform
             );
@@ -92,12 +92,12 @@ public class HexCell
 
             Vector3 newScale = terrain.transform.localScale;
             newScale.x = targetX / prefabSize.x * newScale.x;
-            newScale.y = terrainhight;
+            newScale.y = terrainHigh;
             newScale.z = targetZ / prefabSize.z * newScale.z;
             terrain.transform.localScale = newScale;
             if (prop != null)
             {
-                prop.transform.localScale = newScale;
+                prop.transform.localScale = new Vector3(newScale.x, prop.transform.localScale.y, newScale.z);
             }
         }
 

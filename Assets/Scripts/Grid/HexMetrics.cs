@@ -205,7 +205,7 @@ public static class HexMetrics
     /// <param name="z"></param>
     /// <param name="orientation"></param>
     /// <returns></returns>
-    public static Vector2 OffsetToAxail(int x, int z, HexOrientation orientation)
+    public static Vector2 OffsetToAxial(int x, int z, HexOrientation orientation)
     {
         if (orientation == HexOrientation.PointyTop)
         {

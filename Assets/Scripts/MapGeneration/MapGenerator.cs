@@ -9,12 +9,20 @@ public class MapGenerator : MonoBehaviour
     public HexGrid hexGrid;
 
     [Header("Noise Settings")]
-    public float noiseScale = 0.5f;
-    public int octaves = 6;
-    [Range(0f, 1f)] public float persistance = 0.5f;
-    public float lacunarity = 2f;
     public int seed = 0;
-    public Vector2 offset = Vector2.zero;
+
+    [Header("Continental Noise Settings")]
+    public float C_noiseScale = 28f;
+    public int C_octaves = 2;
+    [Range(0f, 1f)] public float C_persistance = 0.9f;
+    public float C_lacunarity = 2f;
+
+    [Header("Ressources Noise Settings")]
+    public float R_noiseScale = 1.6f;
+    public int R_octaves = 5;
+    [Range(0f, 2f)] public float R_persistance = 1.8f;
+    public float R_lacunarity = 2f;
+
     [Header("Water Level (0-1)")]
     [Range(0f, 1f)] public float seaLevel = 0.45f;
 
@@ -24,7 +32,6 @@ public class MapGenerator : MonoBehaviour
     public bool useThreadedGeneration = true;
 
     public static MapGenerator instance;
-
     private void Awake()
     {
         if (instance != null)
@@ -54,23 +61,23 @@ public class MapGenerator : MonoBehaviour
             // --- 1 Grande échelle : les continents ---
             float[,] continentNoise = Noise.GenerateNoiseMap(
                 width, height,
-                noiseScale * 7f,  // très grand = continents larges
-                seed - 200,
-                2,                   // peu d’octaves = formes douces
-                persistance,
-                2f,
-                offset
+                C_noiseScale,  // très grand = continents larges
+                seed,
+                C_octaves,                   // peu d’octaves = formes douces
+                C_persistance,
+                C_lacunarity,
+                Vector2.zero
             );
 
             // --- 2 Petite échelle : les détails de terrain ---
-            float[,] detailNoise = Noise.GenerateNoiseMap(
+            float[,] ressourcesNoise = Noise.GenerateNoiseMap(
                 width, height,
-                noiseScale * 0.4f,    // petits motifs = relief local
-                seed + 100,
-                octaves,
-                persistance * 2f,
-                lacunarity,
-                offset
+                R_noiseScale,    // petits motifs = relief local
+                seed,
+                R_octaves,
+                R_persistance,
+                R_lacunarity,
+                Vector2.zero
             );
 
             TerrainType[,] terrainMap = new TerrainType[width, height];
@@ -81,7 +88,7 @@ public class MapGenerator : MonoBehaviour
                 for (int x = 0; x < width; x++)
                 {
                     float c = continentNoise[x, y];
-                    float d = detailNoise[x, y];
+                    float d = ressourcesNoise[x, y];
 
                     TerrainType chosen;
 
@@ -132,9 +139,24 @@ public class MapGenerator : MonoBehaviour
                     {
                         HexCell cell = new HexCell();
                         cell.SetCoordinates(new Vector2(x, y), hexGrid.orientation);
-                        cell.terrainhight = Mathf.Clamp01(
-                            continentNoise[x, y] * 0.5f + detailNoise[x, y] * 0.5f
-                        );
+                        float c = continentNoise[x, y];
+                        float d = ressourcesNoise[x, y];
+
+                        float terrainHeight;
+
+                        if (c < seaLevel)
+                        {
+                            // Sous le niveau de la mer : profondeur proportionnelle à c
+                            terrainHeight = Mathf.InverseLerp(0f, seaLevel, c) * 0.3f; // océan = 0 - côte = 0.3
+                        }
+                        else
+                        {
+                            // Au-dessus du niveau de la mer : hauteur + relief local
+                            float landHeight = Mathf.InverseLerp(seaLevel, 1f, c);  // 0 à 1 selon altitude continentale
+                            float localRelief = (d - 0.5f) * 0.3f;                  // +/- relief léger
+                            terrainHeight = Mathf.Clamp01(0.3f + landHeight * 0.7f + localRelief);
+                        }
+                        cell.terrainHigh = terrainHeight + 1f;
                         cell.hexSize = hexGrid.hexSize;
                         cell.SetTerrainType(terrainMap[x, y]);
                         cells.Add(cell);

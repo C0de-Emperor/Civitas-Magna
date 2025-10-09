@@ -58,12 +58,17 @@ public class HexGrid : MonoBehaviour
         OnCellInstancesGenerated?.Invoke();
     }
 
-    public HexCell GetTile(Vector2 coords)
+    public HexCell GetTile(Vector2 coordinates)
     {
-        if (cells.TryGetValue(coords, out HexCell cell))
+        if (cells.TryGetValue(coordinates, out HexCell cell))
             return cell;
 
         return null;
+    }
+
+    public bool HasTile(Vector2 coordinates)
+    {
+        return cells.ContainsKey(coordinates);
     }
 }
 
