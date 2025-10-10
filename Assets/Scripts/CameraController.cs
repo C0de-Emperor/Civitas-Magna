@@ -197,9 +197,9 @@ public class CameraController : MonoBehaviour
 
                     selectionOutline.SetActive(true);
                     selectionOutline.transform.position = new Vector3(
-                        currentCell.terrain.position.x,
+                        currentCell.tile.position.x,
                         currentCell.terrainHigh + 0.001f,
-                        currentCell.terrain.position.z
+                        currentCell.tile.position.z
                     );
 
                     selectionOutline.transform.rotation = grid.orientation == HexOrientation.FlatTop

@@ -6,18 +6,26 @@ using UnityEngine;
 public class HexCell
 {
     [Header("Cell Properties")]
+    [Header("Terrain")]
     [SerializeField] private HexOrientation orientation;
     [field:SerializeField] public HexGrid grid {  get; set; }
     [field:SerializeField] public float hexSize {  get; set; }
     [field:SerializeField] public TerrainType terrainType {  get; private set; }
     [field:SerializeField] public float terrainHigh {  get; set; }
+
+    [Header("Positions")]
     [field:SerializeField] public Vector2 offsetCoordinates {  get; set; }
     [field:SerializeField] public Vector3 cubeCoordinates {  get; private set; }
     [field:SerializeField] public Vector2 axialCoordinates {  get; private set; }
     [field: NonSerialized] public List<HexCell> neighbours { get; private set; }
 
-    [field:SerializeField] public Transform terrain {  get; private set; }
-    [field: SerializeField] public Transform prop { get; private set; }
+    [Header("Objects")]
+    [field: SerializeField] public Transform tile { get; set; }
+    [field: SerializeField] public Transform ressource { get; set; }
+
+    [Header("Units")]
+    [field: SerializeField] public Transform militaryUnit { get; set; }
+    [field: SerializeField] public Transform supportUnit { get; set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
     {
@@ -48,7 +56,7 @@ public class HexCell
             orientation
         ) + grid.transform.position;
 
-        terrain = UnityEngine.Object.Instantiate(
+        tile = UnityEngine.Object.Instantiate(
             terrainType.prefab,
             centrePosition,
             Quaternion.identity,
@@ -57,7 +65,7 @@ public class HexCell
 
         if(terrainType.prop != null)
         {
-            prop = UnityEngine.Object.Instantiate(
+            ressource = UnityEngine.Object.Instantiate(
                 terrainType.prop,
                 centrePosition + new Vector3(0, terrainHigh, 0),
                 Quaternion.identity,
@@ -66,7 +74,7 @@ public class HexCell
         }
 
 
-        Renderer rend = terrain.GetComponentInChildren<Renderer>();
+        Renderer rend = tile.GetComponentInChildren<Renderer>();
         if (rend != null)
         {
             Vector3 prefabSize = rend.localBounds.size;
@@ -90,37 +98,37 @@ public class HexCell
                 targetZ = HexMetrics.OuterRadius(hexSize) * 2f;
             }
 
-            Vector3 newScale = terrain.transform.localScale;
+            Vector3 newScale = tile.transform.localScale;
             newScale.x = targetX / prefabSize.x * newScale.x;
             newScale.y = terrainHigh;
             newScale.z = targetZ / prefabSize.z * newScale.z;
-            terrain.transform.localScale = newScale;
-            if (prop != null)
+            tile.transform.localScale = newScale;
+            if (ressource != null)
             {
-                prop.transform.localScale = new Vector3(newScale.x, prop.transform.localScale.y, newScale.z);
+                ressource.transform.localScale = new Vector3(newScale.x, ressource.transform.localScale.y, newScale.z);
             }
         }
 
-        terrain.gameObject.layer = LayerMask.NameToLayer("Grid");
-        terrain.gameObject.isStatic = true;
+        tile.gameObject.layer = LayerMask.NameToLayer("Grid");
+        tile.gameObject.isStatic = true;
         
         if (orientation == HexOrientation.FlatTop)
         {
-            terrain.Rotate(new Vector3(0, 30, 0));
+            tile.Rotate(new Vector3(0, 30, 0));
         }
 
         int randomRotation = UnityEngine.Random.Range(0, 6);
-        terrain.Rotate(new Vector3(0, randomRotation * 60, 0));
+        tile.Rotate(new Vector3(0, randomRotation * 60, 0));
         
-        if (prop != null)
+        if (ressource != null)
         {
-            prop.gameObject.layer = LayerMask.NameToLayer("Grid");
-            prop.gameObject.isStatic = true;
+            ressource.gameObject.layer = LayerMask.NameToLayer("Grid");
+            ressource.gameObject.isStatic = true;
             if (orientation == HexOrientation.FlatTop)
             {
-                prop.Rotate(new Vector3(0, 30, 0));
+                ressource.Rotate(new Vector3(0, 30, 0));
             }
-            prop.Rotate(new Vector3(0, randomRotation * 60, 0));
+            ressource.Rotate(new Vector3(0, randomRotation * 60, 0));
         }
     }
 
@@ -131,9 +139,9 @@ public class HexCell
 
     public void ClearTerrain()
     {
-        if (terrain != null)
+        if (tile != null)
         {
-            UnityEngine.Object.Destroy(terrain.gameObject);
+            UnityEngine.Object.Destroy(tile.gameObject);
         }
     }
 }
