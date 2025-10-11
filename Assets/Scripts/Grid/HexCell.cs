@@ -105,7 +105,7 @@ public class HexCell
             tile.transform.localScale = newScale;
             if (ressource != null)
             {
-                ressource.transform.localScale = new Vector3(newScale.x, ressource.transform.localScale.y, newScale.z);
+                ressource.transform.localScale = new Vector3(newScale.x, ressource.transform.localScale.y * hexSize, newScale.z);
             }
         }
 

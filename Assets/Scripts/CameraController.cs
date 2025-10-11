@@ -12,8 +12,6 @@ public class CameraController : MonoBehaviour
 
     [Header("References")]
     [SerializeField]
-    private HexGrid grid;
-    [SerializeField]
     private GameObject cameraTarget;
     [SerializeField]
     private CinemachineCamera topDownCamera;
@@ -23,10 +21,6 @@ public class CameraController : MonoBehaviour
     private CameraMode defaultMode = CameraMode.TopDown;
     [SerializeField]
     private CameraMode currentMode;
-    [SerializeField]
-    private GameObject selectionOutline;
-    [HideInInspector]
-    public HexCell outlinedCell = null;
 
     [Header("Parameters")]
     [SerializeField] private float cameraSpeed = 10f;
@@ -34,7 +28,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float cameraZoomMin = 15f;
     [SerializeField] private float cameraZoomMax = 100f;
     [SerializeField] private float cameraZoomDefault = 50f;
-
 
     private Coroutine panCoroutine;
     private Coroutine zoomCoroutine;
@@ -54,7 +47,6 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        selectionOutline.SetActive(false);
         topDownCamera.Lens.FieldOfView = cameraZoomDefault;
         ChangeCamera(defaultMode);
     }
@@ -79,7 +71,6 @@ public class CameraController : MonoBehaviour
                 return null;
         }
     }
-
 
     public void OnPanChange(InputAction.CallbackContext context)
     {
@@ -141,8 +132,6 @@ public class CameraController : MonoBehaviour
         }
     }
 
-
-
     public IEnumerator ProcessPan(InputAction.CallbackContext context)
     {
         while (true)
@@ -161,70 +150,41 @@ public class CameraController : MonoBehaviour
 
     public IEnumerator ProcessZoom(InputAction.CallbackContext context)
     {
-        //Change the FOV of the camera based on the input. If not keyboard, then adjust the value based on the scrollWheelZoomSpeed
-        float zoomInput = context.ReadValue<float>();
+        CinemachineFollow composer = topDownCamera.GetComponent<CinemachineFollow>();
+        if(composer == null)
+        {
+            Debug.Log("Pas de CinemachineFollow");
+            yield return null;
+        }
 
-        //Debug.Log("Zooming: " + zoomInput);
         while (true)
         {
-            //Change the FOV of the camera based on the input. If not keyboard, then adjust the value based on the scrollWheelZoomSpeed
-            float zoomAmount = topDownCamera.Lens.FieldOfView + zoomInput * cameraZoomSpeed * Time.deltaTime;
-            topDownCamera.Lens.FieldOfView = Mathf.Clamp(zoomAmount, cameraZoomMin, cameraZoomMax);
+            float zoomInput = context.ReadValue<float>();
+            if (zoomInput != 0)
+            {
+                Vector3 offset = composer.FollowOffset;
+
+                // Calcule la direction de l'offset (vers la caméra depuis la cible)
+                Vector3 direction = offset.normalized;
+
+                // Modifie la distance le long de cette direction
+                float currentDistance = offset.magnitude;
+                float newDistance = Mathf.Clamp(currentDistance + zoomInput * cameraZoomSpeed * Time.deltaTime, cameraZoomMin, cameraZoomMax);
+
+                // Applique le nouvel offset
+                composer.FollowOffset = direction * newDistance;
+            }
 
             yield return null;
         }
     }
 
+
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 1f);
-    }
-
-    private void Update()
-    {
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
-            Vector2 coord = HexMetrics.CoordinateToOffset(hit.point.x, hit.point.z, grid.hexSize, grid.orientation);
-            HexCell currentCell = grid.GetTile(coord);
-            if (currentCell != null)
-            {
-                if(currentCell != outlinedCell) 
-                {
-                    outlinedCell = currentCell;
-
-                    selectionOutline.SetActive(true);
-                    selectionOutline.transform.position = new Vector3(
-                        currentCell.tile.position.x,
-                        currentCell.terrainHigh + 0.001f,
-                        currentCell.tile.position.z
-                    );
-
-                    selectionOutline.transform.rotation = grid.orientation == HexOrientation.FlatTop
-                        ? Quaternion.Euler(-90f, 30f, 0f)
-                        : Quaternion.Euler(-90f, 0f, 0f);
-                }
-
-
-
-
-                //if (grid.GetTile(coord).prop != null)
-                //    Destroy(grid.GetTile(coord).prop.gameObject);
-                //Destroy(grid.GetTile(coord).terrain.gameObject);
-            }
-            else
-            {
-                outlinedCell = null;
-                selectionOutline.SetActive(false);
-            }
-        }
-        else
-        {
-            outlinedCell = null;
-            selectionOutline.SetActive(false);
-        }
+        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 0.5f);
     }
 }
 
