@@ -11,8 +11,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int height { get; private set; }
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
-
-    //[field: SerializeField] public int batchSize { get; private set; }
+    [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
@@ -96,11 +95,9 @@ public class HexGrid : MonoBehaviour
         }
 
         Debug.Log($"Neighbours assigned for {cells.Count} cells.");
+
+        MapGenerator.instance.isMapReady = true;
     }
-
-
-
-
 
     public HexCell GetTile(Vector2 coordinates)
     {
@@ -113,6 +110,43 @@ public class HexGrid : MonoBehaviour
     public bool HasTile(Vector2 coordinates)
     {
         return cells.ContainsKey(coordinates);
+    }
+
+    /// <summary>
+    /// Révèle toutes les tuiles dans un rayon donné autour d'une cellule.
+    /// </summary>
+    /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
+    /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
+    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius)
+    {
+        // Pour éviter les allocations récurrentes
+        List<HexCell> toReveal = new List<HexCell>(1 + 3*radius*(radius + 1));
+
+        Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetpositions, orientation);
+
+        // Parcours dans le cube space (le plus efficace pour les hex)
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = Mathf.Max(-radius, -dx - radius); dy <= Mathf.Min(radius, -dx + radius); dy++)
+            {
+                int dz = -dx - dy;
+                Vector3 neighbourCube = new Vector3(centerCube.x + dx, centerCube.y + dy, centerCube.z + dz);
+
+                // Convertir cube -> offset selon ton orientation
+                Vector2 offset = HexMetrics.CubeToOffset(neighbourCube, orientation);
+
+                if (cells.TryGetValue(offset, out HexCell neighbour))
+                {
+                    toReveal.Add(neighbour);
+                }
+            }
+        }
+
+        // Révéler les tuiles trouvées
+        foreach (var cell in toReveal)
+        {
+            cell.RevealTile();
+        }
     }
 }
 

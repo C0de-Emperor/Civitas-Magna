@@ -24,8 +24,11 @@ public class HexCell
     [field: SerializeField] public Transform ressource { get; set; }
 
     [Header("Units")]
-    [field: SerializeField] public Transform militaryUnit = null; //{ get; set; }
+    [field: SerializeField] public Transform militaryUnit = null;
     [field: SerializeField] public Transform supportUnit { get; set; }
+
+    [Header("Properties")]
+    [field: SerializeField] public bool isRevealed { get; private set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
     {
@@ -33,7 +36,6 @@ public class HexCell
         offsetCoordinates = _offsetCoordinates;
         cubeCoordinates = HexMetrics.OffsetToCube(_offsetCoordinates, orientation);
         axialCoordinates = HexMetrics.CubeToAxial(cubeCoordinates);
-
     }
 
     public void SetTerrainType(TerrainType _terrainType)
@@ -43,13 +45,45 @@ public class HexCell
 
     public void CreateTerrain()
     {
+        if (grid == null || hexSize == 0 || grid.undiscoveredTilePrefab == null)
+        {
+            Debug.LogError("Missing data for terrain creation");
+            return;
+        }
+
+        if (isRevealed)
+        {
+            Debug.LogError("Unable to create a revealed tile");
+            return;
+        }
+
+        isRevealed = false;
+
+        InstantiateTile(grid.undiscoveredTilePrefab.transform, null);
+    }
+
+    public void RevealTile()
+    {
         if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
         {
             Debug.LogError("Missing data for terrain creation");
             return;
         }
 
-        Vector3 centrePosition = HexMetrics.Center(
+        if (isRevealed)
+        {
+            return;
+        }
+        isRevealed = true;
+
+        UnityEngine.Object.Destroy(tile.gameObject);
+
+        InstantiateTile(terrainType.prefab, terrainType.prop);
+    }
+
+    private void InstantiateTile(Transform tilePrefab, Transform ressourcePrefab)
+    {
+        Vector3 centerPosition = HexMetrics.Center(
             hexSize,
             (int)offsetCoordinates.x,
             (int)offsetCoordinates.y,
@@ -57,17 +91,17 @@ public class HexCell
         ) + grid.transform.position;
 
         tile = UnityEngine.Object.Instantiate(
-            terrainType.prefab,
-            centrePosition,
+            tilePrefab,
+            centerPosition,
             Quaternion.identity,
             grid.transform
         );
 
-        if(terrainType.prop != null)
+        if (ressourcePrefab != null)
         {
             ressource = UnityEngine.Object.Instantiate(
-                terrainType.prop,
-                centrePosition + new Vector3(0, terrainHigh, 0),
+                ressourcePrefab,
+                centerPosition + new Vector3(0, terrainHigh, 0),
                 Quaternion.identity,
                 grid.transform
             );
@@ -111,7 +145,7 @@ public class HexCell
 
         tile.gameObject.layer = LayerMask.NameToLayer("Grid");
         tile.gameObject.isStatic = true;
-        
+
         if (orientation == HexOrientation.FlatTop)
         {
             tile.Rotate(new Vector3(0, 30, 0));
@@ -119,7 +153,7 @@ public class HexCell
 
         int randomRotation = UnityEngine.Random.Range(0, 6);
         tile.Rotate(new Vector3(0, randomRotation * 60, 0));
-        
+
         if (ressource != null)
         {
             ressource.gameObject.layer = LayerMask.NameToLayer("Grid");

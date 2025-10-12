@@ -29,11 +29,14 @@ public class MapGenerator : MonoBehaviour
     [Header("Biomes")]
     public List<TerrainHeight> biomes = new List<TerrainHeight>();
 
+    // a virer
     [Header("Units")]
     public List<Unit> MilitaryUnits = new List<Unit>();
     public List<Unit> SupportUnits = new List<Unit>();
 
     public bool useThreadedGeneration = true;
+
+    public bool isMapReady = false;
 
     public static MapGenerator instance;
     private void Awake()
