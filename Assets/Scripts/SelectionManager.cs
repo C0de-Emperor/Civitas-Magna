@@ -84,9 +84,6 @@ public class SelectionManager : MonoBehaviour
 
 
 
-
-
-
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
                     innerSelectionOutline.transform.position = new Vector3(
@@ -121,7 +118,7 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
 
-            selectedCell.militaryUnit=UnityEngine.Object.Instantiate(
+            selectedCell.militaryUnit = UnityEngine.Object.Instantiate(
                 mapGenerator.MilitaryUnits[0].prefab,
                 new Vector3(selectedCell.tile.position.x, selectedCell.terrainHigh, selectedCell.tile.position.z),
                 new Quaternion(0,0,0,1),

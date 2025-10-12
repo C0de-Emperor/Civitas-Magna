@@ -12,6 +12,8 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
 
+    //[field: SerializeField] public int batchSize { get; private set; }
+
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
     public event Action<float> OnCellBatchGenerated;
@@ -22,6 +24,8 @@ public class HexGrid : MonoBehaviour
     private void Awake()
     {
         gridOrigin = transform.position;
+
+        OnCellInstancesGenerated += AssignNeighbours;
     }
 
     public void SetHexCells(List<HexCell> newCells)
@@ -57,6 +61,46 @@ public class HexGrid : MonoBehaviour
 
         OnCellInstancesGenerated?.Invoke();
     }
+
+    public void AssignNeighbours()
+    {
+        foreach (var cell in cells.Values)
+        {
+            List<HexCell> neighbours = new List<HexCell>();
+
+            // Offsets pour coordonnées axiales
+            Vector2[] axialDirections = new Vector2[]
+            {
+            new Vector2(1, 0),   // E
+            new Vector2(1, -1),  // NE
+            new Vector2(0, -1),  // NW
+            new Vector2(-1, 0),  // W
+            new Vector2(-1, 1),  // SW
+            new Vector2(0, 1)    // SE
+            };
+
+            foreach (var dir in axialDirections)
+            {
+                Vector2 neighbourAxial = cell.axialCoordinates + dir;
+
+                Vector3 cube = HexMetrics.AxialToCube(neighbourAxial);
+                Vector2 offset = HexMetrics.CubeToOffset(cube, orientation);
+
+                if (cells.TryGetValue(offset, out HexCell neighbour))
+                {
+                    neighbours.Add(neighbour);
+                }
+            }
+
+            cell.SetNeighbours(neighbours);
+        }
+
+        Debug.Log($"Neighbours assigned for {cells.Count} cells.");
+    }
+
+
+
+
 
     public HexCell GetTile(Vector2 coordinates)
     {
