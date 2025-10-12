@@ -20,7 +20,7 @@ public class SelectionManager : MonoBehaviour
     public Transform selectedUnit = null;
 
     [SerializeField]
-    private MapGenerator mapGenerator;
+    private UnitManager unitManager;
 
     public static SelectionManager instance;
     private void Awake()
@@ -122,11 +122,15 @@ public class SelectionManager : MonoBehaviour
         {
 
             selectedCell.militaryUnit=UnityEngine.Object.Instantiate(
-                mapGenerator.MilitaryUnits[0].prefab,
+                unitManager.MilitaryUnits[0].prefab,
                 new Vector3(selectedCell.tile.position.x, selectedCell.terrainHigh, selectedCell.tile.position.z),
                 new Quaternion(0,0,0,1),
                 selectedCell.tile
                 );
+        }
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            Debug.Log(unitManager.GetShortestPath(grid, grid.GetTile(new Vector2(0,0)), selectedCell, 1));
         }
         
     }

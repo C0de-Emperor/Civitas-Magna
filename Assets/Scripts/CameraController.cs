@@ -176,7 +176,7 @@ public class CameraController : MonoBehaviour
                 composer.FollowOffset = direction * newDistance;
 
                 // Modifie la vitesse de déplacement
-                cameraSpeed = newDistance * 0.8f + 5f;
+                cameraSpeed = newDistance * 0.8f;
             }
 
             yield return null;
