@@ -162,6 +162,7 @@ public class CameraController : MonoBehaviour
             float zoomInput = context.ReadValue<float>();
             if (zoomInput != 0)
             {
+                
                 Vector3 offset = composer.FollowOffset;
 
                 // Calcule la direction de l'offset (vers la caméra depuis la cible)
@@ -173,6 +174,9 @@ public class CameraController : MonoBehaviour
 
                 // Applique le nouvel offset
                 composer.FollowOffset = direction * newDistance;
+
+                // Modifie la vitesse de déplacement
+                cameraSpeed = newDistance * 0.8f + 5f;
             }
 
             yield return null;

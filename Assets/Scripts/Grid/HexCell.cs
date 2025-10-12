@@ -24,7 +24,7 @@ public class HexCell
     [field: SerializeField] public Transform ressource { get; set; }
 
     [Header("Units")]
-    [field: SerializeField] public Transform militaryUnit { get; set; }
+    [field: SerializeField] public Transform militaryUnit = null; //{ get; set; }
     [field: SerializeField] public Transform supportUnit { get; set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
