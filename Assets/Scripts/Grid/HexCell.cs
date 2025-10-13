@@ -26,6 +26,8 @@ public class HexCell
     [Header("Units")]
     [field: SerializeField] public Transform militaryUnit = null;
     [field: SerializeField] public Transform supportUnit { get; set; }
+    [field: SerializeField] public float terrainCost { get; set; }
+    [field: SerializeField] public bool traversable { get; set; }
 
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; private set; }
@@ -164,6 +166,9 @@ public class HexCell
             }
             ressource.Rotate(new Vector3(0, randomRotation * 60, 0));
         }
+
+        terrainCost = terrainType.terrainCost;
+        traversable = terrainType.traversable;
     }
 
     public void SetNeighbours(List<HexCell> _neighbours)

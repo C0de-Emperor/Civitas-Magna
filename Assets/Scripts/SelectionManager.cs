@@ -20,14 +20,14 @@ public class SelectionManager : MonoBehaviour
     public Transform selectedUnit = null;
 
     [SerializeField]
-    private MapGenerator mapGenerator;
+    private UnitManager unitManager;
 
     public static SelectionManager instance;
     private void Awake()
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scÃ¨ne");
             return;
         }
         instance = this;
@@ -118,12 +118,16 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
 
-            selectedCell.militaryUnit = UnityEngine.Object.Instantiate(
-                mapGenerator.MilitaryUnits[0].prefab,
+            selectedCell.militaryUnit=UnityEngine.Object.Instantiate(
+                unitManager.MilitaryUnits[0].prefab,
                 new Vector3(selectedCell.tile.position.x, selectedCell.terrainHigh, selectedCell.tile.position.z),
                 new Quaternion(0,0,0,1),
                 selectedCell.tile
                 );
+        }
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            Debug.Log(unitManager.GetShortestPath(grid, grid.GetTile(new Vector2(0,0)), selectedCell, 1));
         }
         
     }
