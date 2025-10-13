@@ -27,7 +27,7 @@ public class SelectionManager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scÃ¨ne");
             return;
         }
         instance = this;
@@ -47,7 +47,7 @@ public class SelectionManager : MonoBehaviour
 
     private void Update()
     {
-        if (selectionOutline == null || innerSelectionOutline == null)
+        if (selectionOutline == null || innerSelectionOutline == null || MapGenerator.instance.isMapReady == false)
             return;
 
         RaycastHit hit;
@@ -82,10 +82,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     // autre
 
-
-
-
-
+                    grid.RevealTilesInRadius(coord, 2);
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
@@ -96,7 +93,7 @@ public class SelectionManager : MonoBehaviour
                     );
                 }
 
-
+                
                 //if (grid.GetTile(coord).prop != null)
                 //    Destroy(grid.GetTile(coord).prop.gameObject);
                 //Destroy(grid.GetTile(coord).terrain.gameObject);

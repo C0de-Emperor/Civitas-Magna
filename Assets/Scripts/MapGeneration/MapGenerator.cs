@@ -31,12 +31,14 @@ public class MapGenerator : MonoBehaviour
 
     public bool useThreadedGeneration = true;
 
+    public bool isMapReady = false;
+
     public static MapGenerator instance;
     private void Awake()
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de MapGenerator dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de MapGenerator dans la scÃ¨ne");
             return;
         }
         instance = this;
@@ -58,18 +60,18 @@ public class MapGenerator : MonoBehaviour
 
         Action generateAction = () =>
         {
-            // --- 1 Grande échelle : les continents ---
+            // --- 1 Grande Ã©chelle : les continents ---
             float[,] continentNoise = Noise.GenerateNoiseMap(
                 width, height,
-                C_noiseScale,  // très grand = continents larges
+                C_noiseScale,  // trÃ¨s grand = continents larges
                 seed,
-                C_octaves,                   // peu d’octaves = formes douces
+                C_octaves,                   // peu dâ€™octaves = formes douces
                 C_persistance,
                 C_lacunarity,
                 Vector2.zero
             );
 
-            // --- 2 Petite échelle : les détails de terrain ---
+            // --- 2 Petite Ã©chelle : les dÃ©tails de terrain ---
             float[,] ressourcesNoise = Noise.GenerateNoiseMap(
                 width, height,
                 R_noiseScale,    // petits motifs = relief local
@@ -92,12 +94,12 @@ public class MapGenerator : MonoBehaviour
 
                     TerrainType chosen;
 
-                    // === 1 Océan profond ===
+                    // === 1 OcÃ©an profond ===
                     if (c < seaLevel - 0.05f)
                     {
                         chosen = biomes[0].terrainType; // Ocean
                     }
-                    // === 2 Zone côtière (sable, plage, marais, etc.) ===
+                    // === 2 Zone cÃ´tiÃ¨re (sable, plage, marais, etc.) ===
                     else if (c < seaLevel)
                     {
                         // on est dans la bande de transition (10% autour du niveau de la mer)
@@ -106,10 +108,10 @@ public class MapGenerator : MonoBehaviour
                     // === 3 Terre ferme ===
                     else
                     {
-                        // On calcule un bruit local basé sur le détail
+                        // On calcule un bruit local basÃ© sur le dÃ©tail
                         float local = Mathf.Clamp01(d);
 
-                        // On cherche le biome terrestre correspondant (sans toucher à l’eau/sable)
+                        // On cherche le biome terrestre correspondant (sans toucher Ã  lâ€™eau/sable)
                         chosen = biomes[biomes.Count - 1].terrainType;
                         foreach (var biome in biomes)
                         {
@@ -146,14 +148,14 @@ public class MapGenerator : MonoBehaviour
 
                         if (c < seaLevel)
                         {
-                            // Sous le niveau de la mer : profondeur proportionnelle à c
-                            terrainHeight = Mathf.InverseLerp(0f, seaLevel, c) * 0.3f; // océan = 0 - côte = 0.3
+                            // Sous le niveau de la mer : profondeur proportionnelle Ã  c
+                            terrainHeight = Mathf.InverseLerp(0f, seaLevel, c) * 0.3f; // ocÃ©an = 0 - cÃ´te = 0.3
                         }
                         else
                         {
                             // Au-dessus du niveau de la mer : hauteur + relief local
-                            float landHeight = Mathf.InverseLerp(seaLevel, 1f, c);  // 0 à 1 selon altitude continentale
-                            float localRelief = (d - 0.5f) * 0.3f;                  // +/- relief léger
+                            float landHeight = Mathf.InverseLerp(seaLevel, 1f, c);  // 0 Ã  1 selon altitude continentale
+                            float localRelief = (d - 0.5f) * 0.3f;                  // +/- relief lÃ©ger
                             terrainHeight = Mathf.Clamp01(0.3f + landHeight * 0.7f + localRelief);
                         }
                         cell.terrainHigh = terrainHeight + 1f;

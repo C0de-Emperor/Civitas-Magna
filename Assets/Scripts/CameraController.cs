@@ -53,6 +53,9 @@ public class CameraController : MonoBehaviour
 
     public void ChangeCamera(CameraMode mode)
     {
+        if (!MapGenerator.instance.isMapReady)
+            return;
+
         currentMode = mode;
         CinemachineCamera camera = GetCamera(mode);
         onCameraChanged?.Invoke(camera);
@@ -74,6 +77,9 @@ public class CameraController : MonoBehaviour
 
     public void OnPanChange(InputAction.CallbackContext context)
     {
+        if (!MapGenerator.instance.isMapReady)
+            return;
+
         if (context.performed)
         {
             if (panCoroutine != null)
@@ -94,6 +100,9 @@ public class CameraController : MonoBehaviour
 
     public void OnZoomChanged(InputAction.CallbackContext context)
     {
+        if (!MapGenerator.instance.isMapReady)
+            return;
+
         if (context.started)
         {
             //Debug.Log("Pressed Zoom key");
@@ -117,6 +126,9 @@ public class CameraController : MonoBehaviour
 
     public void OnFocusChange(InputAction.CallbackContext context)
     {
+        if (!MapGenerator.instance.isMapReady)
+            return;
+
         if (context.started)
         {
             //Debug.Log("Focus button pressed... What's it gonna be?");
