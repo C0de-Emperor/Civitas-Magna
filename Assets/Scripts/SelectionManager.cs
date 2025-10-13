@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -72,6 +73,7 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
+                    Debug.Log(currentCell.offsetCoordinates);
                     if(currentCell.militaryUnit != null && (selectedUnit == null || currentCell.militaryUnit.gameObject != selectedUnit.gameObject))
                     {
                         selectedUnit = currentCell.militaryUnit;
@@ -127,7 +129,11 @@ public class SelectionManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            Debug.Log(unitManager.GetShortestPath(grid, grid.GetTile(new Vector2(0,0)), selectedCell, 1));
+            List<Vector2> path = unitManager.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
+            foreach (var item in path)
+            {
+                Debug.Log(item.x+", "+item.y);
+            }
         }
         
     }
