@@ -21,9 +21,9 @@ public class UnitManager : MonoBehaviour
         TreeNode accessibleCellsRoot = new TreeNode(startCellData);
 
         TreeNode currentTreeNode;
-        CellData currentCellData;
+        CellData currentCellData = null;
 
-        while (!endCellFound)
+        while (!endCellFound && (currentCellData==null || currentCellData.cell.axialCoordinates!=startCellData.cell.axialCoordinates))
         {
             currentTreeNode = accessibleCellsRoot.GetSmallestNode();
             currentCellData = currentTreeNode.GetClosestCellData();
@@ -44,12 +44,13 @@ public class UnitManager : MonoBehaviour
                     if (currentCellData.cell.neighbours[i].traversable)
                     {
                         CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell, heuristicFactor);
-                        if (visitedCellsRoot.GetCellDataLeaf(currentCellNeighboursData)==null)
+                        LeafFound isCellDataVisited=visitedCellsRoot.GetCellDataNode(currentCellNeighboursData);
+                        if (!isCellDataVisited.cellDataFound)
                         {
-                            TreeNode parentNode = accessibleCellsRoot.GetCellDataLeaf(currentCellNeighboursData);
-                            if (parentNode != null)
+                            LeafFound isCellDataInAccessible = accessibleCellsRoot.GetCellDataNode(currentCellNeighboursData);
+                            if (!isCellDataInAccessible.cellDataFound)
                             {
-                                parentNode.AddNewNode(currentCellNeighboursData);
+                                isCellDataInAccessible.parentNode.AddNewNode(currentCellNeighboursData);
                             }
                         }
                     }
@@ -58,6 +59,8 @@ public class UnitManager : MonoBehaviour
 
             }
         }
+
+
 
         return pathCoordinates;
     }
@@ -100,7 +103,7 @@ public class CellData
 public class TreeNode
 {
     public readonly float value;
-    private List<CellData> cellDatas;
+    private List<CellData> cellDatas = new List<CellData>();
     private TreeNode leftNode;
     private TreeNode rightNode;
 
@@ -139,32 +142,32 @@ public class TreeNode
         return this.leftNode.GetSmallestNode();
     }
 
-    public TreeNode GetCellDataLeaf(CellData cellData) // returns null if the cellData is in the tree, its leaf if not
+    public LeafFound GetCellDataNode(CellData cellData)
     {
         if (cellData.FCost < this.value)
         {
             if (this.leftNode == null)
             {
-                return this;
+                return new LeafFound(false, this);
             }
-            return this.leftNode.GetCellDataLeaf(cellData);
+            return this.leftNode.GetCellDataNode(cellData);
         }
         else if (cellData.FCost > this.value)
         {
             if (this.rightNode == null)
             {
-                return this;
+                return new LeafFound(false, this);
             }
-            return this.rightNode.GetCellDataLeaf(cellData);
+            return this.rightNode.GetCellDataNode(cellData);
         }
         foreach (var item in this.cellDatas)
         {
             if (item.cell.axialCoordinates == cellData.cell.axialCoordinates)
             {
-                return null;
+                return new LeafFound(true, this);
             }
         }
-        return this;
+        return new LeafFound(false, this);
     }
 
     public void AddNewNode(CellData cellData)
@@ -195,5 +198,17 @@ public class TreeNode
         {
             this.cellDatas.Add(cellData);
         }
+    }
+}
+
+public struct LeafFound
+{
+    public readonly bool cellDataFound;
+    public readonly TreeNode parentNode;
+
+    public LeafFound(bool cellDataFound, TreeNode parentNode)
+    {
+        this.cellDataFound = cellDataFound;
+        this.parentNode = parentNode;
     }
 }
