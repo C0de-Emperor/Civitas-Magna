@@ -28,7 +28,7 @@ public class SelectionManager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de SelectionManager dans la scene");
             return;
         }
         instance = this;
@@ -66,7 +66,7 @@ public class SelectionManager : MonoBehaviour
                     selectionOutline.SetActive(true);
                     selectionOutline.transform.position = new Vector3(
                         currentCell.tile.position.x,
-                        currentCell.terrainHigh + 0.001f,
+                        (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
                         currentCell.tile.position.z
                     );
                 }
@@ -90,7 +90,7 @@ public class SelectionManager : MonoBehaviour
                     innerSelectionOutline.SetActive(true);
                     innerSelectionOutline.transform.position = new Vector3(
                         currentCell.tile.position.x,
-                        currentCell.terrainHigh + 0.001f,
+                        (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
                         currentCell.tile.position.z
                     );
                 }
@@ -120,8 +120,8 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
 
-            selectedCell.militaryUnit=UnityEngine.Object.Instantiate(
-                unitManager.MilitaryUnits[0].prefab,
+            selectedCell.militaryUnit = Instantiate(
+                UnitManager.instance.MilitaryUnits[0].prefab,
                 new Vector3(selectedCell.tile.position.x, selectedCell.terrainHigh, selectedCell.tile.position.z),
                 new Quaternion(0,0,0,1),
                 selectedCell.tile

@@ -9,6 +9,8 @@ public class Unit : ScriptableObject
     [SerializeField] public Transform prefab;
     [SerializeField] public UnitType Type;
     public enum UnitType { military, support };
+    [SerializeField] public UnitSubType SubType;
+    public enum UnitSubType { Warior, Builder };
     [SerializeField] public int MoveReach;
     [SerializeField] public float AttackPower;
     [SerializeField] public float DefensePower;

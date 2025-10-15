@@ -12,6 +12,16 @@ public class UnitManager : MonoBehaviour
     public List<Unit> MilitaryUnits = new List<Unit>();
     public List<Unit> SupportUnits = new List<Unit>();
 
+    public static UnitManager instance;
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogWarning("Il y a plus d'une instance de UnitManager dans la scene");
+            return;
+        }
+        instance = this;
+    }
 
     public List<Vector2> GetShortestPath(HexGrid grid, HexCell startCell, HexCell finishCell, float heuristicFactor)
     {

@@ -61,7 +61,7 @@ public class HexCell
 
         isRevealed = false;
 
-        InstantiateTile(grid.undiscoveredTilePrefab.transform, null);
+        InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }
 
     public void RevealTile()
@@ -80,10 +80,10 @@ public class HexCell
 
         UnityEngine.Object.Destroy(tile.gameObject);
 
-        InstantiateTile(terrainType.prefab, terrainType.prop);
+        InstantiateTile(terrainType.prefab, terrainType.prop, terrainHigh);
     }
 
-    private void InstantiateTile(Transform tilePrefab, Transform ressourcePrefab)
+    private void InstantiateTile(Transform tilePrefab, Transform ressourcePrefab, float high)
     {
         Vector3 centerPosition = HexMetrics.Center(
             hexSize,
@@ -103,7 +103,7 @@ public class HexCell
         {
             ressource = UnityEngine.Object.Instantiate(
                 ressourcePrefab,
-                centerPosition + new Vector3(0, terrainHigh, 0),
+                centerPosition + new Vector3(0, high, 0),
                 Quaternion.identity,
                 grid.transform
             );
@@ -136,7 +136,7 @@ public class HexCell
 
             Vector3 newScale = tile.transform.localScale;
             newScale.x = targetX / prefabSize.x * newScale.x;
-            newScale.y = terrainHigh;
+            newScale.y = high;
             newScale.z = targetZ / prefabSize.z * newScale.z;
             tile.transform.localScale = newScale;
             if (ressource != null)

@@ -12,6 +12,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
+    [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
