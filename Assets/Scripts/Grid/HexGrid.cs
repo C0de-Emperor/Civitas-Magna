@@ -14,6 +14,9 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
 
+    [SerializeField] private Transform raycastTarget;
+    [field: SerializeField] public Transform tileContainer { get; private set; }
+
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
     public event Action<float> OnCellBatchGenerated;
@@ -23,6 +26,9 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
+        raycastTarget.position = new Vector3(-1, 1.3f, -1);
+        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
+
         gridOrigin = transform.position;
 
         OnCellInstancesGenerated += AssignNeighbours;

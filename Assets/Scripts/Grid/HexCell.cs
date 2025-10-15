@@ -96,7 +96,7 @@ public class HexCell
             tilePrefab,
             centerPosition,
             Quaternion.identity,
-            grid.transform
+            grid.tileContainer
         );
 
         if (ressourcePrefab != null)
@@ -105,7 +105,7 @@ public class HexCell
                 ressourcePrefab,
                 centerPosition + new Vector3(0, high, 0),
                 Quaternion.identity,
-                grid.transform
+                grid.tileContainer
             );
         }
 
