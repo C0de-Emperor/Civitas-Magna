@@ -111,7 +111,7 @@ public class SelectionManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            grid.AddMilitaryUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);
+            grid.AddUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);
         }
         if (Input.GetKeyUp(KeyCode.V))
         {

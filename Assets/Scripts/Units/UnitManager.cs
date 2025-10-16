@@ -12,8 +12,7 @@ public class UnitManager : MonoBehaviour
     public List<MilitaryUnit> MilitaryUnits = new List<MilitaryUnit>();
     public List<SupportUnit> SupportUnits = new List<SupportUnit>();
 
-    private Dictionary<MilitaryUnit, List<Vector2>> queuedMilitaryUnits;
-    private Dictionary<SupportUnit, List<Vector2>> queuedSupportUnits;
+    private Dictionary<Unit, List<Vector2>> queuedUnits;
 
     public static UnitManager instance;
     private void Awake()

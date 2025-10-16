@@ -1,16 +1,11 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/MilitaryUnit")]
-public class MilitaryUnit : ScriptableObject
+public class MilitaryUnit : Unit
 {
     public enum UnitType { }
 
-    [Header("Basic Properties")]
-    [SerializeField] private int ID;
-    [SerializeField] public string Name;
-    [SerializeField] public Transform Prefab;
-    [SerializeField] public int MoveReach;
-    [SerializeField] public bool IsABoat;
+    [SerializeField] public UnitType Type;
 
     [Header("Combat properties")]
     [SerializeField] public float AttackPower;

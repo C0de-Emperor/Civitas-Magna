@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f149bc1b248531349aee7d6aabe7bb30, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnit
-  ID: 0
   Name: Roger
   Prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
   MoveReach: 2
   IsABoat: 0
+  unitCategory: 0
+  Type: 0
   AttackPower: 10
   DefensePower: 7
   MaxHealth: 25
