@@ -100,17 +100,7 @@ public class HexCell
             grid.tileContainer
         );
 
-        if (ressourcePrefab != null)
-        {
-            ressource = UnityEngine.Object.Instantiate(
-                ressourcePrefab,
-                centerPosition + new Vector3(0, high, 0),
-                Quaternion.identity,
-                grid.tileContainer
-            );
-        }
-
-
+        Vector3 newScale = tile.transform.localScale;
         Renderer rend = tile.GetComponentInChildren<Renderer>();
         if (rend != null)
         {
@@ -135,15 +125,15 @@ public class HexCell
                 targetZ = HexMetrics.OuterRadius(hexSize) * 2f;
             }
 
-            Vector3 newScale = tile.transform.localScale;
             newScale.x = targetX / prefabSize.x * newScale.x;
             newScale.y = high;
             newScale.z = targetZ / prefabSize.z * newScale.z;
             tile.transform.localScale = newScale;
-            if (ressource != null)
-            {
-                ressource.transform.localScale = new Vector3(newScale.x, ressource.transform.localScale.y * hexSize, newScale.z);
-            }
+        }
+        else
+        {
+            Debug.LogWarning("A tile prefab without renderer it's starnge ...");
+            return;
         }
 
         tile.gameObject.layer = LayerMask.NameToLayer("Grid");
@@ -157,19 +147,39 @@ public class HexCell
         int randomRotation = UnityEngine.Random.Range(0, 6);
         tile.Rotate(new Vector3(0, randomRotation * 60, 0));
 
-        if (ressource != null)
+        if (ressourcePrefab != null)
         {
-            ressource.gameObject.layer = LayerMask.NameToLayer("Grid");
-            ressource.gameObject.isStatic = true;
-            if (orientation == HexOrientation.FlatTop)
-            {
-                ressource.Rotate(new Vector3(0, 30, 0));
-            }
-            ressource.Rotate(new Vector3(0, randomRotation * 60, 0));
+            InstantiateRessource(
+                ressourcePrefab,
+                centerPosition,
+                new Vector3(newScale.x, ressourcePrefab.localScale.y * hexSize, newScale.z),
+                high
+            );
         }
 
         terrainCost = terrainType.terrainCost;
         traversable = terrainType.traversable;
+    }
+
+    public void InstantiateRessource(Transform ressourcePrefab, Vector3 position, Vector3 scale, float high)
+    {
+        ressource = UnityEngine.Object.Instantiate(
+            ressourcePrefab,
+            position + new Vector3(0, high, 0),
+            Quaternion.identity,
+            grid.tileContainer
+        );
+
+        ressource.transform.localScale = scale;
+
+        ressource.gameObject.layer = LayerMask.NameToLayer("Grid");
+        ressource.gameObject.isStatic = true;
+        if (orientation == HexOrientation.FlatTop)
+        {
+            ressource.Rotate(new Vector3(0, 30, 0));
+        }
+        int randomRotation = UnityEngine.Random.Range(0, 6);
+        ressource.Rotate(new Vector3(0, randomRotation * 60, 0));
     }
 
     public void SetNeighbours(List<HexCell> _neighbours)
