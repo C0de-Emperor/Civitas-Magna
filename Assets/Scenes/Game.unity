@@ -742,8 +742,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 0
-  <width>k__BackingField: 20
-  <height>k__BackingField: 20
+  <width>k__BackingField: 200
+  <height>k__BackingField: 200
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
@@ -1178,7 +1178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f440be46898d1024ca3fad988684eb6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  cityPrefab: {fileID: 0}
+  cityPrefab: {fileID: 1758533404836330832, guid: c1e03cd848362124bbff6e44eebcda55, type: 3}
 --- !u!1 &1031135460
 GameObject:
   m_ObjectHideFlags: 0

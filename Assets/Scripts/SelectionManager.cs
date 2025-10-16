@@ -83,6 +83,8 @@ public class SelectionManager : MonoBehaviour
 
                     grid.RevealTilesInRadius(coord, 2);
 
+                   
+
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
                     innerSelectionOutline.transform.position = new Vector3(
@@ -90,6 +92,10 @@ public class SelectionManager : MonoBehaviour
                         (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
                         currentCell.tile.position.z
                     );
+                }
+                if (Input.GetMouseButtonDown(1))
+                {
+                    BuildingManager.instance.CreateCity(currentCell);
                 }
             }
             else
