@@ -33,6 +33,7 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
+        raycastTarget.gameObject.SetActive(true);
         raycastTarget.position = new Vector3(-1, 1.3f, -1);
         raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
 
@@ -205,6 +206,8 @@ public class HexGrid : MonoBehaviour
         }
 
         return;
+    }
+
     public void SetActiveTile(HexCell cell, bool value)
     {
         if(cell.isActive == value) 

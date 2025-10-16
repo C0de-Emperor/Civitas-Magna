@@ -52,15 +52,15 @@ public class CameraController : MonoBehaviour
         instance = this;
     }
 
-    void Start()
+    void Start() 
     {
         topDownCamera.Lens.FieldOfView = cameraZoomDefault;
         ChangeCamera(defaultMode);
 
         mapMinX = 0f;
-        mapMaxX = grid.width * grid.hexSize * 1.5f;
+        mapMaxX = grid.width * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop)? 1.5f : 1.75f);
         mapMinZ = 0f;
-        mapMaxZ = grid.height * grid.hexSize * 1.75f;
+        mapMaxZ = grid.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
     }
 
     public void ChangeCamera(CameraMode mode)
@@ -215,8 +215,6 @@ public class CameraController : MonoBehaviour
             yield return null;
         }
     }
-
-
 
     private void OnDrawGizmos()
     {
