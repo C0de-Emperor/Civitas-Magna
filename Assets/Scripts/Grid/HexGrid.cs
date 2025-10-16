@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour
@@ -15,6 +16,9 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
 
     [SerializeField] private Transform raycastTarget;
+
+    [SerializeField] private uint defaultLayer = 1;
+    [SerializeField] private uint unactiveLayer = 2;
     [field: SerializeField] public Transform tileContainer { get; private set; }
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
@@ -77,7 +81,7 @@ public class HexGrid : MonoBehaviour
         {
             List<HexCell> neighbours = new List<HexCell>();
 
-            // Offsets pour coordonnées axiales
+            // Offsets pour coordonnï¿½es axiales
             Vector2[] axialDirections = new Vector2[]
             {
             new Vector2(1, 0),   // E
@@ -123,13 +127,13 @@ public class HexGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Révèle toutes les tuiles dans un rayon donné autour d'une cellule.
+    /// Rï¿½vï¿½le toutes les tuiles dans un rayon donnï¿½ autour d'une cellule.
     /// </summary>
-    /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
+    /// <param name="centerCellOffsetpositions">Les coordonnï¿½es de la tuile centrale</param>
     /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
     public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius)
     {
-        // Pour éviter les allocations récurrentes
+        // Pour ï¿½viter les allocations rï¿½currentes
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
         Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetpositions, orientation);
@@ -152,7 +156,7 @@ public class HexGrid : MonoBehaviour
             }
         }
 
-        // Révéler les tuiles trouvées
+        // Rï¿½vï¿½ler les tuiles trouvï¿½es
         foreach (var cell in toReveal)
         {
             cell.RevealTile();
@@ -201,6 +205,42 @@ public class HexGrid : MonoBehaviour
         }
 
         return;
+    public void SetActiveTile(HexCell cell, bool value)
+    {
+        if(cell.isActive == value) 
+            return;
+
+        if (!cell.isRevealed)
+        {
+            Debug.LogError("On ne peut pas rendre active une tile non dï¿½couverte");
+            return;
+        }
+
+        var allRenderers = cell.tile.GetComponentsInChildren<Renderer>(true).ToList();
+
+        if (cell.ressource != null)
+        {
+            allRenderers.AddRange(cell.ressource.GetComponentsInChildren<Renderer>(true));
+        }
+
+        // Apply layer mask
+        foreach (Renderer rend in allRenderers)
+        {
+            rend.renderingLayerMask = value ? defaultLayer : unactiveLayer;
+        }
+
+        cell.isActive = value;
+    }
+
+    public void UpdateActiveTiles()
+    {
+        // parcourir les tiles
+        // si la tile est dans la range d'une troupe / ville / etc ...
+            // si elle n'est pas deja active
+                // set actie la tile
+        // sinon
+            // si elle n'est pas deja inactive
+                // set inactive
     }
 }
 

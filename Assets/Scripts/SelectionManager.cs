@@ -91,11 +91,6 @@ public class SelectionManager : MonoBehaviour
                         currentCell.tile.position.z
                     );
                 }
-
-                
-                //if (grid.GetTile(coord).prop != null)
-                //    Destroy(grid.GetTile(coord).prop.gameObject);
-                //Destroy(grid.GetTile(coord).terrain.gameObject);
             }
             else
             {

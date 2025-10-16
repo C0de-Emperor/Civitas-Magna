@@ -30,7 +30,8 @@ public class HexCell
     [field: SerializeField] public bool traversable { get; set; }
 
     [Header("Properties")]
-    [field: SerializeField] public bool isRevealed { get; private set; }
+    [field: SerializeField] public bool isRevealed { get; set; }
+    [field: SerializeField] public bool isActive { get; set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
     {
