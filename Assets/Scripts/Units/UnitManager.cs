@@ -6,11 +6,14 @@ public class UnitManager : MonoBehaviour
 {
     [SerializeField]
     const float HEURISTIC_SCALING = 5.0f;
-    const int MAX_ITERATIONS = 1_000_000;
+    const int MAX_ITERATIONS = 10000;
 
     [Header("Units")]
-    public List<Unit> MilitaryUnits = new List<Unit>();
-    public List<Unit> SupportUnits = new List<Unit>();
+    public List<MilitaryUnit> MilitaryUnits = new List<MilitaryUnit>();
+    public List<SupportUnit> SupportUnits = new List<SupportUnit>();
+
+    private Dictionary<MilitaryUnit, List<Vector2>> queuedMilitaryUnits;
+    private Dictionary<SupportUnit, List<Vector2>> queuedSupportUnits;
 
     public static UnitManager instance;
     private void Awake()

@@ -20,9 +20,6 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector, NonSerialized]
     public Transform selectedUnit = null;
 
-    [SerializeField]
-    private UnitManager unitManager;
-
     public static SelectionManager instance;
     private void Awake()
     {
@@ -119,17 +116,11 @@ public class SelectionManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-
-            selectedCell.militaryUnit = Instantiate(
-                UnitManager.instance.MilitaryUnits[0].prefab,
-                new Vector3(selectedCell.tile.position.x, selectedCell.terrainHigh, selectedCell.tile.position.z),
-                new Quaternion(0,0,0,1),
-                selectedCell.tile
-                );
+            grid.AddMilitaryUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            List<Vector2> path = unitManager.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
+            List<Vector2> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
             foreach (var item in path)
             {
                 Debug.Log(item.x+", "+item.y);

@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f732404695118a4f800d0f771c9352d, type: 3}
+  m_Script: {fileID: 11500000, guid: f149bc1b248531349aee7d6aabe7bb30, type: 3}
   m_Name: Warrior
-  m_EditorClassIdentifier: Assembly-CSharp::Unit
+  m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnit
   ID: 0
-  Name: Warrior
-  prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
-  Type: 0
+  Name: Roger
+  Prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
   MoveReach: 2
+  IsABoat: 0
   AttackPower: 10
-  DefensePower: 8
+  DefensePower: 7
   MaxHealth: 25
   AttackRange: 1

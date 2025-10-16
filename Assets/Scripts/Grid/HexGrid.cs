@@ -19,6 +19,9 @@ public class HexGrid : MonoBehaviour
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
+    [SerializeField] private List<HexCell> militaryOccupiedCells = new List<HexCell>();
+    [SerializeField] private List<HexCell> supportOccupiedCells = new List<HexCell>();
+
     public event Action<float> OnCellBatchGenerated;
     public event Action OnCellInstancesGenerated;
 
@@ -127,7 +130,7 @@ public class HexGrid : MonoBehaviour
     public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius)
     {
         // Pour éviter les allocations récurrentes
-        List<HexCell> toReveal = new List<HexCell>(1 + 3*radius*(radius + 1));
+        List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
         Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetpositions, orientation);
 
@@ -155,7 +158,52 @@ public class HexGrid : MonoBehaviour
             cell.RevealTile();
         }
     }
+
+    public void AddMilitaryUnit(HexCell cell, MilitaryUnit unit)
+    {
+        if (cell.militaryUnit == null)
+        {
+            Transform unitTransform = Instantiate(
+                unit.Prefab,
+                new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                new Quaternion(0, 0, 0, 1),
+                cell.tile
+                );
+
+            cell.militaryUnit = unitTransform;
+            militaryOccupiedCells.Add(cell);
+        }
+        else
+        {
+            Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+        }
+
+        return;
+    }
+
+    public void AddSupportUnit(HexCell cell, SupportUnit unit)
+    {
+        if (cell.supportUnit == null)
+        {
+            Transform unitTransform = Instantiate(
+                unit.Prefab,
+                new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                new Quaternion(0, 0, 0, 1),
+                cell.tile
+                );
+
+            cell.supportUnit = unitTransform;
+            supportOccupiedCells.Add(cell);
+        }
+        else
+        {
+            Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+        }
+
+        return;
+    }
 }
+
 
 public enum HexOrientation
 {
