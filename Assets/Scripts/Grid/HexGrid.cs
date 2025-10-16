@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour
@@ -15,6 +16,9 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
 
     [SerializeField] private Transform raycastTarget;
+
+    [SerializeField] private uint defaultLayer = 1;
+    [SerializeField] private uint unactiveLayer = 2;
     [field: SerializeField] public Transform tileContainer { get; private set; }
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
@@ -154,6 +158,44 @@ public class HexGrid : MonoBehaviour
         {
             cell.RevealTile();
         }
+    }
+
+    public void SetActiveTile(HexCell cell, bool value)
+    {
+        if(cell.isActive == value) 
+            return;
+
+        if (!cell.isRevealed)
+        {
+            Debug.LogError("On ne peut pas rendre active une tile non découverte");
+            return;
+        }
+
+        var allRenderers = cell.tile.GetComponentsInChildren<Renderer>(true).ToList();
+
+        if (cell.ressource != null)
+        {
+            allRenderers.AddRange(cell.ressource.GetComponentsInChildren<Renderer>(true));
+        }
+
+        // Apply layer mask
+        foreach (Renderer rend in allRenderers)
+        {
+            rend.renderingLayerMask = value ? defaultLayer : unactiveLayer;
+        }
+
+        cell.isActive = value;
+    }
+
+    public void UpdateActiveTiles()
+    {
+        // parcourir les tiles
+        // si la tile est dans la range d'une troupe / ville / etc ...
+            // si elle n'est pas deja active
+                // set actie la tile
+        // sinon
+            // si elle n'est pas deja inactive
+                // set inactive
     }
 }
 

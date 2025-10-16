@@ -12,6 +12,8 @@ public class CameraController : MonoBehaviour
 
     [Header("References")]
     [SerializeField]
+    private HexGrid grid;
+    [SerializeField]
     private GameObject cameraTarget;
     [SerializeField]
     private CinemachineCamera topDownCamera;
@@ -28,6 +30,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float cameraZoomMin = 15f;
     [SerializeField] private float cameraZoomMax = 100f;
     [SerializeField] private float cameraZoomDefault = 50f;
+
+    private float mapMinX;
+    private float mapMaxX;
+    private float mapMinZ;
+    private float mapMaxZ;
 
     private Coroutine panCoroutine;
     private Coroutine zoomCoroutine;
@@ -49,6 +56,11 @@ public class CameraController : MonoBehaviour
     {
         topDownCamera.Lens.FieldOfView = cameraZoomDefault;
         ChangeCamera(defaultMode);
+
+        mapMinX = 0f;
+        mapMaxX = grid.width * grid.hexSize * 1.5f;
+        mapMinZ = 0f;
+        mapMaxZ = grid.height * grid.hexSize * 1.75f;
     }
 
     public void ChangeCamera(CameraMode mode)
@@ -148,13 +160,22 @@ public class CameraController : MonoBehaviour
     {
         while (true)
         {
-            //Move the camera target in the direction of the input (2D Vector)
+            // Lire le mouvement
             Vector2 inputVector = context.ReadValue<Vector2>();
-            //Debug.Log("Moving: " + inputVector);
-
-            //Move the camera target in the direction of the input (2D Vector)
             Vector3 moveVector = new Vector3(inputVector.x, 0, inputVector.y);
+
+            // Déplacer la caméra
             cameraTarget.transform.position += moveVector * cameraSpeed * Time.deltaTime;
+
+            // Récupérer la position actuelle
+            Vector3 pos = cameraTarget.transform.position;
+
+            // Restreindre aux bornes de la carte
+            pos.x = Mathf.Clamp(pos.x, mapMinX, mapMaxX);
+            pos.z = Mathf.Clamp(pos.z, mapMinZ, mapMaxZ);
+
+            // Appliquer la position corrigée
+            cameraTarget.transform.position = pos;
 
             yield return null;
         }

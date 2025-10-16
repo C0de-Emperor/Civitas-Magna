@@ -342,8 +342,8 @@ Camera:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.54610175, g: 0.9811321, b: 0.9588984, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -740,13 +740,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 0
-  <width>k__BackingField: 500
-  <height>k__BackingField: 500
+  <width>k__BackingField: 200
+  <height>k__BackingField: 100
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
   <undiscoveredTileHigh>k__BackingField: 1
   raycastTarget: {fileID: 1805208650}
+  defaultLayer: 1
+  unactiveLayer: 2
   <tileContainer>k__BackingField: {fileID: 1327948545}
 --- !u!114 &664016685
 MonoBehaviour:
@@ -952,6 +954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c7a5693a5f559a4fb526faf616f12a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  grid: {fileID: 664016684}
   cameraTarget: {fileID: 716853691}
   topDownCamera: {fileID: 1031135464}
   focusCamera: {fileID: 1288610653}
@@ -993,6 +996,7 @@ MonoBehaviour:
     <terrainCost>k__BackingField: 0
     <traversable>k__BackingField: 0
     <isRevealed>k__BackingField: 0
+    <isActive>k__BackingField: 0
   unitManager: {fileID: 734156154}
 --- !u!1 &734156152
 GameObject:
