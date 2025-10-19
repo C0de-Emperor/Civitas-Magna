@@ -5,7 +5,7 @@ public class BuildingManager : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
 
-    [SerializeField] private Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
+    public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
 
     public static BuildingManager instance;
     private void Awake()
@@ -20,7 +20,7 @@ public class BuildingManager : MonoBehaviour
 
     public void CreateCity(HexCell cell)
     {
-        if (cell == null || cell.ressource != null || cell.isActive == false || cell.isRevealed == false)
+        if (cell == null || cell.ressource != null || cell.isActive == false || cell.isRevealed == false || !cell.terrainType.build.Contains(TerrainType.Build.City))
             return;
 
         Transform obj = cell.InstantiateRessource(cityPrefab);
@@ -32,6 +32,20 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
+        cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3);
+        cell.isACity = true;
+
         cities.Add(cell.offsetCoordinates, component);
+
+        foreach(HexCell n in cell.neighbours)
+        {
+            if(n != null)
+            {
+                component.controlledTiles.Add(n.offsetCoordinates, n);
+            }
+        }
+        component.controlledTiles.Add(cell.offsetCoordinates, cell);
+
+        component.borders.UpdateBorders();
     }
 }

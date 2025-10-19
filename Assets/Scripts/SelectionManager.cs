@@ -19,6 +19,8 @@ public class SelectionManager : MonoBehaviour
     public HexCell selectedCell = null;
     [HideInInspector, NonSerialized]
     public Transform selectedUnit = null;
+    [HideInInspector, NonSerialized]
+    public City selectedCity = null;
 
     public static SelectionManager instance;
     private void Awake()
@@ -70,17 +72,64 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log(currentCell.offsetCoordinates);
-                    if(currentCell.militaryUnit != null && (selectedUnit == null || currentCell.militaryUnit.gameObject != selectedUnit.gameObject))
-                    {
-                        selectedUnit = currentCell.militaryUnit;
-                    }
-                    else if(currentCell.supportUnit != null && (selectedUnit == null || currentCell.supportUnit.gameObject != selectedUnit.gameObject))
-                    {
-                        selectedUnit = currentCell.supportUnit;
-                    }
-                    // autre
 
+                    // --- Sélection d’une unité militaire ---
+                    if (currentCell.militaryUnit != null)
+                    {
+                        if (selectedUnit == null || currentCell.militaryUnit.gameObject != selectedUnit.gameObject)
+                        {
+                            selectedUnit = currentCell.militaryUnit;
+                        }
+                        else if (currentCell.supportUnit != null)
+                        {
+                            // Sélectionne l’unité de support si elle est différente
+                            if (selectedUnit.gameObject != currentCell.supportUnit.gameObject)
+                                selectedUnit = currentCell.supportUnit;
+                            else
+                                selectedUnit = null;
+                        }
+                        else
+                        {
+                            selectedUnit = null;
+                        }
+                    }
+
+                    // --- Sélection d’une unité de support uniquement ---
+                    else if (currentCell.supportUnit != null)
+                    {
+                        if (selectedUnit == null || selectedUnit.gameObject != currentCell.supportUnit.gameObject)
+                            selectedUnit = currentCell.supportUnit;
+                        else
+                            selectedUnit = null;
+                    }
+
+                    // --- Sélection d’une ville ---
+                    else if (currentCell.isACity)
+                    {
+                        City city;
+
+                        // Vérifie que la ville existe dans le dictionnaire
+                        if (BuildingManager.instance.cities.TryGetValue(coord, out city))
+                        {
+                            if (selectedCity == null || selectedCity != city)
+                            {
+                                selectedCity = city;
+                                Debug.Log("Ville sélectionnée : " + coord);
+                            }
+                            else
+                            {
+                                selectedCity = null;
+                                Debug.Log("Ville désélectionnée");
+                            }
+                        }
+                    }
+
+                    // --- Rien à sélectionner ---
+                    else
+                    {
+                        selectedUnit = null;
+                        selectedCity = null;
+                    }
                     grid.RevealTilesInRadius(coord, 2);
 
                    

@@ -7,7 +7,7 @@ public class HexCell
 {
     [Header("Cell Properties")]
     [Header("Terrain")]
-    [SerializeField] private HexOrientation orientation;
+    [SerializeField] public HexOrientation orientation;
     [field:SerializeField] public HexGrid grid {  get; set; }
     [field:SerializeField] public float hexSize {  get; set; }
     [field:SerializeField] public TerrainType terrainType {  get; private set; }
@@ -32,6 +32,7 @@ public class HexCell
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
+    [field: SerializeField] public bool isACity { get; set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
     {
@@ -61,6 +62,8 @@ public class HexCell
         }
 
         isRevealed = false;
+        isActive = true;
+        isACity = false;
 
         InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }

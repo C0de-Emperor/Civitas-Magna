@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "TerrainType", menuName = "TBS/TerrainType")]
@@ -12,4 +13,8 @@ public class TerrainType : ScriptableObject
     [field: SerializeField] public Transform prop { get; private set; }
     [field: SerializeField] public float terrainCost { get; private set; }
     [field: SerializeField] public bool traversable { get; private set; }
+
+    [SerializeField] public List<Build> build = new List<Build> ();
+
+    public enum Build { City }
 }
