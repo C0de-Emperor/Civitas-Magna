@@ -64,9 +64,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   city: {fileID: -8284112874330755618}
   edgesParent: {fileID: 6538708927237055051}
-  lineHeight: 0.05
-  lineWidth: 0.05
-  borderColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  lineHeight: 0.075
+  lineWidth: 0.075
+  borderColor: {r: 0.015686274, g: 0.10482099, b: 1, a: 1}
 --- !u!120 &5724888391069188724
 LineRenderer:
   serializedVersion: 2
