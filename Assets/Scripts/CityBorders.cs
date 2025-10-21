@@ -40,7 +40,7 @@ public class CityBorders : MonoBehaviour
 
                 Vector2 neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2(-1, -1);
 
-                if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !BuildingManager.instance.IsToACity(neighbor))
+                if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !CityManager.instance.IsToACity(neighbor))
                 {
                     float neighborHeight = neighbor != null ? neighbor.terrainHigh : 0f;
                     float maxHeight = Mathf.Max(cell.terrainHigh, neighborHeight);

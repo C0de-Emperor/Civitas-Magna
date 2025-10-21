@@ -7,6 +7,8 @@ using Unity.Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
+    public bool canMove = true;
+
     [SerializeField]
     private const int DEFAULT_PRIORITY = 10;
 
@@ -65,7 +67,7 @@ public class CameraController : MonoBehaviour
 
     public void ChangeCamera(CameraMode mode)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         currentMode = mode;
@@ -89,7 +91,7 @@ public class CameraController : MonoBehaviour
 
     public void OnPanChange(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.performed)
@@ -112,7 +114,7 @@ public class CameraController : MonoBehaviour
 
     public void OnZoomChanged(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.started)
@@ -138,7 +140,7 @@ public class CameraController : MonoBehaviour
 
     public void OnFocusChange(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.started)
@@ -219,7 +221,7 @@ public class CameraController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 0.5f);
+        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 0.25f);
     }
 }
 

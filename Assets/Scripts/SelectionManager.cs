@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class SelectionManager : MonoBehaviour
 {
+    public bool canInteract = true;
+
     [Header("References")]
     [SerializeField]
     private HexGrid grid;
@@ -19,8 +21,8 @@ public class SelectionManager : MonoBehaviour
     public HexCell selectedCell = null;
     [HideInInspector, NonSerialized]
     public Transform selectedUnit = null;
-    [HideInInspector, NonSerialized]
-    public City selectedCity = null;
+    //[HideInInspector, NonSerialized]
+    //public Transform selectedCity = null;
 
     public static SelectionManager instance;
     private void Awake()
@@ -47,8 +49,13 @@ public class SelectionManager : MonoBehaviour
 
     private void Update()
     {
-        if (selectionOutline == null || innerSelectionOutline == null || MapGenerator.instance.isMapReady == false)
+        if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
+        {
+            if(selectionOutline.gameObject.activeSelf)
+                selectionOutline.gameObject.SetActive(false);
+
             return;
+        }
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -102,7 +109,7 @@ public class SelectionManager : MonoBehaviour
                         else
                             selectedUnit = null;
                     }
-
+                    /*
                     // --- Sélection d’une ville ---
                     else if (currentCell.isACity)
                     {
@@ -123,12 +130,13 @@ public class SelectionManager : MonoBehaviour
                             }
                         }
                     }
+                    */
 
                     // --- Rien à sélectionner ---
                     else
                     {
                         selectedUnit = null;
-                        selectedCity = null;
+                        //selectedCity = null;
                     }
                     grid.RevealTilesInRadius(coord, 2);
 
@@ -144,7 +152,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(1))
                 {
-                    BuildingManager.instance.CreateCity(currentCell);
+                    CityManager.instance.CreateCity(currentCell);
                 }
             }
             else
@@ -158,12 +166,20 @@ public class SelectionManager : MonoBehaviour
             outlinedCell = null;
             selectionOutline.SetActive(false);
         }
-       
+
+        if (Input.GetKeyDown(KeyCode.E) && selectedCell != null && selectedCell.isACity)
+        {
+            CityManager.instance.OpenCity(CityManager.instance.cities[selectedCell.offsetCoordinates]);
+        }
+
+        // Unselect
         if (Input.GetKeyDown(KeyCode.Q))
         {
              selectedCell = null;
              innerSelectionOutline.SetActive(false);
         }
+
+        // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
             grid.AddMilitaryUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);

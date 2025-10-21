@@ -1,15 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingManager : MonoBehaviour
+public class CityManager : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
+    [SerializeField] private Transform cityPanel;
 
-    public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
+    [HideInInspector] public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
 
-    Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
+    private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
 
-    public static BuildingManager instance;
+    private City openedCity;
+
+
+    public static CityManager instance;
     private void Awake()
     {
         if (instance != null)
@@ -18,6 +23,8 @@ public class BuildingManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        cityPanel.gameObject.SetActive(false);
     }
 
     public void CreateCity(HexCell cell)
@@ -66,6 +73,18 @@ public class BuildingManager : MonoBehaviour
     {
         return (cell == null)? false : tileToCity.ContainsKey(cell.offsetCoordinates);
     }
+    internal void OpenCity(City city)
+    {
+        if(openedCity != null)
+        {
+            return;
+        }
+
+        CameraController.instance.canMove = false;
+        SelectionManager.instance.canInteract = false;  
+        openedCity = city;
+        cityPanel.gameObject.SetActive(true);
+    }
 
     public void UpdateAllBorders()
     {
@@ -74,4 +93,13 @@ public class BuildingManager : MonoBehaviour
             city.borders.UpdateBorders();
         }
     }
+
+
+
+
+
+
+
+
+
 }
