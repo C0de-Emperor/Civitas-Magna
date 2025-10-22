@@ -750,8 +750,6 @@ MonoBehaviour:
   defaultLayer: 1
   unactiveLayer: 2
   <tileContainer>k__BackingField: {fileID: 1327948545}
-  militaryOccupiedCells: []
-  supportOccupiedCells: []
 --- !u!114 &664016685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -993,13 +991,8 @@ MonoBehaviour:
     <axialCoordinates>k__BackingField: {x: 0, y: 0}
     <tile>k__BackingField: {fileID: 0}
     <ressource>k__BackingField: {fileID: 0}
-    militaryUnit: {fileID: 0}
-    <supportUnit>k__BackingField: {fileID: 0}
-    <terrainCost>k__BackingField: 0
-    <traversable>k__BackingField: 0
     <isRevealed>k__BackingField: 0
     <isActive>k__BackingField: 0
-  unitManager: {fileID: 734156154}
 --- !u!1 &734156152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,9 +1037,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05d76dd3a9d5b1d429becd94d03172b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  MilitaryUnits:
-  - {fileID: 11400000, guid: a1bbad7ebfc02034db6450682c52e7a4, type: 2}
-  SupportUnits: []
+  grid: {fileID: 664016684}
+  militaryUnits:
+  - {fileID: 11400000, guid: 094014399dcb6194d9e995877c2a8970, type: 2}
+  supportUnits: []
 --- !u!1 &753925495
 GameObject:
   m_ObjectHideFlags: 0

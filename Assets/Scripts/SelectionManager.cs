@@ -18,7 +18,7 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector, NonSerialized]
     public HexCell selectedCell = null;
     [HideInInspector, NonSerialized]
-    public Transform selectedUnit = null;
+    public Unit selectedUnit = null;
 
     public static SelectionManager instance;
     private void Awake()
@@ -70,12 +70,12 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log(currentCell.offsetCoordinates);
-                    if(currentCell.militaryUnit != null && (selectedUnit == null || currentCell.militaryUnit.gameObject != selectedUnit.gameObject))
+                    //Debug.Log(currentCell.offsetCoordinates);
+                    if(currentCell.militaryUnit != null && (selectedUnit == null || currentCell.militaryUnit.unitTransform.gameObject != selectedUnit.unitTransform.gameObject))
                     {
                         selectedUnit = currentCell.militaryUnit;
                     }
-                    else if(currentCell.supportUnit != null && (selectedUnit == null || currentCell.supportUnit.gameObject != selectedUnit.gameObject))
+                    else if(currentCell.supportUnit != null && (selectedUnit == null || currentCell.supportUnit.unitTransform.gameObject != selectedUnit.unitTransform.gameObject))
                     {
                         selectedUnit = currentCell.supportUnit;
                     }
@@ -104,6 +104,7 @@ public class SelectionManager : MonoBehaviour
             selectionOutline.SetActive(false);
         }
        
+        // DEBUG
         if (Input.GetKeyDown(KeyCode.Q))
         {
              selectedCell = null;
@@ -111,15 +112,24 @@ public class SelectionManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            grid.AddUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0]);
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            List<Vector2> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
+            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0]);
+            Debug.Log(unit.unitType);
+            UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
+
+            /*
+            List<HexCell> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
             foreach (var item in path)
             {
-                Debug.Log(item.x+", "+item.y);
-            }
+                Debug.Log(item.axialCoordinates);
+            }*/
+        }
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            TurnManager.instance.ChangeTurn();
         }
         
     }

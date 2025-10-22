@@ -16,7 +16,7 @@ MonoBehaviour:
   Prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
   MoveReach: 2
   IsABoat: 0
-  unitCategory: 0
+  unitCategory: 1
   Type: 0
   AttackPower: 10
   DefensePower: 7

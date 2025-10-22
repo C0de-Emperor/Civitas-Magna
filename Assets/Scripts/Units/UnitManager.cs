@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
-    [SerializeField]
-    const float HEURISTIC_SCALING = 5.0f;
+    [SerializeField] HexGrid grid;
+
+    const float HEURISTIC_SCALING = 1.5f;
     const int MAX_ITERATIONS = 10000;
 
     [Header("Units")]
-    public List<MilitaryUnit> MilitaryUnits = new List<MilitaryUnit>();
-    public List<SupportUnit> SupportUnits = new List<SupportUnit>();
+    [SerializeField] public List<MilitaryUnitType> militaryUnits = new List<MilitaryUnitType>();
+    [SerializeField] public List<SupportUnitType> supportUnits = new List<SupportUnitType>();
 
-    private Dictionary<Unit, List<Vector2>> queuedUnits;
+    //public List<Unit> units = new List<Unit>();
+    private Dictionary<Unit, List<MovementData>> queuedUnits = new Dictionary<Unit, List<MovementData>>();
 
     public static UnitManager instance;
     private void Awake()
@@ -25,12 +28,189 @@ public class UnitManager : MonoBehaviour
         instance = this;
     }
 
-    public List<Vector2> GetShortestPath(HexGrid grid, HexCell startCell, HexCell finishCell, float heuristicFactor)
+    private void Start()
     {
-        Debug.LogWarning("SEARCHING PATH FROM "+startCell.offsetCoordinates + " TO "+finishCell.offsetCoordinates);
+        TurnManager.instance.OnTurnChange += MoveQueuedUnits;
+    }
+
+    private void PrintList(List<HexCell> list)
+    {
+        string BLABLA = "";
+        foreach (HexCell cell in list)
+        {
+            BLABLA += cell.offsetCoordinates.ToString() + " ";
+            //Destroy(cell.tile.gameObject);
+        }
+        Debug.Log(BLABLA);
+    }
+
+    public void MoveQueuedUnits()
+    {
+        List<Unit> emptyMovementKeys = new List<Unit>();
+
+        foreach(var unit in queuedUnits.Keys)
+        {
+            MoveUnit(unit, queuedUnits[unit][0].startCell, queuedUnits[unit][0].endCell);
+            queuedUnits[unit].RemoveAt(0);
+            if (queuedUnits[unit].Count == 0)
+            {
+                emptyMovementKeys.Add(unit);
+            }
+        }
+
+        foreach (var unit in emptyMovementKeys)
+        {
+            queuedUnits.Remove(unit);
+        }
+    }
+
+    public void QueueUnitMovement(Unit unit, HexCell unitCell, HexCell destinationCell)
+    {
+        List<HexCell> path = GetShortestPath(unitCell, destinationCell, 1f);
+
+        if (path == null)
+        {
+            return;
+        }
+        else
+        {
+            List<MovementData> movementDatas = new List<MovementData>();
+
+            int i = 0;
+            int j = 0;
+            while (j < path.Count - 1)
+            {
+                float currentPathCost = 0f;
+                Debug.Log(unit.unitType.MoveReach);
+                Debug.Log(path[j + 1].terrainType.terrainCost);
+                while (j < path.Count - 1 && currentPathCost + path[j + 1].terrainType.terrainCost <= unit.unitType.MoveReach)
+                {
+                    currentPathCost += path[j + 1].terrainType.terrainCost;
+                    j++;
+                }
+                movementDatas.Add(new MovementData(path[i], path[j]));
+                i = j;
+            }
+
+            if (movementDatas.Count == 1)
+            {
+                MoveUnit(unit, unitCell, destinationCell);
+            }
+            else
+            {
+                queuedUnits.Add(unit, movementDatas);
+            }
+        }
+    }
+
+    public void MoveUnit(Unit unit, HexCell unitCell, HexCell destinationCell)
+    {
+        if (!destinationCell.isActive || !destinationCell.isRevealed)
+        {
+            Debug.LogWarning("trying to add a unit on a not active tile");
+            //return;
+        }
+
+        if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
+        {
+            if (destinationCell.militaryUnit == null)
+            {
+                unit.unitTransform.position = new Vector3(destinationCell.tile.position.x, destinationCell.terrainHigh, destinationCell.tile.position.z);
+                unitCell.militaryUnit = null;
+            }
+            else
+            {
+                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+            }
+        }
+        else
+        {
+            if(destinationCell.supportUnit == null)
+            {
+                unit.unitTransform.position = new Vector3(destinationCell.tile.position.x, destinationCell.terrainHigh, destinationCell.tile.position.z);
+                unitCell.supportUnit = null;
+            }
+            else
+            {
+                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+            }
+        }
+
+        // Jouer animation
+    }
+
+    public Unit AddUnit(HexCell cell, UnitType unitType)
+    {
+        if (!cell.isActive || !cell.isRevealed)
+        {
+            Debug.LogWarning("trying to add a unit on a not active tile");
+            //return;
+        }
+        if (unitType.unitCategory == UnitType.UnitCategory.military)
+        {
+            if (cell.militaryUnit == null)
+            {
+                Transform unitTransform = Instantiate(
+                    unitType.Prefab,
+                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                    new Quaternion(0, 0, 0, 1),
+                    this.transform
+                    );
+
+                Unit unit = new Unit(unitTransform, unitType);
+
+                cell.militaryUnit = unit;
+                return unit;
+            }
+            else
+            {
+                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+            }
+        }
+        else
+        {
+            if (cell.supportUnit == null)
+            {
+                Transform unitTransform = Instantiate(
+                    unitType.Prefab,
+                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                    new Quaternion(0, 0, 0, 1),
+                    this.transform
+                    );
+
+                Unit unit = new Unit(unitTransform, unitType);
+
+                cell.supportUnit = unit;
+                return unit;
+            }
+            else
+            {
+                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
+            }
+        }
+        return null;
+    }
+
+    public void RemoveUnit(HexCell cell, UnitType.UnitCategory unitCategory)
+    {
+        if (unitCategory == UnitType.UnitCategory.military)
+        {
+            Destroy(cell.militaryUnit.unitTransform.gameObject, 1f);
+            cell.militaryUnit = null;
+        }
+        else
+        {
+            Destroy(cell.militaryUnit.unitTransform.gameObject);
+            cell.supportUnit = null;
+        }
+    }
+
+    public List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, float heuristicFactor)
+    {
+        //Debug.LogWarning("SEARCHING PATH FROM "+startCell.offsetCoordinates + " TO "+finishCell.offsetCoordinates);
 
         bool endCellFound = false;
-        List<Vector2> pathCoordinates = new List<Vector2>();
+        List<HexCell> pathCoordinates = new List<HexCell>();
         CellData startCellData = CreateCellData(null, startCell, finishCell, heuristicFactor, grid.hexSize);
 
         List<CellData> visitedCells = new List<CellData>();
@@ -54,7 +234,7 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (currentCellData.cell.neighbours[i].traversable)
+                else if (currentCellData.cell.neighbours[i].terrainType.traversable)
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell, heuristicFactor, grid.hexSize);
                     //Debug.Log("looking at neighbour cell : " + currentCellNeighboursData.GetCellDataInfo());
@@ -82,16 +262,21 @@ public class UnitManager : MonoBehaviour
         }
         System.DateTime endTime = System.DateTime.Now;
 
-        Debug.Log("iterations : " + iterations);
-        Debug.Log("time taken : " + endTime.Subtract(startTime));
+        //Debug.Log("iterations : " + iterations);
+        //Debug.Log("time taken : " + endTime.Subtract(startTime));
+        Debug.Log("SEARCHING PATH FROM " + startCell.offsetCoordinates + " TO " + finishCell.offsetCoordinates + " IN " + endTime.Subtract(startTime));
 
         if (endCellFound)
         {
+            currentCellData = CreateCellData(currentCellData, finishCell, finishCell, 0f, grid.hexSize);
             while (currentCellData.cell.offsetCoordinates != startCell.offsetCoordinates)
             {
-                pathCoordinates.Add(currentCellData.cell.offsetCoordinates);
+                pathCoordinates.Add(currentCellData.cell);
                 currentCellData = currentCellData.parentCellData;
             }
+            pathCoordinates.Reverse();
+            pathCoordinates.Insert(0, startCell);
+
             return pathCoordinates;
         }
         else
@@ -143,18 +328,30 @@ public class UnitManager : MonoBehaviour
 
     private float GetEuclideanDistance(HexCell cell1, HexCell cell2, float hexSize)
     {
-        float xDiff = Mathf.Pow(cell1.axialCoordinates.x - cell2.axialCoordinates.x, 2);
-        float yDiff = Mathf.Pow(cell1.axialCoordinates.x - cell2.axialCoordinates.y, 2);
+        float xDiff = Mathf.Pow(cell1.offsetCoordinates.x - cell2.offsetCoordinates.x, 2);
+        float yDiff = Mathf.Pow(cell1.offsetCoordinates.y - cell2.offsetCoordinates.y, 2);
         float euclideanDistance = Mathf.Sqrt(xDiff + yDiff) / hexSize;
-        return Mathf.Round(euclideanDistance * 10) / 10;
+        return Mathf.Round(euclideanDistance * 100) / 100;
     }
 
     private CellData CreateCellData(CellData parentCellData, HexCell cell, HexCell destCell, float heuristicFactor, float hexSize)
     {
         float GCost = GetEuclideanDistance(cell, destCell, hexSize);
-        float HCost = cell.terrainCost * HEURISTIC_SCALING;
+        float HCost = cell.terrainType.terrainCost * HEURISTIC_SCALING;
         float FCost = GCost + HCost * heuristicFactor;
         return new CellData(GCost, HCost, FCost, cell, parentCellData);
+    }
+}
+
+public struct MovementData
+{
+    public HexCell startCell;
+    public HexCell endCell;
+
+    public MovementData(HexCell startCell, HexCell endCell)
+    {
+        this.startCell = startCell;
+        this.endCell = endCell;
     }
 }
 
@@ -178,6 +375,18 @@ public class CellData
     public string GetCellDataInfo()
     {
         return this.cell.offsetCoordinates.ToString() + " " + this.GCost.ToString() + " " + HCost.ToString() + " " + this.FCost.ToString();
+    }
+}
+
+public class Unit
+{
+    public Transform unitTransform;
+    public UnitType unitType;
+
+    public Unit(Transform unitTransform, UnitType unitType)
+    {
+        this.unitTransform = unitTransform;
+        this.unitType = unitType;
     }
 }
 

@@ -20,4 +20,4 @@ MonoBehaviour:
   <prop>k__BackingField: {fileID: -8679921383154817045, guid: 5d8b36bdbceb255459ca0d4190028e47, type: 3}
   <icon>k__BackingField: {fileID: 0}
   <terrainCost>k__BackingField: 3
-  <traversable>k__BackingField: 0
+  <traversable>k__BackingField: 1

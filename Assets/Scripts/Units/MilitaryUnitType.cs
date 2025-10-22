@@ -1,7 +1,8 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/MilitaryUnit")]
-public class MilitaryUnit : Unit
+public class MilitaryUnitType : UnitType
 {
     public enum UnitType { }
 
@@ -12,5 +13,10 @@ public class MilitaryUnit : Unit
     [SerializeField] public float DefensePower;
     [SerializeField] public float MaxHealth;
     [SerializeField] public int AttackRange;
+
+    private void Awake()
+    {
+        unitCategory = UnitCategory.military;
+    }
 
 }

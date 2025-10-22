@@ -23,8 +23,6 @@ public class HexGrid : MonoBehaviour
 
     [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
-    [SerializeField] private List<HexCell> occupiedCells = new List<HexCell>();
-
     public event Action<float> OnCellBatchGenerated;
     public event Action OnCellInstancesGenerated;
 
@@ -161,56 +159,7 @@ public class HexGrid : MonoBehaviour
             cell.RevealTile();
         }
     }
-
-    public void AddUnit(HexCell cell, Unit unit)
-    {
-        if (!cell.isActive || !cell.isRevealed)
-        {
-            Debug.LogWarning("trying to add a unit on an not active tile");
-            return;
-        }
-        if (unit.unitCategory == Unit.UnitCategory.military)
-        {
-            if (cell.militaryUnit == null)
-            {
-                Transform unitTransform = Instantiate(
-                    unit.Prefab,
-                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
-                    new Quaternion(0, 0, 0, 1),
-                    cell.tile
-                    );
-
-                cell.militaryUnit = unitTransform;
-                occupiedCells.Add(cell);
-            }
-            else
-            {
-                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
-            }
-        }
-        else
-        {
-            if (cell.supportUnit == null)
-            {
-                Transform unitTransform = Instantiate(
-                    unit.Prefab,
-                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
-                    new Quaternion(0, 0, 0, 1),
-                    cell.tile
-                    );
-
-                cell.supportUnit = unitTransform;
-                occupiedCells.Add(cell);
-            }
-            else
-            {
-                Debug.LogWarning("trying to add a unit on an alreday occupied tile");
-            }
-        }
-
-            return;
-    }
-
+    
     public void SetActiveTile(HexCell cell, bool value)
     {
         if(cell.isActive == value) 

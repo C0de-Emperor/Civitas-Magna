@@ -24,10 +24,8 @@ public class HexCell
     [field: SerializeField] public Transform ressource { get; set; }
 
     [Header("Units")]
-    [field: SerializeField] public Transform militaryUnit = null;
-    [field: SerializeField] public Transform supportUnit { get; set; }
-    [field: SerializeField] public float terrainCost { get; set; }
-    [field: SerializeField] public bool traversable { get; set; }
+    [field: SerializeField] public Unit militaryUnit = null;
+    [field: SerializeField] public Unit supportUnit { get; set; }
 
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
@@ -78,6 +76,7 @@ public class HexCell
             return;
         }
         isRevealed = true;
+        isActive = true; // A virer par la suite
 
         UnityEngine.Object.Destroy(tile.gameObject);
 
@@ -167,9 +166,6 @@ public class HexCell
             }
             ressource.Rotate(new Vector3(0, randomRotation * 60, 0));
         }
-
-        terrainCost = terrainType.terrainCost;
-        traversable = terrainType.traversable;
     }
 
     public void SetNeighbours(List<HexCell> _neighbours)
