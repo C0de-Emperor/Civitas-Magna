@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,8 +15,9 @@ public class UnitManager : MonoBehaviour
     [SerializeField] public List<MilitaryUnitType> militaryUnits = new List<MilitaryUnitType>();
     [SerializeField] public List<SupportUnitType> supportUnits = new List<SupportUnitType>();
 
-    //public List<Unit> units = new List<Unit>();
-    private Dictionary<Unit, List<MovementData>> queuedUnits = new Dictionary<Unit, List<MovementData>>();
+    public int nextAvailableId = 0;
+    public List<Unit> units = new List<Unit>();
+    private Dictionary<int, List<HexCell>> queuedUnits = new Dictionary<int, List<HexCell>>();
 
     public static UnitManager instance;
     private void Awake()
@@ -33,6 +35,18 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += MoveQueuedUnits;
     }
 
+    private Unit GetUnitById(int id)
+    {
+        foreach (var unit in units)
+        {
+            if (unit.id == id)
+            {
+                return unit;
+            }
+        }
+        return null;
+    }
+
     private void PrintList(List<HexCell> list)
     {
         string BLABLA = "";
@@ -46,15 +60,13 @@ public class UnitManager : MonoBehaviour
 
     public void MoveQueuedUnits()
     {
-        List<Unit> emptyMovementKeys = new List<Unit>();
+        List<int> emptyMovementKeys = new List<int>();
 
-        foreach(var unit in queuedUnits.Keys)
+        foreach (var unitId in queuedUnits.Keys)
         {
-            MoveUnit(unit, queuedUnits[unit][0].startCell, queuedUnits[unit][0].endCell);
-            queuedUnits[unit].RemoveAt(0);
-            if (queuedUnits[unit].Count == 0)
+            if (MoveQueuedUnit(unitId))
             {
-                emptyMovementKeys.Add(unit);
+                emptyMovementKeys.Add(unitId);
             }
         }
 
@@ -62,6 +74,22 @@ public class UnitManager : MonoBehaviour
         {
             queuedUnits.Remove(unit);
         }
+    }
+
+    public bool MoveQueuedUnit(int unitId)
+    {
+        Unit unit = GetUnitById(unitId);
+        List<HexCell> path = queuedUnits[unitId];
+        float pathCost = 0f;
+        while (path.Count > 1 && path[1].terrainType.terrainCost + pathCost <= unit.unitType.MoveReach)
+        {
+            pathCost += path[1].terrainType.terrainCost;
+            MoveUnit(unit, path[0], path[1]);
+            path.RemoveAt(0);
+            Debug.Log(unitId);
+            PrintList(path);
+        }
+        return pathCost == 1;
     }
 
     public void QueueUnitMovement(Unit unit, HexCell unitCell, HexCell destinationCell)
@@ -74,32 +102,8 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            List<MovementData> movementDatas = new List<MovementData>();
-
-            int i = 0;
-            int j = 0;
-            while (j < path.Count - 1)
-            {
-                float currentPathCost = 0f;
-                Debug.Log(unit.unitType.MoveReach);
-                Debug.Log(path[j + 1].terrainType.terrainCost);
-                while (j < path.Count - 1 && currentPathCost + path[j + 1].terrainType.terrainCost <= unit.unitType.MoveReach)
-                {
-                    currentPathCost += path[j + 1].terrainType.terrainCost;
-                    j++;
-                }
-                movementDatas.Add(new MovementData(path[i], path[j]));
-                i = j;
-            }
-
-            if (movementDatas.Count == 1)
-            {
-                MoveUnit(unit, unitCell, destinationCell);
-            }
-            else
-            {
-                queuedUnits.Add(unit, movementDatas);
-            }
+            queuedUnits.Add(unit.id, path);
+            MoveQueuedUnit(unit.id);
         }
     }
 
@@ -125,7 +129,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if(destinationCell.supportUnit == null)
+            if (destinationCell.supportUnit == null)
             {
                 unit.unitTransform.position = new Vector3(destinationCell.tile.position.x, destinationCell.terrainHigh, destinationCell.tile.position.z);
                 unitCell.supportUnit = null;
@@ -158,6 +162,7 @@ public class UnitManager : MonoBehaviour
                     );
 
                 Unit unit = new Unit(unitTransform, unitType);
+                units.Add(unit);
 
                 cell.militaryUnit = unit;
                 return unit;
@@ -179,6 +184,7 @@ public class UnitManager : MonoBehaviour
                     );
 
                 Unit unit = new Unit(unitTransform, unitType);
+                units.Add(unit);
 
                 cell.supportUnit = unit;
                 return unit;
@@ -216,7 +222,7 @@ public class UnitManager : MonoBehaviour
         List<CellData> visitedCells = new List<CellData>();
         List<CellData> cellsToVisit = new List<CellData>() { startCellData };
 
-        CellData currentCellData=null;
+        CellData currentCellData = null;
 
         int iterations = 0;
         System.DateTime startTime = System.DateTime.Now;
@@ -239,14 +245,14 @@ public class UnitManager : MonoBehaviour
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell, heuristicFactor, grid.hexSize);
                     //Debug.Log("looking at neighbour cell : " + currentCellNeighboursData.GetCellDataInfo());
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells);
-                    if (isCellDataVisited==-1)
+                    if (isCellDataVisited == -1)
                     {
                         int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit);
-                        if (isCellDataInToVisit==-1)
+                        if (isCellDataInToVisit == -1)
                         {
                             AddNewCellData(currentCellNeighboursData, cellsToVisit);
                         }
-                        else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost )
+                        else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
                         {
                             cellsToVisit[isCellDataInToVisit] = currentCellNeighboursData;
                         }
@@ -285,7 +291,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    private void AddNewCellData(CellData cellData,  List<CellData> cellDataList)
+    private void AddNewCellData(CellData cellData, List<CellData> cellDataList)
     {
         int i = 0;
         while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost)
@@ -298,7 +304,8 @@ public class UnitManager : MonoBehaviour
             cellDataList.Add(cellData);
             return;
         }
-        else if(cellData.FCost == cellDataList[i].FCost){
+        else if (cellData.FCost == cellDataList[i].FCost)
+        {
             while (i < cellDataList.Count && cellDataList[i].FCost == cellData.FCost && cellDataList[i].HCost < cellData.HCost)
             {
                 i++;
@@ -316,7 +323,7 @@ public class UnitManager : MonoBehaviour
 
     private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList)
     {
-        for(int i = 0; i < cellDataList.Count; i++)
+        for (int i = 0; i < cellDataList.Count; i++)
         {
             if (cellDataList[i].cell.offsetCoordinates == cellData.cell.offsetCoordinates)
             {
@@ -341,52 +348,44 @@ public class UnitManager : MonoBehaviour
         float FCost = GCost + HCost * heuristicFactor;
         return new CellData(GCost, HCost, FCost, cell, parentCellData);
     }
-}
 
-public struct MovementData
-{
-    public HexCell startCell;
-    public HexCell endCell;
-
-    public MovementData(HexCell startCell, HexCell endCell)
+    private class CellData
     {
-        this.startCell = startCell;
-        this.endCell = endCell;
-    }
-}
+        private readonly float GCost;
+        public readonly float HCost;
+        public readonly float FCost;
+        public readonly HexCell cell;
+        public readonly CellData parentCellData;
 
-public class CellData
-{
-    private readonly float GCost;
-    public readonly float HCost;
-    public readonly float FCost;
-    public readonly HexCell cell;
-    public readonly CellData parentCellData;
+        public CellData(float GCost, float HCost, float FCost, HexCell cell, CellData parentCellData)
+        {
+            this.GCost = GCost;
+            this.HCost = HCost;
+            this.FCost = FCost;
+            this.cell = cell;
+            this.parentCellData = parentCellData;
+        }
 
-    public CellData(float GCost, float HCost, float FCost, HexCell cell, CellData parentCellData)
-    {
-        this.GCost = GCost;
-        this.HCost = HCost;
-        this.FCost = FCost;
-        this.cell = cell;
-        this.parentCellData = parentCellData;
-    }
-
-    public string GetCellDataInfo()
-    {
-        return this.cell.offsetCoordinates.ToString() + " " + this.GCost.ToString() + " " + HCost.ToString() + " " + this.FCost.ToString();
+        public string GetCellDataInfo()
+        {
+            return this.cell.offsetCoordinates.ToString() + " " + this.GCost.ToString() + " " + HCost.ToString() + " " + this.FCost.ToString();
+        }
     }
 }
 
 public class Unit
 {
+    public int id;
     public Transform unitTransform;
     public UnitType unitType;
 
     public Unit(Transform unitTransform, UnitType unitType)
     {
+        this.id = UnitManager.instance.nextAvailableId;
+        UnitManager.instance.nextAvailableId++;
         this.unitTransform = unitTransform;
         this.unitType = unitType;
+        Debug.Log("NEW UNIT, ID : "+this.id);
     }
 }
 
