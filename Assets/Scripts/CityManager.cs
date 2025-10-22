@@ -17,16 +17,17 @@ public class CityManager : MonoBehaviour
     [SerializeField] private Text production;
     [SerializeField] private Text gold;
     [SerializeField] private Text science;
-    [Header("View Ports")]
-    [SerializeField] private Transform buildingsViewPort;
-    [SerializeField] private Transform unitsViewPort;
+    [Header("Categories")]
+    [SerializeField] private Transform productionCat;
+    [SerializeField] private Transform purchaseCat;
+    [Header("Production View Ports")]
+    [SerializeField] private ScrollRect productionBuildingsScroll;
+    [SerializeField] private ScrollRect productionUnitsScroll;
+    [Header("Purchase View Ports")]
+    [SerializeField] private ScrollRect purchaseBuildingsScroll;
+    [SerializeField] private ScrollRect purchaseUnitsScroll;
 
-    [SerializeField] private ScrollRect buildingsScroll;
-    [SerializeField] private ScrollRect unitsScroll;
-    [Header("Buttons")]
-    [SerializeField] private Button unitsProductionButton;
-
-
+    private bool isProductionPanel = true;
 
     private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
     private City openedCity;
@@ -120,9 +121,8 @@ public class CityManager : MonoBehaviour
 
 
 
-
+        OpenProductionMenu();
         cityPanel.gameObject.SetActive(true);
-        OpenProductionBuildingsMenu();
     }
 
     public void UpdateAllBorders()
@@ -147,24 +147,32 @@ public class CityManager : MonoBehaviour
         return chosenName;
     }
 
-    public void OpenProductionBuildingsMenu()
+    public void OpenBuildingsSubMenu()
     {
-        buildingsViewPort.gameObject.SetActive(true);
-        unitsViewPort.gameObject.SetActive(false);
+        productionBuildingsScroll.gameObject.SetActive(isProductionPanel);
+        purchaseBuildingsScroll.gameObject.SetActive(!isProductionPanel);
+
+        purchaseUnitsScroll.gameObject.SetActive(false);
+        productionUnitsScroll.gameObject.SetActive(false);
 
         // Remonte la ScrollView des bâtiments
         Canvas.ForceUpdateCanvases(); // important pour forcer le layout avant de modifier la position
-        buildingsScroll.verticalNormalizedPosition = 1f;
+        purchaseBuildingsScroll.verticalNormalizedPosition = 1f;
+        productionBuildingsScroll.verticalNormalizedPosition = 1f;
     }
 
-    public void OpenProductionUnitsMenu()
+    public void OpenUnitsSubMenu()
     {
-        buildingsViewPort.gameObject.SetActive(false);
-        unitsViewPort.gameObject.SetActive(true);
+        productionBuildingsScroll.gameObject.SetActive(false);
+        purchaseBuildingsScroll.gameObject.SetActive(false);
+
+        purchaseUnitsScroll.gameObject.SetActive(!isProductionPanel);
+        productionUnitsScroll.gameObject.SetActive(isProductionPanel);
 
         // Remonte la ScrollView des unités
         Canvas.ForceUpdateCanvases();
-        unitsScroll.verticalNormalizedPosition = 1f;
+        purchaseUnitsScroll.verticalNormalizedPosition = 1f;
+        productionUnitsScroll.verticalNormalizedPosition = 1f;
     }
 
 
@@ -172,26 +180,19 @@ public class CityManager : MonoBehaviour
 
     public void OpenProductionMenu()
     {
+        isProductionPanel = true;
+        purchaseCat.gameObject.SetActive(false);
+        productionCat.gameObject.SetActive(true);
 
+        OpenBuildingsSubMenu();
     }
 
     public void OpenPurchaseMenu()
     {
+        isProductionPanel = false;
+        purchaseCat.gameObject.SetActive(true);
+        productionCat.gameObject.SetActive(false);
 
+        OpenBuildingsSubMenu();
     }
-
-    public void OpenPurchaseBuildingsMenu()
-    {
-
-    }
-
-    public void OpenPurchaseUnitsMenu()
-    {
-
-    }
-
-
-
-
-
 }
