@@ -377,15 +377,22 @@ public class Unit
 {
     public int id;
     public Transform unitTransform;
-    public UnitType unitType;
+
+    public MilitaryUnitType militaryUnitType;
+    public float currentHealth;
 
     public Unit(Transform unitTransform, UnitType unitType)
     {
         this.id = UnitManager.instance.nextAvailableId;
         UnitManager.instance.nextAvailableId++;
         this.unitTransform = unitTransform;
-        this.unitType = unitType;
         Debug.Log("NEW UNIT, ID : "+this.id);
+
+        if (unitType.unitCategory == UnitType.UnitCategory.military)
+        {
+            this.militaryUnitType = unitType as MilitaryUnitType;
+            this.currentHealth = this.militaryUnitType.MaxHealth;
+        }
     }
 }
 

@@ -13,6 +13,7 @@ public class MilitaryUnitType : UnitType
     [SerializeField] public float DefensePower;
     [SerializeField] public float MaxHealth;
     [SerializeField] public int AttackRange;
+    [SerializeField] public float HealthRegeneration;
 
     private void Awake()
     {

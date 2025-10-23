@@ -117,7 +117,6 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.V))
         {
             Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0]);
-            Debug.Log(unit.unitType);
             UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
 
             /*
