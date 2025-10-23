@@ -35,7 +35,7 @@ public class CityBorders : MonoBehaviour
             for (int i = 0; i < 6; i++) // on parcours les corneril y en a toujours 6
             {
                 HexCell neighbor = null;
-                if (cell.neighbours != null && i < cell.neighbours.Count)
+                if (cell.neighbours != null && i < 6)
                     neighbor = cell.neighbours[i];
 
                 Vector2 neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2(-1, -1);

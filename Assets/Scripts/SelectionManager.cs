@@ -20,7 +20,7 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector, NonSerialized]
     public HexCell selectedCell = null;
     [HideInInspector, NonSerialized]
-    public Transform selectedUnit = null;
+    public Unit selectedUnit = null;
     //[HideInInspector, NonSerialized]
     //public Transform selectedCity = null;
 
@@ -118,7 +118,7 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
              selectedCell = null;
-            selectedUnit = null;
+             selectedUnit = null;
              innerSelectionOutline.SetActive(false);
         }
 

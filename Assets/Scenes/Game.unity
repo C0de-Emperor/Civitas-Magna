@@ -3461,7 +3461,7 @@ MonoBehaviour:
   currentMode: 0
   cameraSpeed: 15
   cameraZoomSpeed: 1500
-  cameraZoomMin: 20
+  cameraZoomMin: 10
   cameraZoomMax: 100
   cameraZoomDefault: 40
 --- !u!114 &716853695
@@ -3491,10 +3491,6 @@ MonoBehaviour:
     <axialCoordinates>k__BackingField: {x: 0, y: 0}
     <tile>k__BackingField: {fileID: 0}
     <ressource>k__BackingField: {fileID: 0}
-    militaryUnit: {fileID: 0}
-    <supportUnit>k__BackingField: {fileID: 0}
-    <terrainCost>k__BackingField: 0
-    <traversable>k__BackingField: 0
     <isRevealed>k__BackingField: 0
     <isActive>k__BackingField: 0
     <isACity>k__BackingField: 0
@@ -3617,9 +3613,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05d76dd3a9d5b1d429becd94d03172b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  MilitaryUnits:
-  - {fileID: 11400000, guid: a1bbad7ebfc02034db6450682c52e7a4, type: 2}
-  SupportUnits: []
+  grid: {fileID: 664016684}
+  militaryUnits:
+  - {fileID: 11400000, guid: 094014399dcb6194d9e995877c2a8970, type: 2}
+  supportUnits: []
+  nextAvailableId: 0
 --- !u!1 &753925495
 GameObject:
   m_ObjectHideFlags: 0
@@ -4378,12 +4376,8 @@ MonoBehaviour:
   science: {fileID: 533425290}
   productionCat: {fileID: 697254787}
   purchaseCat: {fileID: 539064685}
-  productionBuildingsViewPort: {fileID: 1554397960}
-  productionUnitsViewPort: {fileID: 120443122}
   productionBuildingsScroll: {fileID: 1554397961}
   productionUnitsScroll: {fileID: 120443123}
-  purchaseBuildingsViewPort: {fileID: 1458760647}
-  purchaseUnitsViewPort: {fileID: 1790163456}
   purchaseBuildingsScroll: {fileID: 1458760648}
   purchaseUnitsScroll: {fileID: 1790163457}
 --- !u!1 &971874208

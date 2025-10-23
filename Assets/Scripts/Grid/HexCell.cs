@@ -17,7 +17,7 @@ public class HexCell
     [field:SerializeField] public Vector2 offsetCoordinates {  get; set; }
     [field:SerializeField] public Vector3 cubeCoordinates {  get; private set; }
     [field:SerializeField] public Vector2 axialCoordinates {  get; private set; }
-    [field: NonSerialized] public List<HexCell> neighbours { get; private set; }
+    [field: NonSerialized] public HexCell[] neighbours = new HexCell[6];
 
     [Header("Objects")]
     [field: SerializeField] public Transform tile { get; set; }
@@ -209,7 +209,7 @@ public class HexCell
         return ressource.transform;
     }
 
-    public void SetNeighbours(List<HexCell> _neighbours)
+    public void SetNeighbours(HexCell[] _neighbours)
     {
         neighbours = _neighbours;
     }

@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float cameraSpeed = 10f;
     [SerializeField] private float cameraZoomSpeed = 1f;
     [SerializeField] private float cameraZoomMin = 15f;
-    [SerializeField] private float cameraZoomMax = 100f;
+    [SerializeField] private float cameraZoomMax = 150f;
     [SerializeField] private float cameraZoomDefault = 50f;
 
     private float mapMinX;

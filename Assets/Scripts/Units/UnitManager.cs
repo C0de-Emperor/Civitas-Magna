@@ -78,6 +78,7 @@ public class UnitManager : MonoBehaviour
 
     public bool MoveQueuedUnit(int unitId)
     {
+        Debug.Log("ntm sla fdp");
         Unit unit = GetUnitById(unitId);
         List<HexCell> path = queuedUnits[unitId];
         float pathCost = 0f;
@@ -94,10 +95,12 @@ public class UnitManager : MonoBehaviour
 
     public void QueueUnitMovement(Unit unit, HexCell unitCell, HexCell destinationCell)
     {
+        Debug.Log(unitCell.offsetCoordinates +" " + destinationCell.offsetCoordinates);
         List<HexCell> path = GetShortestPath(unitCell, destinationCell, 1f);
 
         if (path == null)
         {
+            Debug.Log("pas de chemin trouvé");
             return;
         }
         else
@@ -233,17 +236,17 @@ public class UnitManager : MonoBehaviour
             cellsToVisit.RemoveAt(0);
             //Debug.LogWarning("looking at cell : " + currentCellData.GetCellDataInfo());
 
-            for (int i = 0; i < currentCellData.cell.neighbours.Count(); i++)
+            for (int i = 0; i < 6; i++)
             {
-                if (currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates)
+                if (currentCellData.cell.neighbours[i]!=null && currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates)
                 {
                     endCellFound = true;
                     break;
                 }
-                else if (currentCellData.cell.neighbours[i].terrainType.traversable)
+                else if (currentCellData.cell.neighbours[i] != null && currentCellData.cell.neighbours[i].terrainType.traversable)
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell, heuristicFactor, grid.hexSize);
-                    //Debug.Log("looking at neighbour cell : " + currentCellNeighboursData.GetCellDataInfo());
+                    Debug.Log("looking at neighbour cell : " + currentCellNeighboursData.GetCellDataInfo());
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells);
                     if (isCellDataVisited == -1)
                     {
@@ -268,7 +271,7 @@ public class UnitManager : MonoBehaviour
         }
         System.DateTime endTime = System.DateTime.Now;
 
-        //Debug.Log("iterations : " + iterations);
+        Debug.Log("iterations : " + iterations);
         //Debug.Log("time taken : " + endTime.Subtract(startTime));
         Debug.Log("SEARCHING PATH FROM " + startCell.offsetCoordinates + " TO " + finishCell.offsetCoordinates + " IN " + endTime.Subtract(startTime));
 
@@ -377,6 +380,7 @@ public class Unit
 {
     public int id;
     public Transform unitTransform;
+    public UnitType unitType;
 
     public MilitaryUnitType militaryUnitType;
     public float currentHealth;
@@ -386,6 +390,7 @@ public class Unit
         this.id = UnitManager.instance.nextAvailableId;
         UnitManager.instance.nextAvailableId++;
         this.unitTransform = unitTransform;
+        this.unitType = unitType;
         Debug.Log("NEW UNIT, ID : "+this.id);
 
         if (unitType.unitCategory == UnitType.UnitCategory.military)

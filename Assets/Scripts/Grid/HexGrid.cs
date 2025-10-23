@@ -77,7 +77,7 @@ public class HexGrid : MonoBehaviour
     {
         foreach (var cell in cells.Values)
         {
-            List<HexCell> neighbours = new List<HexCell>();
+            HexCell[] neighbours = new HexCell[6];
 
             // Offsets pour coordonn�es axiales
             Vector2[] axialDirections = new Vector2[]
@@ -90,6 +90,7 @@ public class HexGrid : MonoBehaviour
             new Vector2(0, 1)
             };
 
+            int i = 0;
             foreach (var dir in axialDirections)
             {
                 Vector2 neighbourAxial = cell.axialCoordinates + dir;
@@ -99,12 +100,13 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    neighbours.Add(neighbour);
+                    neighbours[i]=neighbour;
                 }
                 else
                 {
-                    neighbours.Add(null);
+                    neighbours[i]=null;
                 }
+                i++;
             }
 
             cell.SetNeighbours(neighbours);
