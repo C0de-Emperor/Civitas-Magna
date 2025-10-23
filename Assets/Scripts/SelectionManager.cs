@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class SelectionManager : MonoBehaviour
 {
+    public bool canInteract = true;
+
     [Header("References")]
     [SerializeField]
     private HexGrid grid;
@@ -18,7 +20,13 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector, NonSerialized]
     public HexCell selectedCell = null;
     [HideInInspector, NonSerialized]
-    public Unit selectedUnit = null;
+    public Transform selectedUnit = null;
+    //[HideInInspector, NonSerialized]
+    //public Transform selectedCity = null;
+
+    // Variables à garder dans ta classe
+    private HexCell lastClickedCell;
+    private int clickCycleIndex = 0;
 
     public static SelectionManager instance;
     private void Awake()
@@ -45,8 +53,13 @@ public class SelectionManager : MonoBehaviour
 
     private void Update()
     {
-        if (selectionOutline == null || innerSelectionOutline == null || MapGenerator.instance.isMapReady == false)
+        if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
+        {
+            if(selectionOutline.gameObject.activeSelf)
+                selectionOutline.gameObject.SetActive(false);
+
             return;
+        }
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -70,16 +83,7 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    //Debug.Log(currentCell.offsetCoordinates);
-                    if(currentCell.militaryUnit != null && (selectedUnit == null || currentCell.militaryUnit.unitTransform.gameObject != selectedUnit.unitTransform.gameObject))
-                    {
-                        selectedUnit = currentCell.militaryUnit;
-                    }
-                    else if(currentCell.supportUnit != null && (selectedUnit == null || currentCell.supportUnit.unitTransform.gameObject != selectedUnit.unitTransform.gameObject))
-                    {
-                        selectedUnit = currentCell.supportUnit;
-                    }
-                    // autre
+                    HandleCellClick(currentCell, coord);
 
                     grid.RevealTilesInRadius(coord, 2);
 
@@ -90,6 +94,10 @@ public class SelectionManager : MonoBehaviour
                         (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
                         currentCell.tile.position.z
                     );
+                }
+                if (Input.GetMouseButtonDown(1))
+                {
+                    CityManager.instance.CreateCity(currentCell);
                 }
             }
             else
@@ -105,11 +113,16 @@ public class SelectionManager : MonoBehaviour
         }
        
         // DEBUG
+
+        // Unselect
         if (Input.GetKeyDown(KeyCode.Q))
         {
              selectedCell = null;
+            selectedUnit = null;
              innerSelectionOutline.SetActive(false);
         }
+
+        // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
             UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0]);
@@ -130,6 +143,69 @@ public class SelectionManager : MonoBehaviour
         {
             TurnManager.instance.ChangeTurn();
         }
-        
+    }
+
+    void HandleCellClick(HexCell currentCell, Vector2 coord)
+    {
+        if (currentCell == null)
+            return;
+
+        // Si on clique sur une nouvelle cellule - reset le cycle
+        if (lastClickedCell != currentCell)
+        {
+            lastClickedCell = currentCell;
+            clickCycleIndex = 0;
+        }
+
+        // Crée une liste dynamique des éléments disponibles sur la cellule
+        List<System.Action> actions = new List<System.Action>();
+
+        // Ajoute une action pour l’unité militaire
+        if (currentCell.militaryUnit != null)
+        {
+            actions.Add(() =>
+            {
+                selectedUnit = currentCell.militaryUnit;
+                Debug.Log("Unité militaire sélectionnée");
+            });
+        }
+
+        // Ajoute une action pour l’unité de support
+        if (currentCell.supportUnit != null)
+        {
+            actions.Add(() =>
+            {
+                selectedUnit = currentCell.supportUnit;
+                Debug.Log("Unité de support sélectionnée");
+            });
+        }
+
+        // Ajoute une action pour la ville
+        if (currentCell.isACity)
+        {
+            actions.Add(() =>
+            {
+                if (CityManager.instance.cities.TryGetValue(coord, out City city))
+                {
+                    CityManager.instance.OpenCity(city);
+                    Debug.Log("Ville ouverte");
+                }
+            });
+        }
+
+        // Si aucun élément sur la cellule
+        if (actions.Count == 0)
+        {
+            selectedUnit = null;
+            lastClickedCell = null;
+            clickCycleIndex = 0;
+            return;
+        }
+
+        // Exécute l’action correspondante
+        actions[clickCycleIndex].Invoke();
+
+        // Passe à l’élément suivant, en bouclant
+        clickCycleIndex = (clickCycleIndex + 1) % actions.Count;
     }
 }

@@ -30,6 +30,7 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
+        raycastTarget.gameObject.SetActive(true);
         raycastTarget.position = new Vector3(-1, 1.3f, -1);
         raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
 
@@ -81,12 +82,12 @@ public class HexGrid : MonoBehaviour
             // Offsets pour coordonn�es axiales
             Vector2[] axialDirections = new Vector2[]
             {
-            new Vector2(1, 0),   // E
-            new Vector2(1, -1),  // NE
-            new Vector2(0, -1),  // NW
-            new Vector2(-1, 0),  // W
-            new Vector2(-1, 1),  // SW
-            new Vector2(0, 1)    // SE
+            new Vector2(1, 0),
+            new Vector2(1, -1), 
+            new Vector2(0, -1),  
+            new Vector2(-1, 0), 
+            new Vector2(-1, 1), 
+            new Vector2(0, 1)
             };
 
             foreach (var dir in axialDirections)
@@ -99,6 +100,10 @@ public class HexGrid : MonoBehaviour
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
                     neighbours.Add(neighbour);
+                }
+                else
+                {
+                    neighbours.Add(null);
                 }
             }
 

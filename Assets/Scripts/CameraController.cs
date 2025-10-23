@@ -7,6 +7,8 @@ using Unity.Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
+    public bool canMove = true;
+
     [SerializeField]
     private const int DEFAULT_PRIORITY = 10;
 
@@ -52,20 +54,20 @@ public class CameraController : MonoBehaviour
         instance = this;
     }
 
-    void Start()
+    void Start() 
     {
         topDownCamera.Lens.FieldOfView = cameraZoomDefault;
         ChangeCamera(defaultMode);
 
         mapMinX = 0f;
-        mapMaxX = grid.width * grid.hexSize * 1.5f;
+        mapMaxX = grid.width * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop)? 1.5f : 1.75f);
         mapMinZ = 0f;
-        mapMaxZ = grid.height * grid.hexSize * 1.75f;
+        mapMaxZ = grid.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
     }
 
     public void ChangeCamera(CameraMode mode)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         currentMode = mode;
@@ -89,7 +91,7 @@ public class CameraController : MonoBehaviour
 
     public void OnPanChange(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.performed)
@@ -112,7 +114,7 @@ public class CameraController : MonoBehaviour
 
     public void OnZoomChanged(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.started)
@@ -138,7 +140,7 @@ public class CameraController : MonoBehaviour
 
     public void OnFocusChange(InputAction.CallbackContext context)
     {
-        if (!MapGenerator.instance.isMapReady)
+        if (!MapGenerator.instance.isMapReady || !canMove)
             return;
 
         if (context.started)
@@ -216,12 +218,10 @@ public class CameraController : MonoBehaviour
         }
     }
 
-
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 0.5f);
+        Gizmos.DrawSphere(cameraTarget.transform.position + Vector3.up * 3, 0.25f);
     }
 }
 
