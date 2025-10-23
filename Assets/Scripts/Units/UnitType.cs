@@ -1,15 +1,13 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SupportUnit", menuName = "Scriptable Objects/SupportUnit")]
-public class SupportUnit : ScriptableObject
+public class UnitType : ScriptableObject
 {
-    public enum UnitType { }
+    public enum UnitCategory { military, support };
 
     [Header("Basic Properties")]
-    [SerializeField] private int ID;
     [SerializeField] public string Name;
     [SerializeField] public Transform Prefab;
     [SerializeField] public int MoveReach;
     [SerializeField] public bool IsABoat;
-
+    [HideInInspector] public UnitCategory unitCategory;
 }

@@ -24,7 +24,7 @@ public class SelectionManager : MonoBehaviour
     //[HideInInspector, NonSerialized]
     //public Transform selectedCity = null;
 
-    // Variables à garder dans ta classe
+    // Variables Ã  garder dans ta classe
     private HexCell lastClickedCell;
     private int clickCycleIndex = 0;
 
@@ -111,6 +111,8 @@ public class SelectionManager : MonoBehaviour
             outlinedCell = null;
             selectionOutline.SetActive(false);
         }
+       
+        // DEBUG
 
         // Unselect
         if (Input.GetKeyDown(KeyCode.Q))
@@ -123,15 +125,23 @@ public class SelectionManager : MonoBehaviour
         // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            grid.AddMilitaryUnit(selectedCell, UnitManager.instance.MilitaryUnits[0]);
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0]);
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            List<Vector2> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
+            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0]);
+            UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
+
+            /*
+            List<HexCell> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
             foreach (var item in path)
             {
-                Debug.Log(item.x+", "+item.y);
-            }
+                Debug.Log(item.axialCoordinates);
+            }*/
+        }
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            TurnManager.instance.ChangeTurn();
         }
     }
 
@@ -147,26 +157,26 @@ public class SelectionManager : MonoBehaviour
             clickCycleIndex = 0;
         }
 
-        // Crée une liste dynamique des éléments disponibles sur la cellule
+        // CrÃ©e une liste dynamique des Ã©lÃ©ments disponibles sur la cellule
         List<System.Action> actions = new List<System.Action>();
 
-        // Ajoute une action pour l’unité militaire
+        // Ajoute une action pour lâ€™unitÃ© militaire
         if (currentCell.militaryUnit != null)
         {
             actions.Add(() =>
             {
                 selectedUnit = currentCell.militaryUnit;
-                Debug.Log("Unité militaire sélectionnée");
+                Debug.Log("UnitÃ© militaire sÃ©lectionnÃ©e");
             });
         }
 
-        // Ajoute une action pour l’unité de support
+        // Ajoute une action pour lâ€™unitÃ© de support
         if (currentCell.supportUnit != null)
         {
             actions.Add(() =>
             {
                 selectedUnit = currentCell.supportUnit;
-                Debug.Log("Unité de support sélectionnée");
+                Debug.Log("UnitÃ© de support sÃ©lectionnÃ©e");
             });
         }
 
@@ -183,7 +193,7 @@ public class SelectionManager : MonoBehaviour
             });
         }
 
-        // Si aucun élément sur la cellule
+        // Si aucun Ã©lÃ©ment sur la cellule
         if (actions.Count == 0)
         {
             selectedUnit = null;
@@ -192,10 +202,10 @@ public class SelectionManager : MonoBehaviour
             return;
         }
 
-        // Exécute l’action correspondante
+        // ExÃ©cute lâ€™action correspondante
         actions[clickCycleIndex].Invoke();
 
-        // Passe à l’élément suivant, en bouclant
+        // Passe Ã  lâ€™Ã©lÃ©ment suivant, en bouclant
         clickCycleIndex = (clickCycleIndex + 1) % actions.Count;
     }
 }

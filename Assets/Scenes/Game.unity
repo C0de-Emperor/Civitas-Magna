@@ -3136,8 +3136,6 @@ MonoBehaviour:
   defaultLayer: 1
   unactiveLayer: 2
   <tileContainer>k__BackingField: {fileID: 1327948545}
-  militaryOccupiedCells: []
-  supportOccupiedCells: []
 --- !u!114 &664016685
 MonoBehaviour:
   m_ObjectHideFlags: 0
