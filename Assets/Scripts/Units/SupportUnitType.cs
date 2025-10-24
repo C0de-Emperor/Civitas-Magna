@@ -1,10 +1,8 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "SupportUnit", menuName = "Scriptable Objects/SupportUnit")]
 public class SupportUnitType : UnitType
 {
-    public enum UnitType { }
-
-    [SerializeField] public UnitType Type;
 
 
     private void Awake()

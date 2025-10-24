@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f149bc1b248531349aee7d6aabe7bb30, type: 3}
-  m_Name: Warrior
-  m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnit
-  Name: Roger
-  Prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnitType
+  Name: Jean-Pascal
+  Prefab: {fileID: 0}
   MoveReach: 2
   IsABoat: 0
   unitCategory: 0
-  Type: 0
-  AttackPower: 10
-  DefensePower: 7
-  MaxHealth: 25
-  AttackRange: 1
+  AttackPower: 15
+  DefensePower: 5
+  MaxHealth: 15
+  AttackRange: 2
   HealthRegeneration: 5

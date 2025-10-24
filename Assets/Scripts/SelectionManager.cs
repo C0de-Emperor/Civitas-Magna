@@ -97,7 +97,21 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(1))
                 {
-                    CityManager.instance.CreateCity(currentCell);
+                    if (selectedUnit != null)
+                    {
+                        if (currentCell.militaryUnit == null)
+                        {
+                            UnitManager.instance.QueueUnitMovement(selectedUnit, selectedCell, currentCell);
+                        }
+                        else
+                        {
+                            UnitManager.instance.QueueUnitFight(selectedCell, currentCell);
+                        }
+                    }
+                    else
+                    {
+                        CityManager.instance.CreateCity(currentCell);
+                    }
                 }
             }
             else

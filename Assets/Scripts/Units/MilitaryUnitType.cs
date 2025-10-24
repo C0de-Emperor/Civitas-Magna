@@ -4,9 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/MilitaryUnit")]
 public class MilitaryUnitType : UnitType
 {
-    public enum UnitType { }
-
-    [SerializeField] public UnitType Type;
 
     [Header("Combat properties")]
     [SerializeField] public float AttackPower;
