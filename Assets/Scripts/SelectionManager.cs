@@ -185,11 +185,11 @@ public class SelectionManager : MonoBehaviour
         }
 
         // Ajoute une action pour l’unité de support
-        if (currentCell.supportUnit != null)
+        if (currentCell.civilianUnit != null)
         {
             actions.Add(() =>
             {
-                selectedUnit = currentCell.supportUnit;
+                selectedUnit = currentCell.civilianUnit;
                 Debug.Log("Unité de support sélectionnée");
             });
         }

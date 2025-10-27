@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnitType
   Name: Jean-Pascal
-  Prefab: {fileID: 0}
+  Prefab: {fileID: 1971821729998780448, guid: d6f1bd5103b4ecf4f91e51b886a19cd4, type: 3}
   MoveReach: 2
   IsABoat: 0
   unitCategory: 0

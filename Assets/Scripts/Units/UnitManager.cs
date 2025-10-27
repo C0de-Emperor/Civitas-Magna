@@ -16,7 +16,7 @@ public class UnitManager : MonoBehaviour
 
     [Header("Units")]
     [SerializeField] public List<MilitaryUnitType> militaryUnits = new List<MilitaryUnitType>();
-    [SerializeField] public List<SupportUnitType> supportUnits = new List<SupportUnitType>();
+    [SerializeField] public List<CivilianUnitType> civilianUnits = new List<CivilianUnitType>();
 
     public int nextAvailableId = 0;
     public List<Unit> units = new List<Unit>();
@@ -187,9 +187,9 @@ public class UnitManager : MonoBehaviour
             }
             else
             {
-                if (destCell.supportUnit == null)
+                if (destCell.civilianUnit == null)
                 {
-                    lastCell.supportUnit = null;
+                    lastCell.civilianUnit = null;
                     for (float t = 0; t < 1; t += Time.deltaTime / time)
                     {
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, destCell.tile.position, t);
@@ -237,7 +237,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if (cell.supportUnit == null)
+            if (cell.civilianUnit == null)
             {
                 Transform unitTransform = Instantiate(
                     unitType.Prefab,
@@ -249,7 +249,7 @@ public class UnitManager : MonoBehaviour
                 Unit unit = new Unit(unitTransform, unitType, "tamer");
                 units.Add(unit);
 
-                cell.supportUnit = unit;
+                cell.civilianUnit = unit;
                 return unit;
             }
             else
@@ -270,7 +270,7 @@ public class UnitManager : MonoBehaviour
         else
         {
             Destroy(cell.militaryUnit.unitTransform.gameObject);
-            cell.supportUnit = null;
+            cell.civilianUnit = null;
         }
     }
 

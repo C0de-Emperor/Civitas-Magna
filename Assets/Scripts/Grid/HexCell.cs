@@ -25,7 +25,7 @@ public class HexCell
 
     [Header("Units")]
     [field: SerializeField] public Unit militaryUnit = null;
-    [field: SerializeField] public Unit supportUnit { get; set; }
+    [field: SerializeField] public Unit civilianUnit { get; set; }
 
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
