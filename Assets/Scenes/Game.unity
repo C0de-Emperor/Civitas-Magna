@@ -3616,7 +3616,8 @@ MonoBehaviour:
   grid: {fileID: 664016684}
   militaryUnits:
   - {fileID: 11400000, guid: 094014399dcb6194d9e995877c2a8970, type: 2}
-  supportUnits: []
+  - {fileID: 11400000, guid: ef48326d9bc955a449a6079ba1ebe33f, type: 2}
+  civilianUnits: []
   nextAvailableId: 0
 --- !u!1 &753925495
 GameObject:
