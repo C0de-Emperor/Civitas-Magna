@@ -13,24 +13,35 @@ public class HexCell
     [field:SerializeField] public TerrainType terrainType {  get; private set; }
     [field:SerializeField] public float terrainHigh {  get; set; }
 
+
     [Header("Positions")]
     [field:SerializeField] public Vector2 offsetCoordinates {  get; set; }
     [field:SerializeField] public Vector3 cubeCoordinates {  get; private set; }
     [field:SerializeField] public Vector2 axialCoordinates {  get; private set; }
+
     [field: NonSerialized] public HexCell[] neighbours = new HexCell[6];
+
 
     [Header("Objects")]
     [field: SerializeField] public Transform tile { get; set; }
     [field: SerializeField] public Transform ressource { get; set; }
+    [field: SerializeField] public TileOverlay tileOverlay { get; set; }
 
     [Header("Units")]
+
     [field: SerializeField] public Unit militaryUnit = null;
     [field: SerializeField] public Unit supportUnit { get; set; }
+
 
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
     [field: SerializeField] public bool isACity { get; set; }
+
+
+    [Header("Ressources Bonuses")]
+    [field: SerializeField] public int food { get; set; }
+    [field: SerializeField] public int production { get; set; }
 
     public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
     {
@@ -220,6 +231,27 @@ public class HexCell
         {
             UnityEngine.Object.Destroy(tile.gameObject);
         }
+    }
+
+    public void SetupOverlay(TileOverlay overlay)
+    {
+        tileOverlay = overlay;
+        tileOverlay.gameObject.SetActive(false);
+    }
+
+    public void ShowOverlay()
+    {
+        if (ressource != null)
+            ressource.gameObject.SetActive(false);
+        tileOverlay.Init(food + terrainType.food, production + terrainType.production);
+        tileOverlay.gameObject.SetActive(true);
+    }
+
+    public void HideOverlay()
+    {
+        if (ressource != null)
+            ressource.gameObject.SetActive(true);
+        tileOverlay.gameObject.SetActive(false);
     }
 }
  

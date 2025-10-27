@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TerrainType
   ID: 3
   <Name>k__BackingField: Water
-  <description>k__BackingField: 
-  <color>k__BackingField: {r: 0.4503381, g: 0.8679245, b: 0.8382841, a: 1}
   <prefab>k__BackingField: {fileID: -8679921383154817045, guid: 69492632863a3934ab9c10406c671c3b, type: 3}
   <prop>k__BackingField: {fileID: 0}
-  <icon>k__BackingField: {fileID: 0}
   <terrainCost>k__BackingField: 2
   <traversable>k__BackingField: 1
+  <build>k__BackingField: 
+  food: 2
+  production: 0

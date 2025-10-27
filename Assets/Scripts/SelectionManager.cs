@@ -6,27 +6,22 @@ public class SelectionManager : MonoBehaviour
 {
     public bool canInteract = true;
 
+
     [Header("References")]
-    [SerializeField]
-    private HexGrid grid;
-    [SerializeField]
-    private GameObject selectionOutline;
-    [SerializeField]
-    private GameObject innerSelectionOutline;
+    [SerializeField] private HexGrid grid;
+    [SerializeField] private GameObject selectionOutline;
+    [SerializeField] private GameObject innerSelectionOutline;
+
 
     [Header("Data")]
-    [HideInInspector]
-    public HexCell outlinedCell = null;
-    [HideInInspector, NonSerialized]
-    public HexCell selectedCell = null;
-    [HideInInspector, NonSerialized]
-    public Unit selectedUnit = null;
-    //[HideInInspector, NonSerialized]
-    //public Transform selectedCity = null;
+    [HideInInspector] public HexCell outlinedCell = null;
+    [HideInInspector, NonSerialized] public HexCell selectedCell = null;
+    [HideInInspector, NonSerialized] public Unit selectedUnit = null;
 
-    // Variables à garder dans ta classe
+
     private HexCell lastClickedCell;
     private int clickCycleIndex = 0;
+    private bool overlay = false;
 
     public static SelectionManager instance;
     private void Awake()
@@ -53,6 +48,22 @@ public class SelectionManager : MonoBehaviour
 
     private void Update()
     {
+        // Unselect city
+        if (Input.GetKeyDown(KeyCode.Escape) && CityManager.instance.openedCity != null)
+        {
+            CityManager.instance.CloseCity();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (overlay)
+                grid.HideAllOverlay();
+            else
+                grid.ShowAllOverlay();
+
+            overlay = !overlay;
+        }
+
         if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
         {
             if(selectionOutline.gameObject.activeSelf)
@@ -121,6 +132,8 @@ public class SelectionManager : MonoBehaviour
              selectedUnit = null;
              innerSelectionOutline.SetActive(false);
         }
+
+
 
         // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)

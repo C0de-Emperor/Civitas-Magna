@@ -12,25 +12,34 @@ public class CityManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Text cityName;
+
     [Header("Production")]
     [SerializeField] private Text food;
     [SerializeField] private Text production;
     [SerializeField] private Text gold;
     [SerializeField] private Text science;
+
     [Header("Categories")]
     [SerializeField] private Transform productionCat;
     [SerializeField] private Transform purchaseCat;
+
     [Header("Production View Ports")]
     [SerializeField] private ScrollRect productionBuildingsScroll;
     [SerializeField] private ScrollRect productionUnitsScroll;
+
     [Header("Purchase View Ports")]
     [SerializeField] private ScrollRect purchaseBuildingsScroll;
     [SerializeField] private ScrollRect purchaseUnitsScroll;
 
+    [Header("Banner")]
+    [SerializeField] private Canvas gameUICanvas; // ton Canvas principal (Screen Space - Overlay)
+    [SerializeField] private CityBannerUI cityBannerPrefab;
+
     private bool isProductionPanel = true;
 
     private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
-    private City openedCity;
+    public City openedCity;
+
 
     [Tooltip("Liste des noms de villes disponibles (aucun doublon possible).")]
     private List<string> availableNames = new List<string>()
@@ -38,7 +47,8 @@ public class CityManager : MonoBehaviour
         "Alexandria", "Babylon", "Carthage", "Thebes", "Sparta", "Corinth",
         "Rome", "Athens", "Byblos", "Uruk", "Nineveh", "Memphis",
         "Kyoto", "Tenochtitlan", "Cusco", "Lisbon", "Seville", "Venice",
-        "Delhi", "Beijing", "Constantinople", "Córdoba", "Antioch", "Jericho"
+        "Delhi", "Beijing", "Constantinople", "Córdoba", "Antioch", "Jericho",
+        "Lyon", "Valence"
     };
 
     public static CityManager instance;
@@ -52,6 +62,22 @@ public class CityManager : MonoBehaviour
         instance = this;
 
         cityPanel.gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        TurnManager.instance.OnTurnChange += AddCityProdution;
+    }
+
+    private void AddCityProdution()
+    {
+        float amountOfGold = 0;
+        foreach (City city in cities.Values)
+        {
+            amountOfGold += city.GetCityGoldProduction();
+        }
+
+        PlayerManager.instance.goldStock += Mathf.RoundToInt(amountOfGold);
     }
 
     public void CreateCity(HexCell cell)
@@ -95,6 +121,15 @@ public class CityManager : MonoBehaviour
         tileToCity.Add(cell.offsetCoordinates, component);
 
         UpdateAllBorders();
+
+        GameObject bannerObj = Instantiate(cityBannerPrefab.gameObject, gameUICanvas.transform);
+        CityBannerUI banner = bannerObj.GetComponent<CityBannerUI>();
+
+        banner.worldTarget = obj.transform;
+        component.bannerUI = banner;
+
+        Debug.Log(component.health);
+        component.UpdateBanner();
     }
 
     public bool IsToACity(HexCell cell)
@@ -108,21 +143,41 @@ public class CityManager : MonoBehaviour
         {
             return;
         }
+        CameraController camera = CameraController.instance;
+        camera.canMove = false;
+        camera.ChangeCamera(CameraMode.TopFocusCity);
+        camera.SetTargetPosition(new Vector2(city.transform.position.x, city.transform.position.z));
 
-        CameraController.instance.canMove = false;
+
         SelectionManager.instance.canInteract = false;  
         openedCity = city;
 
         cityName.text = openedCity.cityName;
-        food.text = openedCity.food.ToString();
-        production.text = openedCity.production.ToString();
-        gold.text = openedCity.gold.ToString();
-        science.text = openedCity.science.ToString();
-
-
+        food.text = openedCity.GetCityFoodProduction().ToString();
+        production.text = openedCity.GetCityProduction().ToString();
+        gold.text = openedCity.GetCityGoldProduction().ToString();
+        science.text = openedCity.GetCityScienceProduction().ToString();
 
         OpenProductionMenu();
         cityPanel.gameObject.SetActive(true);
+    }
+
+    internal void CloseCity()
+    {
+        if(openedCity == null)
+        {
+            Debug.LogError("There is no open city, you can always try to close it");
+            return;
+        }
+
+        CameraController camera = CameraController.instance;
+        camera.canMove = true;
+        camera.ChangeCamera(CameraMode.Default);
+
+        SelectionManager.instance.canInteract = true;
+        openedCity = null;
+
+        cityPanel.gameObject.SetActive(false);
     }
 
     public void UpdateAllBorders()
@@ -175,9 +230,6 @@ public class CityManager : MonoBehaviour
         productionUnitsScroll.verticalNormalizedPosition = 1f;
     }
 
-
-    //not yet
-
     public void OpenProductionMenu()
     {
         isProductionPanel = true;
@@ -194,5 +246,10 @@ public class CityManager : MonoBehaviour
         productionCat.gameObject.SetActive(false);
 
         OpenBuildingsSubMenu();
+    }
+
+    public int PopulationFunction(int x)
+    {
+        return Mathf.RoundToInt( 0.11f * Mathf.Pow(x, 2f) + 10.2f * x + 2f);
     }
 }
