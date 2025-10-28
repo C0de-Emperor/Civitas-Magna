@@ -77,7 +77,7 @@ public class HexCell
         InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }
 
-    public void RevealTile()
+    public void RevealTile(bool showOverlay)
     {
         if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
         {
@@ -95,6 +95,13 @@ public class HexCell
         UnityEngine.Object.Destroy(tile.gameObject);
 
         InstantiateTile(terrainType.prefab, terrainType.prop, terrainHigh);
+
+        if (showOverlay)
+        {
+            ShowOverlay();
+            if(ressource != null)
+                ressource.gameObject.SetActive(false);
+        }
     }
 
     private void InstantiateTile(Transform tilePrefab, Transform ressourcePrefab, float high)
@@ -241,7 +248,7 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null)
+        if (ressource != null && isACity == false)
             ressource.gameObject.SetActive(false);
         tileOverlay.Init(food + terrainType.food, production + terrainType.production);
         tileOverlay.gameObject.SetActive(true);

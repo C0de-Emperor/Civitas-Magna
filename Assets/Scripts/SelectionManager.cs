@@ -21,7 +21,7 @@ public class SelectionManager : MonoBehaviour
 
     private HexCell lastClickedCell;
     private int clickCycleIndex = 0;
-    private bool overlay = false;
+    public bool showOverlay = false;
 
     public static SelectionManager instance;
     private void Awake()
@@ -56,12 +56,12 @@ public class SelectionManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (overlay)
+            if (showOverlay)
                 grid.HideAllOverlay();
             else
                 grid.ShowAllOverlay();
 
-            overlay = !overlay;
+            showOverlay = !showOverlay;
         }
 
         if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
@@ -96,7 +96,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 2);
+                    grid.RevealTilesInRadius(coord, 2, showOverlay);
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);

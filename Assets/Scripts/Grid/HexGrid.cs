@@ -138,7 +138,7 @@ public class HexGrid : MonoBehaviour
     /// </summary>
     /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
     /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
-    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius)
+    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius, bool showOverlay)
     {
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
@@ -164,7 +164,7 @@ public class HexGrid : MonoBehaviour
         // Révéler les tuiles trouvées
         foreach (var cell in toReveal)
         {
-            cell.RevealTile();
+            cell.RevealTile(showOverlay);
         }
     }
     

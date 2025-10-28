@@ -103,7 +103,7 @@ public class CityManager : MonoBehaviour
             return;
         }
 
-        cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3);
+        cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
         cell.isACity = true;
 
         cities.Add(cell.offsetCoordinates, component);
