@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,31 +7,38 @@ public class City : MonoBehaviour
 {
     public string cityName = "Default";
 
-    [Header("Production")]
+    [Header("ProductionPoint")]
     private float food = 2f;
     private float production = 1f;
     private float gold = 0f;
     private float science = 0f;
+
     [Header("Population")]
     public int population = 1;
     public float foodStock;
+
     [Header("Health")]
     [HideInInspector] public float health;
     [HideInInspector] public float maxHealth = 200f;
 
+    [Header("Production")]
+    [HideInInspector] public CityProductionItem currentProduction;
+    private float currentProductionProgress = 0f;
+    public List<BuildingProductionItem> builtBuildings = new List<BuildingProductionItem>();
 
-    [HideInInspector] 
-    public Dictionary<Vector2, HexCell> controlledTiles = new Dictionary<Vector2, HexCell>();
-    [HideInInspector] 
-    public CityBorders borders;
-    [HideInInspector]
-    public CityBannerUI bannerUI;
+
+    [HideInInspector] public Dictionary<Vector2, HexCell> controlledTiles = new Dictionary<Vector2, HexCell>();
+    [HideInInspector] public CityBorders borders;
+    [HideInInspector] public CityBannerUI bannerUI;
+
+
 
     private void Awake()
     {
         health = maxHealth;
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         TurnManager.instance.OnTurnChange += UpdateBanner;
+        TurnManager.instance.OnTurnChange += AddTurnProduction;
     }
 
     public float GetCityFoodProduction()
@@ -135,5 +143,31 @@ public class City : MonoBehaviour
         int turns = GetTurnsToNextPopulation();
 
         bannerUI.UpdateInfo(cityName, population, turns, health, maxHealth);
+    }
+
+    public void SetProduction(CityProductionItem item)
+    {
+        currentProduction = item;
+        currentProductionProgress = 0f;
+    }
+
+    private void AddTurnProduction()
+    {
+        if(currentProduction == null)
+            return;
+
+        currentProductionProgress += GetCityProduction();
+
+        if(currentProductionProgress >= currentProduction.cost)
+        {
+
+            currentProduction.OnProductionComplete(this);
+
+            // On ajoute l'objet au bon type de liste
+            if (currentProduction is BuildingProductionItem building)
+                builtBuildings.Add(building);
+
+            SetProduction(null);
+        }
     }
 }

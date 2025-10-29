@@ -239,7 +239,6 @@ public class HexGrid : MonoBehaviour
     }
 }
 
-
 public enum HexOrientation
 {
     FlatTop,

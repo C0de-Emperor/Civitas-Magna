@@ -7,6 +7,7 @@ public class CityManager : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
     [SerializeField] private Transform cityPanel;
+    public City openedCity;
 
     [HideInInspector] public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
 
@@ -32,14 +33,15 @@ public class CityManager : MonoBehaviour
     [SerializeField] private ScrollRect purchaseUnitsScroll;
 
     [Header("Banner")]
-    [SerializeField] private Canvas gameUICanvas; // ton Canvas principal (Screen Space - Overlay)
+    [SerializeField] private Canvas gameUICanvas;
     [SerializeField] private CityBannerUI cityBannerPrefab;
 
+    [Header("Sprites")]
+    public Sprite selectedProd;
+    public Sprite unselectedProd;
+
     private bool isProductionPanel = true;
-
     private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
-    public City openedCity;
-
 
     [Tooltip("Liste des noms de villes disponibles (aucun doublon possible).")]
     private List<string> availableNames = new List<string>()
@@ -128,7 +130,6 @@ public class CityManager : MonoBehaviour
         banner.worldTarget = obj.transform;
         component.bannerUI = banner;
 
-        Debug.Log(component.health);
         component.UpdateBanner();
     }
 
@@ -188,9 +189,6 @@ public class CityManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Donne un nom de ville aléatoire unique. Retourne "Unnamed" si plus de noms disponibles.
-    /// </summary>
     public string GetRandomCityName()
     {
         if (availableNames.Count == 0)
@@ -253,3 +251,8 @@ public class CityManager : MonoBehaviour
         return Mathf.RoundToInt( 0.11f * Mathf.Pow(x, 2f) + 10.2f * x + 2f);
     }
 }
+
+
+
+
+
