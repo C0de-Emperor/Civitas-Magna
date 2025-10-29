@@ -221,5 +221,21 @@ public class HexCell
             UnityEngine.Object.Destroy(tile.gameObject);
         }
     }
+
+    public Unit GetUnit(UnitType.UnitCategory unitCategory)
+    {
+        if(!isActive || !isRevealed)
+        {
+            return null;
+        }
+        else if (unitCategory == UnitType.UnitCategory.military)
+        {
+            return militaryUnit;
+        }
+        else
+        {
+            return civilianUnit;
+        }
+    }
 }
  

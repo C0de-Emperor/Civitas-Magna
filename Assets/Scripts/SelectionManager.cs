@@ -67,6 +67,7 @@ public class SelectionManager : MonoBehaviour
         {
             Vector2 coord = HexMetrics.CoordinateToOffset(hit.point.x, hit.point.z, grid.hexSize, grid.orientation);
             HexCell currentCell = grid.GetTile(coord);
+            Debug.Log(currentCell.militaryUnit);
             if (currentCell != null && currentCell.tile != null)
             {
                 if (currentCell != outlinedCell)
@@ -99,14 +100,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        if (currentCell.militaryUnit == null)
-                        {
-                            UnitManager.instance.QueueUnitMovement(selectedUnit, selectedCell, currentCell);
-                        }
-                        else
-                        {
-                            UnitManager.instance.QueueUnitFight(selectedCell, currentCell);
-                        }
+                        UnitManager.instance.QueueUnitMovement(selectedUnit, selectedCell, currentCell);
                     }
                     else
                     {
@@ -139,11 +133,15 @@ public class SelectionManager : MonoBehaviour
         // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0]);
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], "player0");
+        }
+        if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
+        {
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], "player1");
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0]);
+            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0], "player0");
             UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
 
             /*

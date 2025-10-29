@@ -15,6 +15,7 @@ public class MilitaryUnitType : UnitType
     private void Awake()
     {
         unitCategory = UnitCategory.military;
+        unitName = names[Random.Range(0, names.Length - 1)];
     }
 
 }
