@@ -3316,8 +3316,8 @@ MonoBehaviour:
   <undiscoveredTileHigh>k__BackingField: 1
   <tileContainer>k__BackingField: {fileID: 1327948545}
   raycastTarget: {fileID: 1805208650}
-  overlayParent: {fileID: 1327948545}
-  overlayPrefab: {fileID: 1909048867}
+  overlayParent: {fileID: 1367866541}
+  overlayPrefab: {fileID: 1367866540}
 --- !u!114 &664016685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4648,10 +4648,10 @@ MonoBehaviour:
   productionUnitsScroll: {fileID: 120443123}
   purchaseBuildingsScroll: {fileID: 1458760648}
   purchaseUnitsScroll: {fileID: 1790163457}
-  gameUICanvas: {fileID: 425153386}
-  cityBannerPrefab: {fileID: 29318512801802164, guid: fe1bb1d996db6ab498f582fae774dd1d, type: 3}
-  selectedProd: {fileID: 21300000, guid: a5523b2e15748f94bbc4d888384abdd5, type: 3}
-  unselectedProd: {fileID: 21300000, guid: d3114f51ab6495e46bc761a6f128141b, type: 3}
+  gameUICanvas: {fileID: 0}
+  cityBannerPrefab: {fileID: 0}
+  selectedProd: {fileID: 0}
+  unselectedProd: {fileID: 0}
 --- !u!1 &971874208
 GameObject:
   m_ObjectHideFlags: 0
@@ -7200,6 +7200,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366357294}
   m_CullTransparentMesh: 1
+--- !u!114 &1367866540 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4272545335857838435, guid: 2b050faf0e5fb00419b17986bd8dacdc, type: 3}
+  m_PrefabInstance: {fileID: 7922149137062838861}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78e9e64d309a824a954d5351ccafb5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+--- !u!4 &1367866541 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8432736373643895754, guid: 2b050faf0e5fb00419b17986bd8dacdc, type: 3}
+  m_PrefabInstance: {fileID: 7922149137062838861}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1394014761
 GameObject:
   m_ObjectHideFlags: 0
@@ -9615,17 +9631,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1874057211}
   m_CullTransparentMesh: 1
---- !u!114 &1909048867 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4272545335857838435, guid: 2b050faf0e5fb00419b17986bd8dacdc, type: 3}
-  m_PrefabInstance: {fileID: 7922149137062838861}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a78e9e64d309a824a954d5351ccafb5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!1 &1962283108
 GameObject:
   m_ObjectHideFlags: 0

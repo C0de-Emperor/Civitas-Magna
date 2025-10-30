@@ -246,7 +246,7 @@ public class UnitManager : MonoBehaviour
                 }
                 unit.unitTransform.position = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
             }
-            grid.RevealTilesInRadius(unit.unitTransform.position, 2);
+            grid.RevealTilesInRadius(unit.unitTransform.position, 2, true);
         }
 
         if (isInRange)
