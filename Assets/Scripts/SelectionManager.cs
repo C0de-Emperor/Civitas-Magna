@@ -108,7 +108,14 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(1))
                 {
-                    CityManager.instance.CreateCity(currentCell);
+                    if (selectedUnit != null)
+                    {
+                        UnitManager.instance.QueueUnitMovement(selectedUnit, selectedCell, currentCell);
+                    }
+                    else
+                    {
+                        CityManager.instance.CreateCity(currentCell);
+                    }
                 }
             }
             else
@@ -138,11 +145,19 @@ public class SelectionManager : MonoBehaviour
         // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0]);
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], "player0");
+        }
+        if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
+        {
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], "player1");
+        }
+        if (Input.GetKeyUp(KeyCode.O) && selectedCell != null)
+        {
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[1], "player1");
         }
         if (Input.GetKeyUp(KeyCode.V))
         {
-            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0]);
+            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0], "player0");
             UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
 
             /*
@@ -184,11 +199,11 @@ public class SelectionManager : MonoBehaviour
         }
 
         // Ajoute une action pour l’unité de support
-        if (currentCell.supportUnit != null)
+        if (currentCell.civilianUnit != null)
         {
             actions.Add(() =>
             {
-                selectedUnit = currentCell.supportUnit;
+                selectedUnit = currentCell.civilianUnit;
                 Debug.Log("Unité de support sélectionnée");
             });
         }

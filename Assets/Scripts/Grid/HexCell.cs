@@ -30,7 +30,7 @@ public class HexCell
     [Header("Units")]
 
     [field: SerializeField] public Unit militaryUnit = null;
-    [field: SerializeField] public Unit supportUnit { get; set; }
+    [field: SerializeField] public Unit civilianUnit { get; set; }
 
 
     [Header("Properties")]
@@ -240,6 +240,22 @@ public class HexCell
         }
     }
 
+    public Unit GetUnit(UnitType.UnitCategory unitCategory)
+    {
+        if(!isActive || !isRevealed)
+        {
+            return null;
+        }
+        else if (unitCategory == UnitType.UnitCategory.military)
+        {
+            return militaryUnit;
+        }
+        else
+        {
+            return civilianUnit;
+        }
+    }
+  
     public void SetupOverlay(TileOverlay overlay)
     {
         tileOverlay = overlay;
