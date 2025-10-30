@@ -67,7 +67,6 @@ public class SelectionManager : MonoBehaviour
         {
             Vector2 coord = HexMetrics.CoordinateToOffset(hit.point.x, hit.point.z, grid.hexSize, grid.orientation);
             HexCell currentCell = grid.GetTile(coord);
-            Debug.Log(currentCell.militaryUnit);
             if (currentCell != null && currentCell.tile != null)
             {
                 if (currentCell != outlinedCell)
@@ -138,6 +137,10 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
         {
             UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], "player1");
+        }
+        if (Input.GetKeyUp(KeyCode.O) && selectedCell != null)
+        {
+            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[1], "player1");
         }
         if (Input.GetKeyUp(KeyCode.V))
         {

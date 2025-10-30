@@ -39,9 +39,10 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += ResetUnitsMoveCount;
     }
 
-    private void UnitFight(HexCell attackerCell, HexCell defenderCell)
+    private bool UnitFight(HexCell attackerCell, HexCell defenderCell)
     {
         float tileDistance = GetEuclideanDistance(attackerCell, defenderCell);
+        Debug.Log(attackerCell.offsetCoordinates + " " + defenderCell.offsetCoordinates);
         Debug.Log(attackerCell.militaryUnit.id + " " + defenderCell.militaryUnit.id);
 
         defenderCell.militaryUnit.currentHealth -= attackerCell.militaryUnit.militaryUnitType.AttackPower;
@@ -49,15 +50,18 @@ public class UnitManager : MonoBehaviour
         {
             attackerCell.militaryUnit.currentHealth -= defenderCell.militaryUnit.militaryUnitType.DefensePower;
         }
-
-        if (defenderCell.militaryUnit.currentHealth <= 0)
-        {
-            RemoveUnit(defenderCell, UnitType.UnitCategory.military);
-        }
+        
         if (attackerCell.militaryUnit.currentHealth <= 0)
         {
             RemoveUnit(attackerCell, UnitType.UnitCategory.military);
         }
+        if (defenderCell.militaryUnit.currentHealth <= 0)
+        {
+            RemoveUnit(defenderCell, UnitType.UnitCategory.military);
+            return true;
+        }
+
+        return false;
     }
 
     private Unit GetUnitById(int id)
@@ -131,15 +135,18 @@ public class UnitManager : MonoBehaviour
         float pathCost = 0f;
         bool isInRange = false;
         
-        if (queuedUnitMovements[unitId].unitToAttackId!=-1 && destCell.GetUnit(UnitType.UnitCategory.military) == null)
+        if (queuedUnitMovements[unitId].unitToAttackId != -1 && destCell.GetUnit(UnitType.UnitCategory.military) == null) // Arrête le pathfinding si la case est inactive
         {
             return true;
         }
         
-        while (path.Count > 1 && path[1].terrainType.terrainCost + pathCost <= unit.unitType.MoveReach)
+        Debug.Log(startCell.offsetCoordinates+" ATKS "+destCell.offsetCoordinates);
+
+        while (path.Count > 1 && path[1].terrainType.terrainCost + pathCost <= unit.unitType.MoveReach && !isInRange)
         {
             float distanceToDest = GetEuclideanDistance(destCell, path[0]);
-            if (queuedUnitMovements[unitId].unitToAttackId != -1 && destCell.militaryUnit.id == queuedUnitMovements[unitId].unitToAttackId && destCell.militaryUnit != null && distanceToDest <= unit.militaryUnitType.AttackRange)
+            Debug.Log("distance to target:" + distanceToDest);
+            if (queuedUnitMovements[unitId].unitToAttackId != -1 && destCell.militaryUnit != null && destCell.militaryUnit.id == queuedUnitMovements[unitId].unitToAttackId && distanceToDest <= unit.militaryUnitType.AttackRange)
             {
                 isInRange = true;
             }
@@ -151,11 +158,28 @@ public class UnitManager : MonoBehaviour
             }
         }
         unit.movesDone += pathCost;
-        StartCoroutine(MoveUnit(unit, startCell, destCells, 1f));
+        Debug.Log(destCells.Count);
+
+        StartCoroutine(MoveUnit(unit, destCells, 0.1f, isInRange));
+        if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
+        {
+            startCell.militaryUnit = null;
+            path[0].militaryUnit = unit;
+        }
+        else
+        {
+            startCell.militaryUnit = null;
+            path[0].civilianUnit = unit;
+        }
+
         if (isInRange)
         {
-            UnitFight(path[0], destCell);
+            if(UnitFight(path[0], destCell))
+            {
+                return true;
+            }
         }
+
         return path.Count <= 1;
     }
 
@@ -182,74 +206,52 @@ public class UnitManager : MonoBehaviour
                 movementData.unitToAttackId = -1;
             }
 
+            if (queuedUnitMovements.ContainsKey(unit.id))
+            {
+                queuedUnitMovements[unit.id] = movementData;
+            }
+            else
+            {
                 queuedUnitMovements.Add(unit.id, movementData);
+            }
             MoveQueuedUnit(unit.id);
         }
     }
 
-    IEnumerator MoveUnit(Unit unit, HexCell startCell, Queue<HexCell> destCells, float time)
+    IEnumerator MoveUnit(Unit unit, Queue<HexCell> destCells, float time, bool isInRange)
     {
-        HexCell lastCell = startCell;
         HexCell destCell;
-
-        if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
-        {
-            lastCell.militaryUnit = null;
-        }
-        else
-        {
-            lastCell.civilianUnit = null;
-        }
 
         while (destCells.Count > 0)
         {
             destCell = destCells.Dequeue();
+            Vector3 startPos = unit.unitTransform.position;
             if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
             {
-                if (destCell.militaryUnit == null)
+                for(float t=0; t<time; t+= Time.deltaTime)
                 {
-                    for (float t = 0; t < 1; t += Time.deltaTime / time)
-                    {
-                        Vector3 newPos = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
-                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, newPos, t);
-                        yield return null;
-                    }
+                    Vector3 newPos = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
+                    unit.unitTransform.position += (newPos-startPos)*Time.deltaTime/time;
+                    yield return null;
                 }
-                else
-                {
-                    // A REPENSER
-                    if (unit.master != destCell.militaryUnit.master)
-                    {
-                        //UnitFight(unit, destCell.militaryUnit);
-                    }
-                }
+                unit.unitTransform.position = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
             }
             else
             {
-                if (destCell.civilianUnit == null)
+                for (float t = 0; t < time; t += Time.deltaTime)
                 {
-                    for (float t = 0; t < 1; t += Time.deltaTime / time)
-                    {
-                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, destCell.tile.position, t);
-                        yield return null;
-                    }
+                    Vector3 newPos = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
+                    unit.unitTransform.position += (newPos - startPos) * Time.deltaTime / time;
+                    yield return null;
                 }
-                else
-                {
-                    Debug.LogWarning("trying to add a unit on an alreday occupied tile");
-                }
+                unit.unitTransform.position = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
             }
-            lastCell = destCell;
             grid.RevealTilesInRadius(unit.unitTransform.position, 2);
         }
 
-        if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
+        if (isInRange)
         {
-            lastCell.militaryUnit = unit;
-        }
-        else
-        {
-            lastCell.civilianUnit = unit;
+            // play attack animation
         }
     }
 
