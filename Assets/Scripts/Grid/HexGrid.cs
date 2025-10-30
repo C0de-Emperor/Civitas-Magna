@@ -14,19 +14,21 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int batchSize { get; private set; }
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
-
-    [SerializeField] private Transform raycastTarget;
-
-    [SerializeField] private uint defaultLayer = 1;
-    [SerializeField] private uint unactiveLayer = 2;
     [field: SerializeField] public Transform tileContainer { get; private set; }
 
-    [SerializeField] private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
+    [field: SerializeField] private Transform raycastTarget;
+
+    [field: SerializeField] private Transform overlayParent;
+
+    [field: SerializeField] private TileOverlay overlayPrefab;
 
     public event Action<float> OnCellBatchGenerated;
     public event Action OnCellInstancesGenerated;
 
+    private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
     private Vector3 gridOrigin;
+    private uint defaultLayer = 1;
+    private uint unactiveLayer = 2;
 
     private void Awake()
     {
@@ -37,6 +39,7 @@ public class HexGrid : MonoBehaviour
         gridOrigin = transform.position;
 
         OnCellInstancesGenerated += AssignNeighbours;
+        OnCellInstancesGenerated += SetTileOverlays;
     }
 
     public void SetHexCells(List<HexCell> newCells)
@@ -131,18 +134,16 @@ public class HexGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// R�v�le toutes les tuiles dans un rayon donn� autour d'une cellule.
+    /// Révèle toutes les tuiles dans un rayon donn autour d'une cellule.
     /// </summary>
-    /// <param name="centerCellOffsetpositions">Les coordonn�es de la tuile centrale</param>
+    /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
     /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
-    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius)
+    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius, bool showOverlay)
     {
-        // Pour �viter les allocations r�currentes
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
         Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetpositions, orientation);
 
-        // Parcours dans le cube space (le plus efficace pour les hex)
         for (int dx = -radius; dx <= radius; dx++)
         {
             for (int dy = Mathf.Max(-radius, -dx - radius); dy <= Mathf.Min(radius, -dx + radius); dy++)
@@ -160,10 +161,10 @@ public class HexGrid : MonoBehaviour
             }
         }
 
-        // R�v�ler les tuiles trouv�es
+        // Révéler les tuiles trouvées
         foreach (var cell in toReveal)
         {
-            cell.RevealTile();
+            cell.RevealTile(showOverlay);
         }
     }
     
@@ -204,8 +205,39 @@ public class HexGrid : MonoBehaviour
             // si elle n'est pas deja inactive
                 // set inactive
     }
-}
 
+    public void SetTileOverlays()
+    {
+        foreach (HexCell cell in cells.Values)
+        {
+            TileOverlay overlay = Instantiate(overlayPrefab, overlayParent);
+            overlay.transform.localPosition = new Vector3(
+                cell.tile.transform.position.x, 
+                cell.terrainHigh + 0.001f,
+                cell.tile.transform.position.z);
+            overlay.transform.rotation = Quaternion.Euler(90f, 0f, 0f); // face vers le haut, par ex.
+
+            cell.SetupOverlay(overlay);
+        }
+    }
+
+    public void ShowAllOverlay()
+    {
+        foreach (HexCell cell in cells.Values)
+        {
+            if(cell.isRevealed && cell.isActive)
+                cell.ShowOverlay();
+        }
+    }
+
+    public void HideAllOverlay()
+    {
+        foreach (HexCell cell in cells.Values)
+        {
+            cell.HideOverlay();
+        }
+    }
+}
 
 public enum HexOrientation
 {

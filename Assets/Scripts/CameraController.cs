@@ -18,11 +18,13 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private GameObject cameraTarget;
     [SerializeField]
-    private CinemachineCamera topDownCamera;
+    private CinemachineCamera defaultCamera;
     [SerializeField]
     private CinemachineCamera focusCamera;
     [SerializeField]
-    private CameraMode defaultMode = CameraMode.TopDown;
+    private CinemachineCamera topCityFocusCamera;
+    [SerializeField]
+    private CameraMode defaultMode = CameraMode.Default;
     [SerializeField]
     private CameraMode currentMode;
 
@@ -56,7 +58,7 @@ public class CameraController : MonoBehaviour
 
     void Start() 
     {
-        topDownCamera.Lens.FieldOfView = cameraZoomDefault;
+        defaultCamera.Lens.FieldOfView = cameraZoomDefault;
         ChangeCamera(defaultMode);
 
         mapMinX = 0f;
@@ -65,28 +67,47 @@ public class CameraController : MonoBehaviour
         mapMaxZ = grid.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
     }
 
+    public void SetTargetPosition(Vector2 pos)
+    {
+        cameraTarget.transform.position = new Vector3(pos.x, cameraTarget.transform.position.y, pos.y);
+    }
+
     public void ChangeCamera(CameraMode mode)
     {
-        if (!MapGenerator.instance.isMapReady || !canMove)
-            return;
+        if (currentMode == mode) return;
 
         currentMode = mode;
-        CinemachineCamera camera = GetCamera(mode);
-        onCameraChanged?.Invoke(camera);
-        camera.Priority = DEFAULT_PRIORITY;
+        CinemachineCamera cam = GetCamera(mode);
+
+        if (cam == null)
+        {
+            Debug.LogError($"No Cinemachine camera assigned for mode: {mode}");
+            return;
+        }
+
+        onCameraChanged?.Invoke(cam);
+
+        // baisse la priorité des autres caméras
+        ResetAllCameraPriorities();
+        cam.Priority = DEFAULT_PRIORITY;
     }
 
     private CinemachineCamera GetCamera(CameraMode mode)
     {
-        switch (mode)
+        return mode switch
         {
-            case CameraMode.TopDown:
-                return topDownCamera;
-            case CameraMode.Focus:
-                return focusCamera;
-            default:
-                return null;
-        }
+            CameraMode.Default => defaultCamera,
+            CameraMode.Focus => focusCamera,
+            CameraMode.TopFocusCity => topCityFocusCamera,
+            _ => null
+        };
+    }
+
+    private void ResetAllCameraPriorities()
+    {
+        defaultCamera.Priority = 0;
+        //focusCamera.Priority = 0;
+        topCityFocusCamera.Priority = 0;
     }
 
     public void OnPanChange(InputAction.CallbackContext context)
@@ -109,7 +130,7 @@ public class CameraController : MonoBehaviour
                 StopCoroutine(panCoroutine);
             }
         }
-        ChangeCamera(CameraMode.TopDown);
+        //ChangeCamera(CameraMode.Default);
     }
 
     public void OnZoomChanged(InputAction.CallbackContext context)
@@ -185,7 +206,7 @@ public class CameraController : MonoBehaviour
 
     public IEnumerator ProcessZoom(InputAction.CallbackContext context)
     {
-        CinemachineFollow composer = topDownCamera.GetComponent<CinemachineFollow>();
+        CinemachineFollow composer = defaultCamera.GetComponent<CinemachineFollow>();
         if(composer == null)
         {
             Debug.Log("Pas de CinemachineFollow");
@@ -227,6 +248,7 @@ public class CameraController : MonoBehaviour
 
 public enum CameraMode
 {
-    TopDown,
-    Focus
+    Default,
+    Focus,
+    TopFocusCity
 }
