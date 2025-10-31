@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
   m_Name: Monument
   m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
   itemName: Monument
-  cost: 41.35
-  icon: {fileID: 0}
-  buildingID: 
+  cost: 40
+  icon: {fileID: 21300000, guid: f3038b0b319fa804fa5f46aba6a9f2f7, type: 3}
   bonusProduction: 0
   bonusFood: 0

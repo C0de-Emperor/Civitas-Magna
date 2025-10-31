@@ -23,7 +23,7 @@ public class City : MonoBehaviour
 
     [Header("Production")]
     [HideInInspector] public CityProductionItem currentProduction;
-    private float currentProductionProgress = 0f;
+    public float currentProductionProgress = 0f;
     public List<BuildingProductionItem> builtBuildings = new List<BuildingProductionItem>();
 
 

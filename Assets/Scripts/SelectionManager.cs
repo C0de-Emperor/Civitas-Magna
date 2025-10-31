@@ -194,7 +194,6 @@ public class SelectionManager : MonoBehaviour
             actions.Add(() =>
             {
                 selectedUnit = currentCell.militaryUnit;
-                Debug.Log("Unité militaire sélectionnée");
             });
         }
 
@@ -204,7 +203,6 @@ public class SelectionManager : MonoBehaviour
             actions.Add(() =>
             {
                 selectedUnit = currentCell.civilianUnit;
-                Debug.Log("Unité de support sélectionnée");
             });
         }
 
@@ -216,7 +214,6 @@ public class SelectionManager : MonoBehaviour
                 if (CityManager.instance.cities.TryGetValue(coord, out City city))
                 {
                     CityManager.instance.OpenCity(city);
-                    Debug.Log("Ville ouverte");
                 }
             });
         }
