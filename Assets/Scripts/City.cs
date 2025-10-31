@@ -7,22 +7,22 @@ public class City : MonoBehaviour
 {
     public string cityName = "Default";
 
-    [Header("ProductionPoint")]
-    private float food = 2f;
-    private float production = 1f;
-    private float gold = 0f;
-    private float science = 0f;
+    [Header("Base Production Point")]
+    private float baseFood = 2f;
+    private float baseProduction = 1f;
+    private float baseGold = 0f;
+    private float baseScience = 0f;
 
     [Header("Population")]
     public int population = 1;
     public float foodStock;
 
     [Header("Health")]
-    [HideInInspector] public float health;
-    [HideInInspector] public float maxHealth = 200f;
+    public float damage = 0;
+    private float maxHealth = 200f;
 
     [Header("Production")]
-    [HideInInspector] public CityProductionItem currentProduction;
+    public CityProductionItem currentProduction;
     public float currentProductionProgress = 0f;
     public List<BuildingProductionItem> builtBuildings = new List<BuildingProductionItem>();
 
@@ -35,15 +35,22 @@ public class City : MonoBehaviour
 
     private void Awake()
     {
-        health = maxHealth;
+        damage = 0f;
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         TurnManager.instance.OnTurnChange += UpdateBanner;
         TurnManager.instance.OnTurnChange += AddTurnProduction;
     }
 
+
+
     public float GetCityFoodProduction()
     {
-        float amount = food;
+        float amount = baseFood;
+
+        foreach (BuildingProductionItem building in builtBuildings)
+        {
+            amount += building.bonusFood;
+        }
 
         foreach (HexCell cell in controlledTiles.Values)
         {
@@ -58,7 +65,12 @@ public class City : MonoBehaviour
 
     public float GetCityProduction()
     {
-        float amount = production;
+        float amount = baseProduction;
+
+        foreach (BuildingProductionItem building in builtBuildings)
+        {
+            amount += building.bonusProduction;
+        }
 
         foreach (HexCell cell in controlledTiles.Values)
         {
@@ -73,13 +85,45 @@ public class City : MonoBehaviour
 
     public float GetCityGoldProduction()
     {
-        return gold;
+        float amount = baseGold;
+
+        amount += population * 0.25f;
+
+        foreach (BuildingProductionItem building in builtBuildings)
+        {
+            amount += building.bonusGold;
+        }
+
+        return amount;
     }
 
     public float GetCityScienceProduction()
     {
-        return science;
+        float amount = baseScience;
+
+        amount += population;
+
+        foreach (BuildingProductionItem building in builtBuildings)
+        {
+            amount += building.bonusScience;
+        }
+
+        return amount;
     }
+
+    public float GetCityMaxHealth()
+    {
+        float amount = maxHealth;
+
+        foreach (BuildingProductionItem building in builtBuildings)
+        {
+            amount += building.bonusHealth;
+        }
+
+        return amount;
+    }
+
+
 
     public void UpdateFoodStock()
     {
@@ -138,11 +182,11 @@ public class City : MonoBehaviour
 
     public void UpdateBanner()
     {
-        health -= 1;
+        damage += 1;
 
         int turns = GetTurnsToNextPopulation();
 
-        bannerUI.UpdateInfo(cityName, population, turns, health, maxHealth);
+        bannerUI.UpdateInfo(cityName, population, turns, damage, GetCityMaxHealth());
     }
 
     public void SetProduction(CityProductionItem item)
@@ -160,13 +204,7 @@ public class City : MonoBehaviour
 
         if(currentProductionProgress >= currentProduction.cost)
         {
-
             currentProduction.OnProductionComplete(this);
-
-            // On ajoute l'objet au bon type de liste
-            if (currentProduction is BuildingProductionItem building)
-                builtBuildings.Add(building);
-
             SetProduction(null);
         }
     }

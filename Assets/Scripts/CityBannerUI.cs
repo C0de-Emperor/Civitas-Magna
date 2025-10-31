@@ -57,7 +57,7 @@ public class CityBannerUI : MonoBehaviour
         }
     }
 
-    public void UpdateInfo(string name, int level, int turns, float health, float maxHealth)
+    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth)
     {
         cityNameText.text = name;
         levelText.text = level.ToString();
@@ -83,6 +83,6 @@ public class CityBannerUI : MonoBehaviour
         healthBar.maxValue = maxHealth;
         healthBar.minValue = 0f;
 
-        healthBar.value = health;
+        healthBar.value = maxHealth - damage;
     }
 }

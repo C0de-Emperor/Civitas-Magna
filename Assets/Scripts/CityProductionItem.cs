@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public abstract class CityProductionItem : ScriptableObject
 {
     public string itemName;
@@ -9,12 +8,3 @@ public abstract class CityProductionItem : ScriptableObject
 
     public abstract void OnProductionComplete(City city);
 }
-
-
-
-
-
-
-
-
-
