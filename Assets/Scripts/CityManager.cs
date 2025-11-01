@@ -79,7 +79,7 @@ public class CityManager : MonoBehaviour
             amountOfGold += city.GetCityGoldProduction();
         }
 
-        PlayerManager.instance.goldStock += Mathf.RoundToInt(amountOfGold);
+        PlayerManager.instance.goldStock += amountOfGold;
     }
 
     public void CreateCity(HexCell cell)
@@ -251,8 +251,3 @@ public class CityManager : MonoBehaviour
         return Mathf.RoundToInt( 0.11f * Mathf.Pow(x, 2f) + 10.2f * x + 2f);
     }
 }
-
-
-
-
-

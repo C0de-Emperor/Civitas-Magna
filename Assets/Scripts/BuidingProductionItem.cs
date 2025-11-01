@@ -3,6 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/ProductionItem/Building")]
 public class BuildingProductionItem : CityProductionItem
 {
+    [Header("Cost")]
+    public float costInGoldPerTurn;
     [Header("Bonuses")]
     public float bonusFood;
     public float bonusProduction;
