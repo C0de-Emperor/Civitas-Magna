@@ -30,8 +30,4 @@ public class PlayerManager : MonoBehaviour
     {
         goldStockText.text = Mathf.RoundToInt(goldStock).ToString();
     }
-
-
-
-
 }

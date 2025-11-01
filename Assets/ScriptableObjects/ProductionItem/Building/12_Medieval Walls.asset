@@ -21,3 +21,5 @@ MonoBehaviour:
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 100
+  requierments:
+  - {fileID: 11400000, guid: ea93644cd7dd82648b1072db75a251e7, type: 2}

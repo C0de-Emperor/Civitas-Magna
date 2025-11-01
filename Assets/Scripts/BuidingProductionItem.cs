@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/ProductionItem/Building")]
@@ -11,6 +12,8 @@ public class BuildingProductionItem : CityProductionItem
     public float bonusGold;
     public float bonusScience;
     public float bonusHealth;
+    [Header("Requirements")]
+    public List<BuildingProductionItem> requierments = new List<BuildingProductionItem>();
 
     public override void OnProductionComplete(City city)
     {

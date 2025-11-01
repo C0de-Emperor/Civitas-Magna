@@ -10,43 +10,30 @@ public class ProductionButton : MonoBehaviour
     public CityProductionItem item;
 
     [Header("References")]
-    private Button button;
-    private Image image;
-
-    public Text prodNameText;
-    public Text prodTimeText;
-    public Image prodIcon;
-
-    private Color activeColor = new Color(1, 1, 1, 1);
-    private Color unactiveColor = new Color(0.8f, 0.8f, 0.8f, 1);
-    private Color builtColor = new Color(0.5f, 1f, 0.5f, 1);
+    [HideInInspector] public Button button;
+    [HideInInspector] public Image image;
+    [HideInInspector] public Text prodNameText;
+    [HideInInspector] public Text prodTimeText;
+    [HideInInspector] public Image prodIcon;
 
     private void Awake()
     {
         button = GetComponent<Button>();
         image = GetComponent<Image>();
-    }
 
-    private void Start()
-    {
-        if (CityManager.instance.openedCity == null)
-        {
-            Debug.LogWarning("No opened city.");
-            return;
-        }
-        if (item == null)
+        prodNameText = transform.Find("Name").GetComponent<Text>();
+        prodTimeText = transform.Find("Turn").GetComponent<Text>();
+        prodIcon = transform.Find("Icon").GetComponent<Image>();
+
+        if (item == null || button == null || image == null || prodNameText == null || prodTimeText == null || prodIcon == null)
         {
             Debug.LogWarning($"ProductionButton sur {gameObject.name} : référence manquante.");
             return;
         }
 
-        button.onClick.AddListener(() => OnButtonClick());
-
-        image.color = unactiveColor;
-        image.sprite = CityManager.instance.unselectedProd;
-
         prodIcon.sprite = item.icon;
         prodNameText.text = item.itemName;
+        button.onClick.AddListener(() => OnButtonClick());
     }
 
     private void OnButtonClick()
@@ -56,29 +43,46 @@ public class ProductionButton : MonoBehaviour
             if (!CityManager.instance.openedCity.builtBuildings.Contains(building))
             {
                 CityManager.instance.openedCity.SetProduction(item);
-                UpdateVisual();
+                BuildButtonManager.instance.RefreshUI();
             }
         }
     }
 
-    private void UpdateVisual()
+    public void UpdateVisual(Sprite selectedSprite, Color activeColor, Sprite unselectedSprite, Color unactiveColor, Color builtColor)
     {
-        prodTimeText.text = GetTurnsToProduce().ToString();
-        Debug.Log(GetTurnsToProduce().ToString());
+        City city = CityManager.instance.openedCity;
+        if (city == null)
+            return;
 
-        if (CityManager.instance.openedCity.currentProduction == item)
+        if(item is  BuildingProductionItem building)
         {
-            image.color = activeColor;
-            button.interactable = false;
-            image.sprite = CityManager.instance.selectedProd;
+            if (city.builtBuildings.Contains(building))
+            {
+                image.sprite = unselectedSprite;
+                image.color = builtColor;
+                return;
+            }
         }
-        else
-        {
-            image.color = unactiveColor;
-            button.interactable = true;
-            image.sprite = CityManager.instance.unselectedProd;
+        
+        // -- Temps de production --
+        int turns = Mathf.Max(1, GetTurnsToProduce());
+        prodTimeText.text = turns.ToString();
+
+        // -- Apparence du bouton --
+        if (city.currentProduction == item) 
+        { 
+            image.color = activeColor; 
+            button.interactable = false; 
+            image.sprite = selectedSprite; 
+        } 
+        else 
+        { 
+            image.color = unactiveColor; 
+            button.interactable = true; 
+            image.sprite = unselectedSprite; 
         }
     }
+
 
     private int GetTurnsToProduce()
     {
@@ -89,31 +93,4 @@ public class ProductionButton : MonoBehaviour
 
     }
 
-    private void OnEnable()
-    {
-        if (CityManager.instance == null || CityManager.instance.openedCity == null)
-        {
-            return;
-        }
-            
-
-       
-        if (item is BuildingProductionItem building)
-        {
-            if (CityManager.instance.openedCity.builtBuildings.Contains(building))
-            {
-                prodTimeText.text = "";
-                image.color = builtColor;
-                button.interactable = false;
-            }
-            else
-            {
-                UpdateVisual();
-            }
-        }
-        else
-        {
-            UpdateVisual();
-        }
-    }
 }

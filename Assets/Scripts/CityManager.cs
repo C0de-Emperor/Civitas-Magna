@@ -36,9 +36,7 @@ public class CityManager : MonoBehaviour
     [SerializeField] private Canvas gameUICanvas;
     [SerializeField] private CityBannerUI cityBannerPrefab;
 
-    [Header("Sprites")]
-    public Sprite selectedProd;
-    public Sprite unselectedProd;
+
 
     private bool isProductionPanel = true;
     private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
@@ -160,6 +158,7 @@ public class CityManager : MonoBehaviour
         science.text = openedCity.GetCityScienceProduction().ToString();
 
         OpenProductionMenu();
+        BuildButtonManager.instance.RefreshUI();
         cityPanel.gameObject.SetActive(true);
     }
 
