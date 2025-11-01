@@ -10,21 +10,14 @@ public class ProductionButton : MonoBehaviour
     public CityProductionItem item;
 
     [Header("References")]
-    [HideInInspector] public Button button;
-    [HideInInspector] public Image image;
-    [HideInInspector] public Text prodNameText;
-    [HideInInspector] public Text prodTimeText;
-    [HideInInspector] public Image prodIcon;
+    [SerializeField] private Button button;
+    [SerializeField] private Image image;
+    [SerializeField] private Text prodNameText;
+    [SerializeField] private Text prodTimeText;
+    [SerializeField] private Image prodIcon;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
-        image = GetComponent<Image>();
-
-        prodNameText = transform.Find("Name").GetComponent<Text>();
-        prodTimeText = transform.Find("Turn").GetComponent<Text>();
-        prodIcon = transform.Find("Icon").GetComponent<Image>();
-
         if (item == null || button == null || image == null || prodNameText == null || prodTimeText == null || prodIcon == null)
         {
             Debug.LogWarning($"ProductionButton sur {gameObject.name} : référence manquante.");
@@ -51,6 +44,7 @@ public class ProductionButton : MonoBehaviour
     public void UpdateVisual(Sprite selectedSprite, Color activeColor, Sprite unselectedSprite, Color unactiveColor, Color builtColor)
     {
         City city = CityManager.instance.openedCity;
+        Debug.Log(city);
         if (city == null)
             return;
 
@@ -63,20 +57,20 @@ public class ProductionButton : MonoBehaviour
                 return;
             }
         }
-        
+
         // -- Temps de production --
         int turns = Mathf.Max(1, GetTurnsToProduce());
         prodTimeText.text = turns.ToString();
 
         // -- Apparence du bouton --
         if (city.currentProduction == item) 
-        { 
+        {
             image.color = activeColor; 
             button.interactable = false; 
             image.sprite = selectedSprite; 
         } 
         else 
-        { 
+        {
             image.color = unactiveColor; 
             button.interactable = true; 
             image.sprite = unselectedSprite; 

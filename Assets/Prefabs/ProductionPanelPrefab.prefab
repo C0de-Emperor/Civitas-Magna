@@ -458,6 +458,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   item: {fileID: 0}
+  button: {fileID: 1261446443866445671}
+  image: {fileID: 3572250260832820486}
   prodNameText: {fileID: 3085433023390422044}
   prodTimeText: {fileID: 945611913350979600}
   prodIcon: {fileID: 402740760052008731}

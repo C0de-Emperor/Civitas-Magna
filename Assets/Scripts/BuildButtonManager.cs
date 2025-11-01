@@ -15,7 +15,7 @@ public class BuildButtonManager : MonoBehaviour
     public Sprite selectedSprite;
     public Sprite unselectedSprite;
 
-    public static BuildButtonManager instance;
+    public static BuildButtonManager instance; 
     private void Awake()
     {
         if (instance != null)
