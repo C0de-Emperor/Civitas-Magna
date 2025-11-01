@@ -6,7 +6,7 @@ public class UnitType : ScriptableObject
 
     [Header("Basic Properties")]
     [SerializeField] public Transform Prefab;
-    [SerializeField] public Sprite mapSprite;
+    [SerializeField] public Sprite unitSprite;
     [SerializeField] public int MoveReach;
     [SerializeField] public bool IsABoat;
     [HideInInspector] public UnitCategory unitCategory;

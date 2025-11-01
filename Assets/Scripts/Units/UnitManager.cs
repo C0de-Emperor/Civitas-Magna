@@ -10,19 +10,22 @@ using UnityEngine.Tilemaps;
 public class UnitManager : MonoBehaviour
 {
     [SerializeField] HexGrid grid;
+    [SerializeField] UnitPin unitPinPrefab;
+    [SerializeField] Transform unitPinCanvas;
 
     const float HEURISTIC_SCALING = 1.5f;
     const int MAX_ITERATIONS = 10000;
 
     [Header("Units")]
-    [SerializeField] public List<MilitaryUnitType> militaryUnits = new List<MilitaryUnitType>();
-    [SerializeField] public List<CivilianUnitType> civilianUnits = new List<CivilianUnitType>();
+    public List<MilitaryUnitType> militaryUnits = new List<MilitaryUnitType>();
+    public List<CivilianUnitType> civilianUnits = new List<CivilianUnitType>();
 
-    public int nextAvailableId = 0;
-    public List<Unit> units = new List<Unit>();
+    [HideInInspector] public int nextAvailableId = 0;
+    private List<Unit> units = new List<Unit>();
     private Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
 
     public static UnitManager instance;
+
     private void Awake()
     {
         if (instance != null)
@@ -37,6 +40,7 @@ public class UnitManager : MonoBehaviour
     {
         TurnManager.instance.OnTurnChange += ExecuteQueuedUnitMovements;
         TurnManager.instance.OnTurnChange += ResetUnitsMoveCount;
+        TurnManager.instance.OnTurnChange += RegenerateUnitsHealth;
     }
 
     private bool UnitFight(HexCell attackerCell, HexCell defenderCell)
@@ -45,17 +49,18 @@ public class UnitManager : MonoBehaviour
         Debug.Log(attackerCell.offsetCoordinates + " " + defenderCell.offsetCoordinates);
         Debug.Log(attackerCell.militaryUnit.id + " " + defenderCell.militaryUnit.id);
 
-        defenderCell.militaryUnit.currentHealth -= attackerCell.militaryUnit.militaryUnitType.AttackPower;
-        if (defenderCell.militaryUnit.militaryUnitType.AttackRange>=tileDistance)
+        defenderCell.militaryUnit.TakeDamage(attackerCell.militaryUnit.GetUnitMilitaryData().AttackPower);
+
+        if (defenderCell.militaryUnit.GetUnitMilitaryData().AttackRange>=tileDistance)
         {
-            attackerCell.militaryUnit.currentHealth -= defenderCell.militaryUnit.militaryUnitType.DefensePower;
+            attackerCell.militaryUnit.TakeDamage(defenderCell.militaryUnit.GetUnitMilitaryData().DefensePower);
         }
         
-        if (attackerCell.militaryUnit.currentHealth <= 0)
+        if (!attackerCell.militaryUnit.IsAlive())
         {
             RemoveUnit(attackerCell, UnitType.UnitCategory.military);
         }
-        if (defenderCell.militaryUnit.currentHealth <= 0)
+        if (!defenderCell.militaryUnit.IsAlive())
         {
             RemoveUnit(defenderCell, UnitType.UnitCategory.military);
             return true;
@@ -87,13 +92,16 @@ public class UnitManager : MonoBehaviour
         Debug.Log(BLABLA);
     }
 
-    public void HealUnits()
+    public void RegenerateUnitsHealth()
     {
         foreach(var unit in units)
         {
             if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
             {
-                unit.currentHealth += unit.militaryUnitType.HealthRegeneration;
+                if(unit.lastDamagingTurn < TurnManager.instance.currentTurn - 1)
+                {
+                    unit.Heal(unit.GetUnitMilitaryData().HealthRegeneration);
+                }
             }
         }
     }
@@ -146,7 +154,7 @@ public class UnitManager : MonoBehaviour
         {
             float distanceToDest = GetEuclideanDistance(destCell, path[0]);
             Debug.Log("distance to target:" + distanceToDest);
-            if (queuedUnitMovements[unitId].unitToAttackId != -1 && destCell.militaryUnit != null && destCell.militaryUnit.id == queuedUnitMovements[unitId].unitToAttackId && distanceToDest <= unit.militaryUnitType.AttackRange)
+            if (queuedUnitMovements[unitId].unitToAttackId != -1 && destCell.militaryUnit != null && destCell.militaryUnit.id == queuedUnitMovements[unitId].unitToAttackId && distanceToDest <= unit.GetUnitMilitaryData().AttackRange)
             {
                 isInRange = true;
             }
@@ -197,7 +205,8 @@ public class UnitManager : MonoBehaviour
         {
             queuedMovementData movementData = new queuedMovementData();
             movementData.path = path;
-            if (destinationCell.GetUnit(UnitType.UnitCategory.military) != null)
+
+            if (destinationCell.GetUnit(UnitType.UnitCategory.military) != null && unit.master.playerName != destinationCell.GetUnit(UnitType.UnitCategory.military).master.playerName)
             {
                 movementData.unitToAttackId = destinationCell.militaryUnit.id;
             }
@@ -232,6 +241,9 @@ public class UnitManager : MonoBehaviour
                 {
                     Vector3 newPos = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
                     unit.unitTransform.position += (newPos-startPos)*Time.deltaTime/time;
+
+                    unit.unitPin.worldTarget=unit.unitTransform;
+
                     yield return null;
                 }
                 unit.unitTransform.position = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
@@ -242,6 +254,9 @@ public class UnitManager : MonoBehaviour
                 {
                     Vector3 newPos = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
                     unit.unitTransform.position += (newPos - startPos) * Time.deltaTime / time;
+
+                    unit.unitPin.worldTarget = unit.unitTransform;
+
                     yield return null;
                 }
                 unit.unitTransform.position = new Vector3(destCell.tile.position.x, destCell.terrainHigh, destCell.tile.position.z);
@@ -255,7 +270,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public Unit AddUnit(HexCell cell, UnitType unitType, string master)
+    public Unit AddUnit(HexCell cell, UnitType unitType, Player master)
     {
         if (!cell.isActive || !cell.isRevealed)
         {
@@ -272,11 +287,18 @@ public class UnitManager : MonoBehaviour
                     new Quaternion(0, 0, 0, 1),
                     this.transform
                     );
-
                 Unit unit = new Unit(unitTransform, unitType, master);
                 units.Add(unit);
 
                 cell.militaryUnit = unit;
+
+                UnitPin unitPin = Instantiate(unitPinPrefab, unitPinCanvas.transform);
+                unitPin.worldTarget = unit.unitTransform;
+                unitPin.InitializePin(unitType.unitSprite, master.livery);
+                
+                unit.unitPin=unitPin;
+                unit.TakeDamage(0f);
+
                 return unit;
             }
             else
@@ -295,10 +317,15 @@ public class UnitManager : MonoBehaviour
                     this.transform
                     );
 
-                Unit unit = new Unit(unitTransform, unitType, "tamer");
+                Unit unit = new Unit(unitTransform, unitType, master);
                 units.Add(unit);
 
                 cell.civilianUnit = unit;
+
+                UnitPin unitPin = Instantiate(unitPinPrefab, instance.transform);
+                unitPin.worldTarget = unit.unitTransform;
+                unit.unitPin=unitPin;
+
                 return unit;
             }
             else
@@ -306,6 +333,7 @@ public class UnitManager : MonoBehaviour
                 Debug.LogWarning("trying to add a unit on an alreday occupied tile");
             }
         }
+
         return null;
     }
 
@@ -313,12 +341,14 @@ public class UnitManager : MonoBehaviour
     {
         if (unitCategory == UnitType.UnitCategory.military)
         {
-            Destroy(cell.militaryUnit.unitTransform.gameObject, 1f);
+            Destroy(cell.militaryUnit.unitPin.gameObject, Time.deltaTime);
+            Destroy(cell.militaryUnit.unitTransform.gameObject, Time.deltaTime);
             cell.militaryUnit = null;
         }
         else
         {
-            Destroy(cell.militaryUnit.unitTransform.gameObject);
+            Destroy(cell.militaryUnit.unitPin.gameObject, Time.deltaTime);
+            Destroy(cell.militaryUnit.unitTransform.gameObject, Time.deltaTime);
             cell.civilianUnit = null;
         }
     }
@@ -451,9 +481,10 @@ public class UnitManager : MonoBehaviour
 
     private float GetEuclideanDistance(HexCell cell1, HexCell cell2)
     {
-        float xDiff = Mathf.Pow(cell1.offsetCoordinates.x - cell2.offsetCoordinates.x, 2);
+        /*float xDiff = Mathf.Pow(cell1.offsetCoordinates.x - cell2.offsetCoordinates.x, 2);
         float yDiff = Mathf.Pow(cell1.offsetCoordinates.y - cell2.offsetCoordinates.y, 2);
-        float euclideanDistance = Mathf.Sqrt(xDiff + yDiff) / grid.hexSize;
+        float euclideanDistance = Mathf.Sqrt(xDiff + yDiff) / grid.hexSize;*/
+        float euclideanDistance = Vector2.Distance(cell1.tile.position, cell2.tile.position)/grid.hexSize;
         return Mathf.Round(euclideanDistance * 100) / 100;
     }
 
@@ -494,13 +525,16 @@ public class Unit
     public int id;
     public Transform unitTransform;
     public UnitType unitType;
-    public string master;
+    public Player master;
+    public UnitPin unitPin;
 
-    public MilitaryUnitType militaryUnitType;
-    public float currentHealth;
+    private MilitaryUnitType militaryUnitType;
+    private float currentHealth;
+
     public float movesDone;
+    public int lastDamagingTurn = -1;
 
-    public Unit(Transform unitTransform, UnitType unitType, string master)
+    public Unit(Transform unitTransform, UnitType unitType, Player master)
     {
         this.id = UnitManager.instance.nextAvailableId;
         UnitManager.instance.nextAvailableId++;
@@ -516,6 +550,35 @@ public class Unit
             this.militaryUnitType = unitType as MilitaryUnitType;
             this.currentHealth = this.militaryUnitType.MaxHealth;
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        this.currentHealth -= damage;
+        this.unitPin.UpdateHealth(this.currentHealth, this.militaryUnitType.MaxHealth);
+        lastDamagingTurn = TurnManager.instance.currentTurn;
+    }
+
+    public void Heal(float healAmount)
+    {
+        this.currentHealth += healAmount;
+        
+        if(this.currentHealth >= this.militaryUnitType.MaxHealth)
+        {
+            this.currentHealth = this.militaryUnitType.MaxHealth;
+        }
+
+        this.unitPin.UpdateHealth(this.currentHealth, this.militaryUnitType.MaxHealth);
+    }
+
+    public bool IsAlive()
+    {
+        return this.currentHealth >= 0;
+    }
+
+    public MilitaryUnitType GetUnitMilitaryData()
+    {
+        return this.militaryUnitType;
     }
 }
 

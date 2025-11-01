@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnit
   Prefab: {fileID: 8784064745653476505, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
-  mapSprite: {fileID: 0}
+  unitSprite: {fileID: -2020400331, guid: 68a41922d3d138947b160134af160be9, type: 3}
   MoveReach: 2
   IsABoat: 0
   unitCategory: 0
-  unitName: 
+  unitName: Jocelyn
   names:
   - Abel
   - Achille

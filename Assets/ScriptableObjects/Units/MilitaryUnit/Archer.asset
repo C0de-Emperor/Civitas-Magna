@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnitType
   Prefab: {fileID: 1942232533529390389, guid: ac8ee10a52727624d9400f73c46cd50c, type: 3}
-  mapSprite: {fileID: 0}
+  unitSprite: {fileID: 809045524, guid: 2049dd9b44497d8418b6ee516b2a540a, type: 3}
   MoveReach: 2
   IsABoat: 0
   unitCategory: 0
-  unitName: Valmont
+  unitName: "Andr\xE9"
   names:
   - Abel
   - Achille
@@ -440,7 +440,7 @@ MonoBehaviour:
   - Yvonnick
   - Zacharie
   - "Z\xE9phirin"
-  AttackPower: 15
+  AttackPower: 3
   DefensePower: 5
   MaxHealth: 15
   AttackRange: 2
