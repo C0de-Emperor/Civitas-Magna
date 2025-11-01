@@ -92,6 +92,7 @@ public class City : MonoBehaviour
         foreach (BuildingProductionItem building in builtBuildings)
         {
             amount += building.bonusGold;
+            amount -= building.costInGoldPerTurn;
         }
 
         return amount;
@@ -202,7 +203,7 @@ public class City : MonoBehaviour
 
         currentProductionProgress += GetCityProduction();
 
-        if(currentProductionProgress >= currentProduction.cost)
+        if(currentProductionProgress >= currentProduction.costInProduction)
         {
             currentProduction.OnProductionComplete(this);
             SetProduction(null);

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: 18_Factory
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Factory
+  costInProduction: 390
+  icon: {fileID: 21300000, guid: e1d6979070da0cc4ba2eecaad4ca67bc, type: 3}
+  costInGoldPerTurn: 1
+  bonusFood: 0
+  bonusProduction: 6
+  bonusGold: 0
+  bonusScience: 0
+  bonusHealth: 0

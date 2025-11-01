@@ -6,7 +6,7 @@ public class PlayerManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Text goldStockText;
 
-    [HideInInspector] public int goldStock = 0;
+    [HideInInspector] public float goldStock = 0f;
 
     public static PlayerManager instance;
     private void Awake()
@@ -28,7 +28,7 @@ public class PlayerManager : MonoBehaviour
 
     private void UpdateMainUI()
     {
-        goldStockText.text = goldStock.ToString();
+        goldStockText.text = Mathf.RoundToInt(goldStock).ToString();
     }
 
 

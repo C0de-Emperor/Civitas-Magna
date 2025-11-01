@@ -46,7 +46,7 @@ public class ProductionButton : MonoBehaviour
         image.sprite = CityManager.instance.unselectedProd;
 
         prodIcon.sprite = item.icon;
-        prodNameText.text = item.name;
+        prodNameText.text = item.itemName;
     }
 
     private void OnButtonClick()
@@ -82,7 +82,7 @@ public class ProductionButton : MonoBehaviour
 
     private int GetTurnsToProduce()
     {
-        float prodRequired = item.cost - CityManager.instance.openedCity.currentProductionProgress;
+        float prodRequired = item.costInProduction - CityManager.instance.openedCity.currentProductionProgress;
         float net = CityManager.instance.openedCity.GetCityProduction();
 
         return Mathf.CeilToInt(prodRequired / net);
