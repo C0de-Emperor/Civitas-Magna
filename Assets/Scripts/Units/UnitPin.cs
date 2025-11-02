@@ -81,5 +81,7 @@ public class UnitPin : MonoBehaviour
         this.UnitSprite.sprite = unitSprite;
         this.UnitSprite.SetNativeSize();
         this.UnitSprite.color = livery[1];
+
+        UpdateHealth(1, 1);
     }
 }

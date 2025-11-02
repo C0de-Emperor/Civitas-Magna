@@ -110,7 +110,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        UnitManager.instance.QueueUnitMovement(selectedUnit, selectedCell, currentCell);
+                        UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory);
                     }
                     else
                     {
@@ -145,27 +145,15 @@ public class SelectionManager : MonoBehaviour
         // Debug Unit
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], new Player("player1", new Color[]{ new Color(255, 0, 0), new Color(0, 0, 0) }));
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player1", new Color[]{ new Color(255, 0, 0), new Color(0, 0, 0) }));
         }
         if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
         {
-            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[0], new Player("player2", new Color[] { new Color(0, 255, 0), new Color(255, 255, 255) }));
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player2", new Color[] { new Color(0, 255, 0), new Color(255, 255, 255) }));
         }
         if (Input.GetKeyUp(KeyCode.O) && selectedCell != null)
         {
-            UnitManager.instance.AddUnit(selectedCell, UnitManager.instance.militaryUnits[1], new Player("player3", new Color[] { new Color(0, 0, 0), new Color(255, 0, 255) }));
-        }
-        if (Input.GetKeyUp(KeyCode.V))
-        {
-            Unit unit = UnitManager.instance.AddUnit(grid.GetTile(new Vector2(0, 0)), UnitManager.instance.militaryUnits[0], new Player("player1", new Color[] { new Color(255, 0, 0), new Color(0, 0, 0) }));
-            UnitManager.instance.QueueUnitMovement(unit, grid.GetTile(new Vector2(0, 0)), selectedCell);
-
-            /*
-            List<HexCell> path = UnitManager.instance.GetShortestPath(grid, grid.GetTile(new Vector2(0, 0)), selectedCell, 1);
-            foreach (var item in path)
-            {
-                Debug.Log(item.axialCoordinates);
-            }*/
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[1], selectedCell, new Player("player3", new Color[] { new Color(0, 0, 0), new Color(255, 0, 255) }));
         }
         if (Input.GetKeyUp(KeyCode.P))
         {

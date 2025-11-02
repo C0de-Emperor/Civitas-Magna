@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f149bc1b248531349aee7d6aabe7bb30, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnitType
-  Prefab: {fileID: 1942232533529390389, guid: ac8ee10a52727624d9400f73c46cd50c, type: 3}
+  unitPrefab: {fileID: 1967603536147803221, guid: ac8ee10a52727624d9400f73c46cd50c, type: 3}
   unitSprite: {fileID: 809045524, guid: 2049dd9b44497d8418b6ee516b2a540a, type: 3}
   MoveReach: 2
   IsABoat: 0
   unitCategory: 0
-  unitName: "Andr\xE9"
+  unitName: Julian
   names:
   - Abel
   - Achille

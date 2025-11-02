@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class UnitType : ScriptableObject
 {
-    public enum UnitCategory { military, support };
+    public enum UnitCategory { military, civilian };
 
     [Header("Basic Properties")]
-    [SerializeField] public Transform Prefab;
+    [SerializeField] public GameObject unitPrefab;
     [SerializeField] public Sprite unitSprite;
     [SerializeField] public int MoveReach;
     [SerializeField] public bool IsABoat;

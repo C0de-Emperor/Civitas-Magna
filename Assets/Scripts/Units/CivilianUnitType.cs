@@ -7,7 +7,7 @@ public class CivilianUnitType : UnitType
 
     private void Awake()
     {
-        unitCategory = UnitCategory.support;
+        unitCategory = UnitCategory.civilian;
         unitName = names[Random.Range(0, names.Length - 1)];
     }
 }
