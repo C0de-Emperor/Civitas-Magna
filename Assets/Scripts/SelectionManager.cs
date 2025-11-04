@@ -96,7 +96,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 2, showOverlay);
+                    grid.RevealTilesInRadius(coord, 2, showOverlay); // DEVELOPPEMENT, A ENLEVER
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
@@ -110,12 +110,20 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory);
+                        if(UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory))
+                        {
+                            selectedCell = null;
+                            selectedUnit = null;
+                        }
                     }
                     else
                     {
                         CityManager.instance.CreateCity(currentCell);
                     }
+                }
+                if (Input.GetKeyUp(KeyCode.X))
+                {
+                    Debug.Log(UnitManager.instance.GetEuclideanDistance(selectedCell, currentCell));
                 }
             }
             else
