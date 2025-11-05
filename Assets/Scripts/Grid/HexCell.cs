@@ -248,8 +248,12 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null && isACity == false)
+        if (ressource != null && !isACity)
             ressource.gameObject.SetActive(false);
+
+        if (ressource != null && isACity)
+            ressource.gameObject.GetComponent<City>().HideForOverlay();
+
         tileOverlay.Init(food + terrainType.food, production + terrainType.production);
         tileOverlay.gameObject.SetActive(true);
     }
@@ -258,6 +262,10 @@ public class HexCell
     {
         if (ressource != null)
             ressource.gameObject.SetActive(true);
+
+        if (isACity)
+            ressource.gameObject.GetComponent<City>().ShowForOverlay();
+
         tileOverlay.gameObject.SetActive(false);
     }
 }

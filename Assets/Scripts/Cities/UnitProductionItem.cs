@@ -3,12 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Unit", menuName = "Scriptable Objects/ProductionItem/Unit")]
 public class UnitProductionItem : CityProductionItem
 {
-    public GameObject unitPrefab;
+    public UnitType unit;
 
     public override void OnProductionComplete(City city)
     {
-        //Vector3 spawnPos = city.transform.position + Vector3.forward * 2f;
-        //GameObject unit = Instantiate(unitPrefab, spawnPos, Quaternion.identity);
+        UnitManager.instance.AddUnit(unit, city.occupiedCell, PlayerManager.instance.player);
+
         Debug.Log($"{city.cityName} a entraîné {itemName}");
     }
 }

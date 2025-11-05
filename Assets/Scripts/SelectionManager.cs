@@ -52,6 +52,7 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && CityManager.instance.openedCity != null)
         {
             CityManager.instance.CloseCity();
+            selectedCell = null;
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -66,8 +67,15 @@ public class SelectionManager : MonoBehaviour
 
         if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
         {
-            if(selectionOutline.gameObject.activeSelf)
+            if (outlinedCell != null || selectedCell != null || selectedUnit != null)
+            {
                 selectionOutline.gameObject.SetActive(false);
+                innerSelectionOutline.gameObject.SetActive(false);
+                selectedCell = null;
+                outlinedCell = null;
+                selectedUnit = null;
+            }
+                
 
             return;
         }
@@ -230,6 +238,9 @@ public class SelectionManager : MonoBehaviour
             clickCycleIndex = 0;
             return;
         }
+
+        if (clickCycleIndex >= actions.Count)
+            clickCycleIndex = 0;
 
         // Exécute l’action correspondante
         actions[clickCycleIndex].Invoke();
