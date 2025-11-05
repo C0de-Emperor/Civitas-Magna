@@ -145,6 +145,7 @@ public class City : MonoBehaviour
             {
                 foodStock -= CityManager.instance.PopulationFunction(population);
                 population++;
+                borders.ExpandCity();
             }
         }
         else if (net < 0)
@@ -188,8 +189,6 @@ public class City : MonoBehaviour
         damage += 1;
 
         int turns = GetTurnsToNextPopulation();
-
-        Debug.Log(currentProduction);
         if(currentProduction != null)
             bannerUI.UpdateInfo(
                 cityName, 

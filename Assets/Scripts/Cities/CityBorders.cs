@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(City))]
 public class CityBorders : MonoBehaviour
 {
     public City city;
@@ -65,5 +67,85 @@ public class CityBorders : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ExpandCity()
+    {
+        int tileAmount = GetWeightedRandom();
+
+        for (int i = 0; i < tileAmount; i++)
+        {
+            HexCell newTile = GetRandomBorderTile(city);
+            if (newTile == null)
+            {
+                Debug.LogWarning($"{city.cityName} n’a plus de tuiles disponibles pour s’étendre.");
+                break;
+            }
+
+            // Ajoute la tuile à la ville
+            newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 1, SelectionManager.instance.showOverlay);
+            city.controlledTiles.Add(newTile.offsetCoordinates, newTile);
+            CityManager.instance.tileToCity.Add(newTile.offsetCoordinates, city);
+
+            // sorte d'animation
+            // UpdateBorders();
+        }
+
+        UpdateBorders();
+    }
+
+    private int GetWeightedRandom()
+    {
+        float r = Random.value;
+
+        if (r < 0.6f) return 1;      // 60%
+        else if (r < 0.9f) return 2; // 30%
+        else return 3;               // 10%
+    }
+
+    private static HexCell GetRandomBorderTile(City city)
+    {
+        if (city == null || city.controlledTiles == null || city.controlledTiles.Count == 0)
+            return null;
+
+        HashSet<HexCell> borderTiles = new HashSet<HexCell>();
+
+        foreach (HexCell tile in city.controlledTiles.Values)
+        {
+            foreach (HexCell neighbor in tile.neighbours)
+            {
+                if (neighbor == null)
+                    continue;
+
+                // déjà contrôlées
+                if (city.controlledTiles.ContainsKey(neighbor.offsetCoordinates))
+                    continue;
+
+                // appartient déjà à une autre ville
+                if (CityManager.instance.IsToACity(neighbor))
+                    continue;
+
+                float distance = UnitManager.instance.GetEuclideanDistance(city.occupiedCell, neighbor); 
+                //HexMetrics.GetDistance(city.occupiedCell.offsetCoordinates, neighbor.offsetCoordinates);
+                if (distance > CityManager.instance.maxCityRadius)
+                    continue;
+
+                borderTiles.Add(neighbor);
+            }
+        }
+
+        if (borderTiles.Count == 0)
+            return null;
+
+        int index = Random.Range(0, borderTiles.Count);
+        int i = 0;
+        foreach (var tile in borderTiles)
+        {
+            if (i == index)
+                return tile;
+            i++;
+        }
+
+        return null; // si ça retourne null c'est pas censé
     }
 }
