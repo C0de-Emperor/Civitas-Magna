@@ -8,6 +8,7 @@ public class CityManager : MonoBehaviour
     [SerializeField] private Transform cityPrefab;
     [SerializeField] private Transform cityPanel;
     public City openedCity;
+    public int maxCityRadius = 4;
 
     [HideInInspector] public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
 
@@ -39,7 +40,7 @@ public class CityManager : MonoBehaviour
 
 
     private bool isProductionPanel = true;
-    private Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
+    [SerializeField] public Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
 
     [Tooltip("Liste des noms de villes disponibles (aucun doublon possible).")]
     private List<string> availableNames = new List<string>()
