@@ -17,7 +17,8 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: c3c5b9f17c7f63e44a3a0766b4f54595, type: 3}
   costInGoldPerTurn: 0.25
   bonusFood: 0
-  bonusProduction: 1.5
+  bonusProduction: 2
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 0
+  requierments: []

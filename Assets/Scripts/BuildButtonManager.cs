@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuildButtonManager : MonoBehaviour
 {
     [Header("References")]
-    public ProductionButton[] buttons;
-    public RectTransform contentPanel;
+    public ProductionButton[] buildingButtons;
+    public ProductionButton[] unitButtons;
+    public RectTransform buildingContentPanel;
+    public RectTransform unitContentPanel;
+    public Transform bonusPrefab;
 
     [Header("Colors")]
     public Color activeColor = new Color(1, 1, 1, 1);
@@ -14,6 +18,12 @@ public class BuildButtonManager : MonoBehaviour
     [Header("Sprites")]
     public Sprite selectedSprite;
     public Sprite unselectedSprite;
+
+    public Sprite food;
+    public Sprite prod;
+    public Sprite gold;
+    public Sprite science;
+    public Sprite health;
 
     public static BuildButtonManager instance; 
     private void Awake()
@@ -26,15 +36,16 @@ public class BuildButtonManager : MonoBehaviour
         instance = this;
     }
 
-    public void RefreshUI()
+    public void RefreshUI(bool isBuildingMenu)
     {
+        ProductionButton[] b = isBuildingMenu? buildingButtons : unitButtons;
         int showedButton = 0;
 
         City city = CityManager.instance.openedCity;
-        if (city == null || buttons.Length == 0)
+        if (city == null || b.Length == 0)
             return;
 
-        foreach (ProductionButton button in buttons)
+        foreach (ProductionButton button in b)
         {
             bool shouldBeVisible = true;
 
@@ -61,11 +72,11 @@ public class BuildButtonManager : MonoBehaviour
             // --- Ajustement de la taille du Content ---
             if (showedButton > 0)
             {
-                float buttonHeight = buttons[0].GetComponent<RectTransform>().rect.height;
+                float buttonHeight = b[0].GetComponent<RectTransform>().rect.height;
                 float spacing = 5f; // ou la même valeur que ton VerticalLayoutGroup spacing
                 float totalHeight = buttonHeight * showedButton + spacing * (showedButton - 1);
 
-                RectTransform contentRect = contentPanel.GetComponent<RectTransform>();
+                RectTransform contentRect = (isBuildingMenu? buildingContentPanel : unitContentPanel).GetComponent<RectTransform>();
                 contentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
             }
         }

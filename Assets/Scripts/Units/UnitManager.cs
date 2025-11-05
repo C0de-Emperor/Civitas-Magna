@@ -1,14 +1,6 @@
-using JetBrains.Annotations;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Tilemaps;
 
 public class UnitManager : MonoBehaviour
 {

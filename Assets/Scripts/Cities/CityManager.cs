@@ -64,22 +64,6 @@ public class CityManager : MonoBehaviour
         cityPanel.gameObject.SetActive(false);
     }
 
-    private void Start()
-    {
-        TurnManager.instance.OnTurnChange += AddCityProdution;
-    }
-
-    private void AddCityProdution()
-    {
-        float amountOfGold = 0;
-        foreach (City city in cities.Values)
-        {
-            amountOfGold += city.GetCityGoldProduction();
-        }
-
-        PlayerManager.instance.goldStock += amountOfGold;
-    }
-
     public void CreateCity(HexCell cell)
     {
         if (cell == null 
@@ -102,9 +86,15 @@ public class CityManager : MonoBehaviour
             Debug.LogError("City Prefab ne convient pas, il manque un City component");
             return;
         }
+        component.occupiedCell = cell;
 
         cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
         cell.isACity = true;
+
+        if(SelectionManager.instance.showOverlay)
+        {
+            component.HideForOverlay();
+        }
 
         cities.Add(cell.offsetCoordinates, component);
 
@@ -158,7 +148,7 @@ public class CityManager : MonoBehaviour
         science.text = openedCity.GetCityScienceProduction().ToString();
 
         OpenProductionMenu();
-        BuildButtonManager.instance.RefreshUI();
+        
         cityPanel.gameObject.SetActive(true);
     }
 
@@ -201,6 +191,9 @@ public class CityManager : MonoBehaviour
 
     public void OpenBuildingsSubMenu()
     {
+        if(isProductionPanel)
+            BuildButtonManager.instance.RefreshUI(true);
+
         productionBuildingsScroll.gameObject.SetActive(isProductionPanel);
         purchaseBuildingsScroll.gameObject.SetActive(!isProductionPanel);
 
@@ -215,6 +208,9 @@ public class CityManager : MonoBehaviour
 
     public void OpenUnitsSubMenu()
     {
+        if (isProductionPanel)
+            BuildButtonManager.instance.RefreshUI(false);
+
         productionBuildingsScroll.gameObject.SetActive(false);
         purchaseBuildingsScroll.gameObject.SetActive(false);
 

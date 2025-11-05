@@ -15,6 +15,7 @@ public class ProductionButton : MonoBehaviour
     [SerializeField] private Text prodNameText;
     [SerializeField] private Text prodTimeText;
     [SerializeField] private Image prodIcon;
+    [SerializeField] private Transform bonusPanel;
 
     private void Awake()
     {
@@ -29,6 +30,42 @@ public class ProductionButton : MonoBehaviour
         button.onClick.AddListener(() => OnButtonClick());
     }
 
+    private void Start()
+    {
+        GenerateBonuses();
+    }
+
+    private void GenerateBonuses()
+    {
+        if (item is not BuildingProductionItem building)
+            return;
+
+        var manager = BuildButtonManager.instance;
+
+        (int value, Sprite icon)[] bonuses =
+        {
+        (building.bonusFood, manager.food),
+        (building.bonusProduction, manager.prod),
+        (building.bonusGold, manager.gold),
+        (building.bonusScience, manager.science),
+        (building.bonusHealth, manager.health),
+    };
+
+        foreach (var (value, icon) in bonuses)
+        {
+            if (value > 0)
+                CreatePanel(value, icon);
+        }
+    }
+
+    private void CreatePanel(float amount, Sprite sprite)
+    {
+        GameObject obj = Instantiate(BuildButtonManager.instance.bonusPrefab.gameObject, bonusPanel);
+
+        obj.GetComponentInChildren<Text>().text = amount.ToString();
+        obj.GetComponentInChildren<Image>().sprite = sprite;
+    }
+
     private void OnButtonClick()
     {
         if (item is BuildingProductionItem building)
@@ -36,15 +73,19 @@ public class ProductionButton : MonoBehaviour
             if (!CityManager.instance.openedCity.builtBuildings.Contains(building))
             {
                 CityManager.instance.openedCity.SetProduction(item);
-                BuildButtonManager.instance.RefreshUI();
+                BuildButtonManager.instance.RefreshUI(true);
             }
+        }
+        if (item is UnitProductionItem unit)
+        {
+            CityManager.instance.openedCity.SetProduction(item);
+            BuildButtonManager.instance.RefreshUI(false);
         }
     }
 
     public void UpdateVisual(Sprite selectedSprite, Color activeColor, Sprite unselectedSprite, Color unactiveColor, Color builtColor)
     {
         City city = CityManager.instance.openedCity;
-        Debug.Log(city);
         if (city == null)
             return;
 
@@ -77,10 +118,13 @@ public class ProductionButton : MonoBehaviour
         }
     }
 
-
     private int GetTurnsToProduce()
     {
-        float prodRequired = item.costInProduction - CityManager.instance.openedCity.currentProductionProgress;
+        float prodRequired = 0f;
+        if (CityManager.instance.openedCity.currentProduction == item)
+            prodRequired = item.costInProduction - CityManager.instance.openedCity.currentProductionProgress;
+        else
+            prodRequired = item.costInProduction;
         float net = CityManager.instance.openedCity.GetCityProduction();
 
         return Mathf.CeilToInt(prodRequired / net);

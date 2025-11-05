@@ -6,6 +6,8 @@ using UnityEngine;
 public class City : MonoBehaviour
 {
     public string cityName = "Default";
+    [SerializeField] private Transform model;
+    public HexCell occupiedCell;
 
     [Header("Base Production Point")]
     private float baseFood = 2f;
@@ -39,9 +41,9 @@ public class City : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         TurnManager.instance.OnTurnChange += UpdateBanner;
         TurnManager.instance.OnTurnChange += AddTurnProduction;
+        TurnManager.instance.OnTurnChange += AddTurnGoldProdution;
+        TurnManager.instance.OnTurnChange += AddTurnScienceProdution;
     }
-
-
 
     public float GetCityFoodProduction()
     {
@@ -196,6 +198,18 @@ public class City : MonoBehaviour
         currentProductionProgress = 0f;
     }
 
+
+
+    public void HideForOverlay()
+    {
+        model.gameObject.SetActive(false);
+    }
+
+    public void ShowForOverlay()
+    {
+        model.gameObject.SetActive(true);
+    }
+
     private void AddTurnProduction()
     {
         if(currentProduction == null)
@@ -208,5 +222,16 @@ public class City : MonoBehaviour
             currentProduction.OnProductionComplete(this);
             SetProduction(null);
         }
+    }
+
+    private void AddTurnGoldProdution()
+    {
+        PlayerManager.instance.goldStock += GetCityGoldProduction();
+    }
+
+    private void AddTurnScienceProdution()
+    {
+        if(ResearchManager.instance.currentResearch != null)
+            ResearchManager.instance.currentResearchProgress += GetCityScienceProduction();
     }
 }

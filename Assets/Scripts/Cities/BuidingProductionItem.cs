@@ -7,11 +7,11 @@ public class BuildingProductionItem : CityProductionItem
     [Header("Cost")]
     public float costInGoldPerTurn;
     [Header("Bonuses")]
-    public float bonusFood;
-    public float bonusProduction;
-    public float bonusGold;
-    public float bonusScience;
-    public float bonusHealth;
+    public int bonusFood;
+    public int bonusProduction;
+    public int bonusGold;
+    public int bonusScience;
+    public int bonusHealth;
     [Header("Requirements")]
     public List<BuildingProductionItem> requierments = new List<BuildingProductionItem>();
 
