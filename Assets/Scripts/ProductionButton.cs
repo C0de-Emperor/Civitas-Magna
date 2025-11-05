@@ -100,7 +100,7 @@ public class ProductionButton : MonoBehaviour
         }
 
         // -- Temps de production --
-        int turns = Mathf.Max(1, GetTurnsToProduce());
+        int turns = Mathf.Max(1, CityManager.instance.GetTurnsToProduce(item, city));
         prodTimeText.text = turns.ToString();
 
         // -- Apparence du bouton --
@@ -118,17 +118,6 @@ public class ProductionButton : MonoBehaviour
         }
     }
 
-    private int GetTurnsToProduce()
-    {
-        float prodRequired = 0f;
-        if (CityManager.instance.openedCity.currentProduction == item)
-            prodRequired = item.costInProduction - CityManager.instance.openedCity.currentProductionProgress;
-        else
-            prodRequired = item.costInProduction;
-        float net = CityManager.instance.openedCity.GetCityProduction();
 
-        return Mathf.CeilToInt(prodRequired / net);
-
-    }
 
 }

@@ -8,6 +8,8 @@ public class CityBannerUI : MonoBehaviour
     public Text levelText;
     public Text turnText;
     public Slider healthBar;
+    public Image currentProd;
+    public Text currentProdTurn;
 
     [HideInInspector] public Transform worldTarget;
     [HideInInspector] public Vector3 offset;
@@ -57,7 +59,7 @@ public class CityBannerUI : MonoBehaviour
         }
     }
 
-    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth)
+    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn)
     {
         cityNameText.text = name;
         levelText.text = level.ToString();
@@ -78,11 +80,24 @@ public class CityBannerUI : MonoBehaviour
             turnText.text = "--";
         }
 
-        
-
         healthBar.maxValue = maxHealth;
         healthBar.minValue = 0f;
 
         healthBar.value = maxHealth - damage;
+
+        if(prodIcon != null)
+        {
+            currentProd.gameObject.SetActive(true);
+            currentProd.sprite = prodIcon;
+        }
+        else
+        {
+            currentProd.gameObject.SetActive(false);
+        }
+
+        if(prodturn > 0)
+            currentProdTurn.text = prodturn.ToString();
+        else
+            currentProdTurn.text = "";
     }
 }

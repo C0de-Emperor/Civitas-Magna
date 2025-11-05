@@ -39,10 +39,10 @@ public class City : MonoBehaviour
     {
         damage = 0f;
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
-        TurnManager.instance.OnTurnChange += UpdateBanner;
         TurnManager.instance.OnTurnChange += AddTurnProduction;
         TurnManager.instance.OnTurnChange += AddTurnGoldProdution;
         TurnManager.instance.OnTurnChange += AddTurnScienceProdution;
+        TurnManager.instance.OnTurnChange += UpdateBanner;
     }
 
     public float GetCityFoodProduction()
@@ -189,13 +189,35 @@ public class City : MonoBehaviour
 
         int turns = GetTurnsToNextPopulation();
 
-        bannerUI.UpdateInfo(cityName, population, turns, damage, GetCityMaxHealth());
+        Debug.Log(currentProduction);
+        if(currentProduction != null)
+            bannerUI.UpdateInfo(
+                cityName, 
+                population, 
+                turns, 
+                damage, 
+                GetCityMaxHealth(), 
+                currentProduction.icon, 
+                CityManager.instance.GetTurnsToProduce(currentProduction, this)
+            );
+        else
+            bannerUI.UpdateInfo(
+                cityName, 
+                population, 
+                turns, 
+                damage, 
+                GetCityMaxHealth(), 
+                null, 
+                -1
+            );
     }
 
     public void SetProduction(CityProductionItem item)
     {
         currentProduction = item;
         currentProductionProgress = 0f;
+
+        UpdateBanner();
     }
 
 

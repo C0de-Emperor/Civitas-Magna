@@ -245,4 +245,16 @@ public class CityManager : MonoBehaviour
     {
         return Mathf.RoundToInt( 0.11f * Mathf.Pow(x, 2f) + 10.2f * x + 2f);
     }
+
+    public int GetTurnsToProduce(CityProductionItem item, City city)
+    {
+        float prodRequired = 0f;
+        if (city.currentProduction == item)
+            prodRequired = item.costInProduction - city.currentProductionProgress;
+        else
+            prodRequired = item.costInProduction;
+        float net = city.GetCityProduction();
+
+        return Mathf.CeilToInt(prodRequired / net);
+    }
 }

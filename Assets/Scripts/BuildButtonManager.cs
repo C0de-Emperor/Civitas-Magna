@@ -4,14 +4,14 @@ using UnityEngine.UI;
 public class BuildButtonManager : MonoBehaviour
 {
     [Header("References")]
-    public ProductionButton[] buildingButtons;
-    public ProductionButton[] unitButtons;
+    private ProductionButton[] buildingButtons;
+    private ProductionButton[] unitButtons;
     public RectTransform buildingContentPanel;
     public RectTransform unitContentPanel;
     public Transform bonusPrefab;
 
     [Header("Colors")]
-    public Color activeColor = new Color(1, 1, 1, 1);
+    public Color activeColor = new Color(1, 0.8f, 0.8f, 1);
     public Color unactiveColor = new Color(0.8f, 0.8f, 0.8f, 1);
     public Color builtColor = new Color(0.5f, 1f, 0.5f, 1);
 
@@ -34,6 +34,18 @@ public class BuildButtonManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        buildingButtons = new ProductionButton[buildingContentPanel.childCount];
+        unitButtons = new ProductionButton[unitContentPanel.childCount];
+
+        for (int i = 0; i < buildingContentPanel.childCount; i++)
+        {
+            buildingButtons[i] = buildingContentPanel.GetChild(i).GetComponent<ProductionButton>();
+        }
+        for (int i = 0; i < unitContentPanel.childCount; i++)
+        {
+            unitButtons[i] = unitContentPanel.GetChild(i).GetComponent<ProductionButton>();
+        }
     }
 
     public void RefreshUI(bool isBuildingMenu)
