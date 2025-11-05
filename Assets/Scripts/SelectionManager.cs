@@ -131,7 +131,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (Input.GetKeyUp(KeyCode.X))
                 {
-                    Debug.Log(UnitManager.instance.GetEuclideanDistance(selectedCell, currentCell));
+                    Debug.Log(UnitManager.instance.GetDistance(selectedCell, currentCell));
                 }
             }
             else
