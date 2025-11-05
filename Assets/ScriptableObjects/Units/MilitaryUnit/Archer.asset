@@ -20,8 +20,8 @@ MonoBehaviour:
   IsABoat: 0
   baseProductionCost: 0
   unitCategory: 0
-  AttackPower: 3
-  DefensePower: 5
-  MaxHealth: 15
+  AttackPower: 25
+  DefensePower: 15
+  MaxHealth: 100
   AttackRange: 2
   HealthRegeneration: 5

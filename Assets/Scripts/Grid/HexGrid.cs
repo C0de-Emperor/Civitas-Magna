@@ -138,11 +138,11 @@ public class HexGrid : MonoBehaviour
     /// </summary>
     /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
     /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
-    public void RevealTilesInRadius(Vector2 centerCellOffsetpositions, int radius, bool showOverlay)
+    public void RevealTilesInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool showOverlay)
     {
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
-        Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetpositions, orientation);
+        Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetCoordinates, orientation);
 
         for (int dx = -radius; dx <= radius; dx++)
         {
@@ -156,15 +156,33 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    toReveal.Add(neighbour);
+                    neighbour.RevealTile(showOverlay);
                 }
             }
         }
+    }
 
-        // Révéler les tuiles trouvées
-        foreach (var cell in toReveal)
+    public void SetActiveInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool activate)
+    {
+        List<HexCell> toActivate = new List<HexCell>(1 + 3 * radius * (radius + 1));
+
+        Vector3 centerCube = HexMetrics.OffsetToCube(centerCellOffsetCoordinates, orientation);
+
+        for (int dx = -radius; dx <= radius; dx++)
         {
-            cell.RevealTile(showOverlay);
+            for (int dy = Mathf.Max(-radius, -dx - radius); dy <= Mathf.Min(radius, -dx + radius); dy++)
+            {
+                int dz = -dx - dy;
+                Vector3 neighbourCube = new Vector3(centerCube.x + dx, centerCube.y + dy, centerCube.z + dz);
+
+                // Convertir cube -> offset selon ton orientation
+                Vector2 offset = HexMetrics.CubeToOffset(neighbourCube, orientation);
+
+                if (cells.TryGetValue(offset, out HexCell neighbour))
+                {
+                    SetActiveTile(neighbour, activate);
+                }
+            }
         }
     }
     
@@ -204,6 +222,19 @@ public class HexGrid : MonoBehaviour
         // sinon
             // si elle n'est pas deja inactive
                 // set inactive
+        foreach (var cell in cells.Values)
+        {
+            cell.isActive = false;
+        }
+
+        foreach(var city in CityManager.instance.cities.Values)
+        {
+            foreach(var cellCoordinates in city.controlledTiles.Keys)
+            {
+                SetActiveInRadius(cellCoordinates, 2, true);
+            }
+        }
+
     }
 
     public void SetTileOverlays()

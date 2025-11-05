@@ -158,7 +158,7 @@ public class SelectionManager : MonoBehaviour
 
 
 
-        // Debug Unit
+        // Debug Unit, à dégager
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
             UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player1", new Color[]{ new Color(255, 0, 0), new Color(0, 0, 0) }));

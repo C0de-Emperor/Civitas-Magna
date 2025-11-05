@@ -83,7 +83,7 @@ public class CityBorders : MonoBehaviour
             }
 
             // Ajoute la tuile à la ville
-            newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 1, SelectionManager.instance.showOverlay);
+            newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 2, SelectionManager.instance.showOverlay);
             city.controlledTiles.Add(newTile.offsetCoordinates, newTile);
             CityManager.instance.tileToCity.Add(newTile.offsetCoordinates, city);
 

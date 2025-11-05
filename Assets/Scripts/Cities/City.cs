@@ -5,9 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(CityBorders))]
 public class City : MonoBehaviour
 {
+    const float RUINED_CITY_FACTOR_REDUCTION = 0.5f;
+    const float FACTOR_REGENERATION = 0.05f;
+
     public string cityName = "Default";
     [SerializeField] private Transform model;
     public HexCell occupiedCell;
+    public Player master;
 
     [Header("Base Production Point")]
     private float baseFood = 2f;
@@ -28,6 +32,7 @@ public class City : MonoBehaviour
     public float currentProductionProgress = 0f;
     public List<BuildingProductionItem> builtBuildings = new List<BuildingProductionItem>();
 
+    public float cityFactor = 1;
 
     [HideInInspector] public Dictionary<Vector2, HexCell> controlledTiles = new Dictionary<Vector2, HexCell>();
     [HideInInspector] public CityBorders borders;
@@ -43,6 +48,8 @@ public class City : MonoBehaviour
         TurnManager.instance.OnTurnChange += AddTurnGoldProdution;
         TurnManager.instance.OnTurnChange += AddTurnScienceProdution;
         TurnManager.instance.OnTurnChange += UpdateBanner;
+
+        TurnManager.instance.OnTurnChange += RegenerateFactors;
     }
 
     public float GetCityFoodProduction()
@@ -62,7 +69,7 @@ public class City : MonoBehaviour
             amount += cell.terrainType.food;
         }
 
-        return amount;
+        return amount * cityFactor;
     }
 
     public float GetCityProduction()
@@ -82,7 +89,7 @@ public class City : MonoBehaviour
             amount += cell.terrainType.production;
         }
 
-        return amount;
+        return amount * cityFactor;
     }
 
     public float GetCityGoldProduction()
@@ -97,7 +104,7 @@ public class City : MonoBehaviour
             amount -= building.costInGoldPerTurn;
         }
 
-        return amount;
+        return amount * cityFactor;
     }
 
     public float GetCityScienceProduction()
@@ -111,7 +118,7 @@ public class City : MonoBehaviour
             amount += building.bonusScience;
         }
 
-        return amount;
+        return amount * cityFactor;
     }
 
     public float GetCityMaxHealth()
@@ -254,5 +261,27 @@ public class City : MonoBehaviour
     {
         if(ResearchManager.instance.currentResearch != null)
             ResearchManager.instance.currentResearchProgress += GetCityScienceProduction();
+    }
+
+    public void TakeDamage(Unit unit)
+    {
+        damage += unit.GetUnitMilitaryData().AttackPower;
+
+        if (damage >= maxHealth)
+        {
+            master = unit.master;
+            damage = Mathf.Round(maxHealth/2);
+            cityFactor -= RUINED_CITY_FACTOR_REDUCTION;
+        }
+    }
+
+    public void RegenerateFactors()
+    {
+        cityFactor += FACTOR_REGENERATION;
+
+        if (cityFactor > 1)
+        {
+            cityFactor = 1;
+        }
     }
 }

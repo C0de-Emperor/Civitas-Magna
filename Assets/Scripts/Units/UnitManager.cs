@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class UnitManager : MonoBehaviour
     public List<CivilianUnitType> civilianUnits = new List<CivilianUnitType>();
 
     [HideInInspector] public int nextAvailableId = 0;
-    private Dictionary<int, Unit> units = new Dictionary<int, Unit>();
+    public Dictionary<int, Unit> units { get; private set; }
     private Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
 
     const float HEURISTIC_SCALING = 1.5f;
@@ -39,6 +40,25 @@ public class UnitManager : MonoBehaviour
     public void Start()
     {
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
+    }
+
+    // combat entre une unité et une cité
+    public void CityFight(HexCell unitCell, HexCell cityCell)
+    {
+        float cellDistance = GetDistance(unitCell, cityCell);
+        City city = CityManager.instance.cities[cityCell.offsetCoordinates];
+
+        if (cityCell.militaryUnit != null && cellDistance <= cityCell.militaryUnit.GetUnitMilitaryData().AttackRange)
+        {
+            unitCell.militaryUnit.TakeDamage(cityCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité offensive prend des dégats si à portée de l'unité défensive
+        }
+
+        city.TakeDamage(unitCell.militaryUnit); // la cité prend des dégats (mitigés par son degré de protection)
+
+        if (!unitCell.militaryUnit.IsAlive())
+        {
+            RemoveUnit(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
+        }
     }
 
     // met à jour toutes les unités
@@ -120,7 +140,14 @@ public class UnitManager : MonoBehaviour
 
             if (cellToAttack != null)
             {
-                UnitFight(currentCell, cellToAttack);
+                if (cellToAttack.isACity)
+                {
+                    CityFight(currentCell, cellToAttack);
+                }
+                else
+                {
+                    UnitFight(currentCell, cellToAttack);
+                }
             }
         }
         else // pareil que ci-dessus, pour les unités civiles
@@ -178,17 +205,21 @@ public class UnitManager : MonoBehaviour
         {
             return true;
         }
+        if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
+        {
+            return true;
+        }
 
         float pathCost = 0f;
         Debug.Log(movementData.unitToAttackId + " " + GetDistance(path[0], path[path.Count - 1]) +" "+ unit.movesDone);
-        while (path.Count>1 && unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach && (movementData.unitToAttackId==-1 || GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
             path.RemoveAt(0);
         }
 
-        if (movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange)
+        if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
         {
             StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1])); // faire le déplacement et attaquer l'unité ennemie
         }
@@ -209,13 +240,18 @@ public class UnitManager : MonoBehaviour
     public bool QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
     {
         queuedMovementData movementData = new queuedMovementData();
+        movementData.attacksACity = false;
         movementData.unitToAttackId = -1;
 
         Unit unit;
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            if (destCell.militaryUnit != null)
+            if (destCell.isACity && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
+            {
+                movementData.attacksACity = true;
+            }
+            else if (destCell.militaryUnit != null && destCell.militaryUnit.master != unitCell.militaryUnit.master)
             {
                 movementData.unitToAttackId = destCell.militaryUnit.id; // si le déplacement finit sur une case occupé, il faut désigner l'unité de cette case comme ennemi à attaquer
             }
@@ -610,5 +646,6 @@ public class Unit
 public struct queuedMovementData
 {
     public int unitToAttackId;
+    public bool attacksACity;
     public List<HexCell> path;
 }
