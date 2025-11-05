@@ -125,7 +125,7 @@ public class CityBorders : MonoBehaviour
                 if (CityManager.instance.IsToACity(neighbor))
                     continue;
 
-                float distance = UnitManager.instance.GetEuclideanDistance(city.occupiedCell, neighbor); 
+                float distance = UnitManager.instance.GetDistance(city.occupiedCell, neighbor); 
                 //HexMetrics.GetDistance(city.occupiedCell.offsetCoordinates, neighbor.offsetCoordinates);
                 if (distance > CityManager.instance.maxCityRadius)
                     continue;
