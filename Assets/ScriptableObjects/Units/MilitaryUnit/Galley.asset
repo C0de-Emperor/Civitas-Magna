@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f149bc1b248531349aee7d6aabe7bb30, type: 3}
-  m_Name: Warrior
-  m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnit
-  unitPrefab: {fileID: 4721491388033150390, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
-  unitSprite: {fileID: 21300000, guid: c574eb1e5bbc15a418df028da04f7342, type: 3}
-  unitIcon: {fileID: 21300000, guid: 68a41922d3d138947b160134af160be9, type: 3}
-  MoveReach: 2
+  m_Name: Galley
+  m_EditorClassIdentifier: Assembly-CSharp::MilitaryUnitType
+  unitPrefab: {fileID: 129735036492118858, guid: 59c8cb01e251a2f46a6c9a3cf9d40638, type: 3}
+  unitSprite: {fileID: 21300000, guid: 9666cfbe72d5ea04bab674d73f8d455a, type: 3}
+  unitIcon: {fileID: 21300000, guid: 2d7064c05e14e7b4a81b036d2cc7fcc6, type: 3}
+  MoveReach: 3
   tileRevealRadius: 0
-  IsABoat: 0
+  IsABoat: 1
   baseProductionCost: 0
   unitCategory: 0
-  AttackPower: 10
-  DefensePower: 7
-  MaxHealth: 25
+  AttackPower: 15
+  DefensePower: 10
+  MaxHealth: 40
   AttackRange: 1
   HealthRegeneration: 5

@@ -1,21 +1,20 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/MilitaryUnit")]
+[CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/Unit/MilitaryUnit")]
 public class MilitaryUnitType : UnitType
 {
 
     [Header("Combat properties")]
-    [SerializeField] public float AttackPower;
-    [SerializeField] public float DefensePower;
-    [SerializeField] public float MaxHealth;
-    [SerializeField] public int AttackRange;
-    [SerializeField] public float HealthRegeneration;
+    public float AttackPower;
+    public float DefensePower;
+    public float MaxHealth;
+    public int AttackRange;
+    public float HealthRegeneration;
 
     private void Awake()
     {
         unitCategory = UnitCategory.military;
-        unitName = names[Random.Range(0, names.Length - 1)];
     }
 
 }

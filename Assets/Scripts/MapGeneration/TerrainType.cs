@@ -10,7 +10,7 @@ public class TerrainType : ScriptableObject
     [field: SerializeField] public Transform prefab { get; private set; }
     [field: SerializeField] public Transform prop { get; private set; }
     [field: SerializeField] public float terrainCost { get; private set; } 
-    [field: SerializeField] public bool traversable { get; private set; }
+    [field: SerializeField] public bool isWater { get; private set; }
     [field: SerializeField] public List<Build> build { get; private set; } = new List<Build>();
     public enum Build { City }
 

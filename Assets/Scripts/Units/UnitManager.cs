@@ -1,14 +1,6 @@
-using JetBrains.Annotations;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Tilemaps;
 
 public class UnitManager : MonoBehaviour
 {
@@ -28,6 +20,9 @@ public class UnitManager : MonoBehaviour
     const float HEURISTIC_SCALING = 1.5f;
     const int MAX_ITERATIONS = 10000;
     const float UNITS_SPEED = 0.2f;
+    const float UNITS_TURN_SPEED = 0.5f;
+    public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa", "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "Arsène", "Arthur", "Aubin", "Auguste", "Augustin", "Aurélien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "Barnabé", "Barnard", "Barthélémy", "Basile", "Bastien", "Baudouin", "Benjamin", "Benoît", "Bérenger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille", "Casimir", "Cédric", "Céleste", "Célestin", "César", "Charles", "Charlie", "Christian", "Christophe", "Claude", "Clément", "Clovis", "Colin", "Côme", "Constant", "Constantin", "Corentin", "Crépin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "Désiré", "Didier", "Dimitri", "Dominique", "Donald", "Donatien", "Dorian", "Eden", "Edgar", "Edgard", "Edmond", "Edouard", "Elias", "Elie", "Eloi", "Emile", "Emilien", "Emmanuel", "Eric", "Ernest", "Erwan", "Erwann", "Etienne", "Eudes", "Eugène", "Evrard", "abien", "Fabrice", "Faustin", "Félicien", "Félix", "Ferdinand", "Fernand", "Fiacre", "Fidèle", "Firmin", "Flavien", "Florent", "Florentin", "Florian", "Floribert", "Fortuné", "Francis", "Franck", "François", "Frédéric", "Fulbert", "Gabin", "Gabriel", "Gaël", "Gaétan", "Gaëtan", "Gaspard", "Gaston", "Gatien", "Gauthier", "Gautier", "Geoffroy", "Georges", "Gérald", "Gérard", "Géraud", "Germain", "Gervais", "Ghislain", "Gilbert", "Gildas", "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "Grégoire", "Gregory", "Guénolé", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain", "Gwenaël", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "Hervé", "Hippolythe", "Honoré", "Honorin", "Horace", "Hubert", "Hugo", "Hugues", "Hyacinthe", "Ignace", "Igor", "Isidore", "Ismaël", "Jacky", "Jacob", "Jacques", "Jean", "Jérémie", "Jérémy", "Jérôme", "Joachim", "Jocelyn", "Joël", "Johan", "Jonas", "Jonathan", "Jordan", "José", "Joseph", "Joshua", "Josselin", "Josué", "Judicaël", "Jules", "Julian", "Julien", "Juste", "Justin", "Kévin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "Léandre", "Léger", "Léo", "Léon", "Léonard", "Léonce", "Léopold", "Lilian", "Lionel", "Loan", "Loïc", "Loïck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "Maël", "Mahé", "Maixent", "Malo", "Manuel", "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "Matéo", "Mathéo", "Mathias", "Mathieu", "Mathis", "Mathurin", "Mathys", "Mattéo", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "Médard", "Melchior", "Merlin", "Michael", "&", "dérivés", "Michel", "Milo", "Modeste", "Morgan", "Naël", "Narcisse", "Nathan", "Nathanaël", "Nestor", "Nicolas", "Noa", "Noah", "Noé", "Noël", "Norbert", "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "Pacôme", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval", "Philémon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "Rafaël", "Raoul", "Raphaël", "Raymond", "Réginald", "Régis", "Rémi", "Rémy", "Renaud", "René", "Reynald", "Richard", "Robert", "Robin", "Rodolphe", "Rodrigue", "Roger", "Roland", "Romain", "Romaric", "Roméo", "Romuald", "Ronan", "Sacha", "Salomon", "Sam", "Sami", "Samson", "Samuel", "Samy", "Sasha", "Saturnin", "Sébastien", "Séraphin", "Serge", "Séverin", "Sidoine", "Siméon", "Simon", "Sixte", "Stanislas", "Stéphane", "Sylvain", "Sylvère", "Sylvestre", "Tancrède", "Tanguy", "Théo", "Théodore", "Théophane", "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse", "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
+
 
     public static UnitManager instance;
 
@@ -92,15 +87,26 @@ public class UnitManager : MonoBehaviour
                     currentCell.militaryUnit = unit;
                     lastCell.militaryUnit = null;
 
-                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    Vector3 unitStep = (currentCellPos-unit.unitTransform.position)*Time.smoothDeltaTime/UNITS_SPEED;
-
-                    for (float i=0; i<UNITS_SPEED; i+=Time.deltaTime)
+                    Vector3 currentCellDir = currentCell.tile.position-unit.unitTransform.position;
+                    currentCellDir.y = 0;
+                    Quaternion rot = Quaternion.LookRotation(currentCellDir);
+                    if (rot != Quaternion.identity)
                     {
-                        unit.unitTransform.position += unitStep;
+                        for (float t = 0; t < 1; t += Time.deltaTime / UNITS_TURN_SPEED)
+                        {
+                            unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t);
+                            yield return null;
+                        }
+                    }
+                    unit.unitTransform.rotation = rot;
+
+                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    for (float t = 0; t < 1; t += Time.deltaTime / UNITS_SPEED)
+                    {
+                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t);
                         yield return null;
                     }
-                    unit.unitTransform.position = currentCellPos;
+                    unit.unitTransform.transform.position = currentCellPos;
                 }
                 else
                 {
@@ -108,6 +114,7 @@ public class UnitManager : MonoBehaviour
                 }
 
                 lastCell = currentCell;
+                grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.tileRevealRadius, false);
             }
 
             if (cellToAttack != null)
@@ -127,14 +134,22 @@ public class UnitManager : MonoBehaviour
                     currentCell.civilianUnit = unit;
                     lastCell.civilianUnit = null;
 
-                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    Vector3 unitStep = (currentCellPos - lastCell.tile.position) * Time.smoothDeltaTime;
-
-                    for (float i = 0; i < UNITS_SPEED; i += Time.deltaTime)
+                    Vector3 currentCellDir = currentCell.tile.position;
+                    currentCellDir.y = unit.unitTransform.position.y;
+                    Quaternion rot = Quaternion.LookRotation(currentCellDir);
+                    for (float t=0; t<1; t+=Time.deltaTime / UNITS_TURN_SPEED)
                     {
-                        unit.unitTransform.position += unitStep;
+                        unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t);
                         yield return null;
                     }
+
+                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    for (float t = 0; t < 1; t += Time.deltaTime / UNITS_SPEED)
+                    {
+                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t);
+                        yield return null;
+                    }
+
                     unit.unitTransform.position = currentCellPos;
                 }
                 else
@@ -143,6 +158,7 @@ public class UnitManager : MonoBehaviour
                 }
 
                 lastCell = currentCell;
+                grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.tileRevealRadius, false);
             }
         }
     }
@@ -191,15 +207,7 @@ public class UnitManager : MonoBehaviour
 
     public bool QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
     {
-        List<HexCell> path = GetShortestPath(unitCell, destCell, 1f);
-
-        if (path.Count <= 1)
-        {
-            return false;
-        }
-
         queuedMovementData movementData = new queuedMovementData();
-        movementData.path = path;
         movementData.unitToAttackId = -1;
 
         Unit unit;
@@ -215,6 +223,13 @@ public class UnitManager : MonoBehaviour
         {
             unit = unitCell.civilianUnit;
         }
+
+        List<HexCell> path = GetShortestPath(unitCell, destCell, unit.unitType, 1f);
+        if (path.Count <= 1)
+        {
+            return false;
+        }
+        movementData.path = path;
 
         if (queuedUnitMovements.ContainsKey(unit.id))
         {
@@ -277,7 +292,7 @@ public class UnitManager : MonoBehaviour
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
-            if(cell.militaryUnit == null)
+            if(cell.militaryUnit == null && isCellTraversable(cell.terrainType, unitType))
             {
                 Transform unitTransform = Instantiate(
                     unitType.unitPrefab.transform,
@@ -300,7 +315,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if (cell.militaryUnit == null)
+            if (cell.militaryUnit == null && isCellTraversable(cell.terrainType, unitType))
             {
                 Transform unitTransform = Instantiate(
                     unitType.unitPrefab.transform,
@@ -323,7 +338,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    private List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, float heuristicFactor)
+    private List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, UnitType unitType, float heuristicFactor)
     {
         //Debug.LogWarning("SEARCHING PATH FROM "+startCell.offsetCoordinates + " TO "+finishCell.offsetCoordinates);
 
@@ -356,7 +371,7 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (currentCellData.cell.neighbours[i].terrainType.traversable)
+                else if (isCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType))
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell, heuristicFactor);
                     //Debug.Log("looking at neighbour cell : " + currentCellNeighboursData.GetCellDataInfo());
@@ -469,6 +484,20 @@ public class UnitManager : MonoBehaviour
         return new CellData(GCost, HCost, FCost, cell, parentCellData);
     }
 
+    private bool isCellTraversable(TerrainType terrainType, UnitType unitType)
+    {
+        if(terrainType.terrainCost > unitType.MoveReach)
+        {
+            return false;
+        }
+        if((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private void PrintList(List<HexCell> list) // DEBUGAGE; A VIRER
     {
         string BLABLA = "";
@@ -510,6 +539,7 @@ public class Unit
     public readonly UnitType unitType;
     public readonly Player master;
     public readonly UnitPin unitPin;
+    public string unitName;
 
     private MilitaryUnitType militaryUnitType;
     private float currentHealth;
@@ -529,8 +559,9 @@ public class Unit
 
         this.movesDone = 0;
         this.lastDamagingTurn = -1;
+        this.unitName = UnitManager.instance.NAMES_LIST[Random.Range(0, UnitManager.instance.NAMES_LIST.Length - 1)];
 
-        unitPin.InitializePin(this.unitType.unitSprite, this.master.livery);
+        unitPin.InitializePin(this.unitType.unitIcon, this.master.livery);
         unitPin.worldTarget = this.unitTransform;
 
         //Debug.Log("NEW UNIT, ID : "+this.id);
