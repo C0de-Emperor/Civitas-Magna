@@ -39,24 +39,18 @@ public class CityBannerUI : MonoBehaviour
         Vector3 worldPos = worldTarget.position + offset;
         Vector3 screenPos = mainCamera.WorldToScreenPoint(worldPos);
 
-        if (screenPos.z > 0)
-        {
-            transform.position = screenPos;
+        transform.position = screenPos;
 
-            // Calcul de la distance pour adapter le scale
-            float distance = Vector3.Distance(mainCamera.transform.position, worldPos);
-            float t = Mathf.InverseLerp(minDistance, maxDistance, distance);
-            float scale = Mathf.Lerp(maxScale, minScale, t);
+        // Calcul de la distance pour adapter le scale
+        float distance = Vector3.Distance(mainCamera.transform.position, worldPos);
+        float t = Mathf.InverseLerp(minDistance, maxDistance, distance);
+        float scale = Mathf.Lerp(maxScale, minScale, t);
 
-            rect.localScale = Vector3.one * scale;
+        rect.localScale = Vector3.one * scale;
 
-            if (hideWhenTooFar)
-                gameObject.SetActive(distance < maxDistance * 1.2f);
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        if (hideWhenTooFar)
+            gameObject.SetActive(distance < maxDistance * 1.2f);
+
     }
 
     public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn)

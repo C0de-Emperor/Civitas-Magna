@@ -27,8 +27,8 @@ public class HexGrid : MonoBehaviour
 
     private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
     private Vector3 gridOrigin;
-    private uint defaultLayer = 1;
-    private uint unactiveLayer = 2;
+    public readonly uint defaultLayer = 1;
+    public readonly uint unactiveLayer = 2;
 
     private void Awake()
     {
@@ -40,6 +40,11 @@ public class HexGrid : MonoBehaviour
 
         OnCellInstancesGenerated += AssignNeighbours;
         OnCellInstancesGenerated += SetTileOverlays;
+    }
+
+    private void Start()
+    {
+        TurnManager.instance.OnTurnChange += UpdateActiveTiles;
     }
 
     public void SetHexCells(List<HexCell> newCells)
@@ -180,51 +185,30 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    SetActiveTile(neighbour, activate);
+                    neighbour.SetActiveTile(activate);
                 }
             }
         }
     }
-    
-    public void SetActiveTile(HexCell cell, bool value)
-    {
-        if(cell.isActive == value) 
-            return;
-
-        if (!cell.isRevealed)
-        {
-            Debug.LogError("On ne peut pas rendre active une tile non d�couverte");
-            return;
-        }
-
-        var allRenderers = cell.tile.GetComponentsInChildren<Renderer>(true).ToList();
-
-        if (cell.ressource != null)
-        {
-            allRenderers.AddRange(cell.ressource.GetComponentsInChildren<Renderer>(true));
-        }
-
-        // Apply layer mask
-        foreach (Renderer rend in allRenderers)
-        {
-            rend.renderingLayerMask = value ? defaultLayer : unactiveLayer;
-        }
-
-        cell.isActive = value;
-    }
 
     public void UpdateActiveTiles()
     {
-        // parcourir les tiles
-        // si la tile est dans la range d'une troupe / ville / etc ...
-            // si elle n'est pas deja active
-                // set actie la tile
-        // sinon
-            // si elle n'est pas deja inactive
-                // set inactive
+        List<UnitSightData> unitSightDatas = new List<UnitSightData>();
+
         foreach (var cell in cells.Values)
         {
-            cell.isActive = false;
+            if (cell.isRevealed)
+            {
+                cell.SetActiveTile(false);
+            }
+
+            if(cell.militaryUnit != null)
+            {
+                UnitSightData unitSightData;
+                unitSightData.sightRadius = cell.militaryUnit.unitType.sightRadius;
+                unitSightData.unitCell = cell;
+                unitSightDatas.Add(unitSightData);
+            }
         }
 
         foreach(var city in CityManager.instance.cities.Values)
@@ -235,6 +219,10 @@ public class HexGrid : MonoBehaviour
             }
         }
 
+        foreach(var unitSightData in unitSightDatas)
+        {
+            SetActiveInRadius(unitSightData.unitCell.offsetCoordinates, unitSightData.sightRadius, true);
+        }
     }
 
     public void SetTileOverlays()
@@ -274,4 +262,10 @@ public enum HexOrientation
 {
     FlatTop,
     PointyTop
+}
+
+public struct UnitSightData
+{
+    public HexCell unitCell;
+    public int sightRadius;
 }

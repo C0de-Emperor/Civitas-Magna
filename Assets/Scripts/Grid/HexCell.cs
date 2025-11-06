@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -267,6 +268,33 @@ public class HexCell
             ressource.gameObject.GetComponent<City>().ShowForOverlay();
 
         tileOverlay.gameObject.SetActive(false);
+    }
+
+    public void SetActiveTile(bool value)
+    {
+        if (isActive == value)
+            return;
+
+        if (!isRevealed)
+        {
+            Debug.LogError("On ne peut pas rendre active une tile non découverte");
+            return;
+        }
+
+        var allRenderers = tile.GetComponentsInChildren<Renderer>(true).ToList();
+
+        if (ressource != null)
+        {
+            allRenderers.AddRange(ressource.GetComponentsInChildren<Renderer>(true));
+        }
+
+        // Apply layer mask
+        foreach (Renderer rend in allRenderers)
+        {
+            rend.renderingLayerMask = value ? grid.defaultLayer : grid.unactiveLayer;
+        }
+
+        isActive = value;
     }
 }
  

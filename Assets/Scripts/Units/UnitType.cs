@@ -9,7 +9,7 @@ public class UnitType : ScriptableObject
     public Sprite unitSprite;
     public Sprite unitIcon;
     public int MoveReach;
-    public int tileRevealRadius;
+    public int sightRadius;
     public bool IsABoat;
 
     public int baseProductionCost;
