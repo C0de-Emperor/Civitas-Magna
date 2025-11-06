@@ -16,7 +16,7 @@ MonoBehaviour:
   unitSprite: {fileID: 21300000, guid: 9666cfbe72d5ea04bab674d73f8d455a, type: 3}
   unitIcon: {fileID: 21300000, guid: 2d7064c05e14e7b4a81b036d2cc7fcc6, type: 3}
   MoveReach: 3
-  tileRevealRadius: 0
+  sightRadius: 2
   IsABoat: 1
   baseProductionCost: 0
   unitCategory: 0

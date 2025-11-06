@@ -193,7 +193,7 @@ public class HexGrid : MonoBehaviour
 
     public void UpdateActiveTiles()
     {
-        List<UnitSightData> unitSightDatas = new List<UnitSightData>();
+        List<SightData> sightDatas = new List<SightData>();
 
         foreach (var cell in cells.Values)
         {
@@ -204,10 +204,10 @@ public class HexGrid : MonoBehaviour
 
             if(cell.militaryUnit != null)
             {
-                UnitSightData unitSightData;
+                SightData unitSightData;
                 unitSightData.sightRadius = cell.militaryUnit.unitType.sightRadius;
-                unitSightData.unitCell = cell;
-                unitSightDatas.Add(unitSightData);
+                unitSightData.cellCoordinates = cell.offsetCoordinates;
+                sightDatas.Add(unitSightData);
             }
         }
 
@@ -215,13 +215,16 @@ public class HexGrid : MonoBehaviour
         {
             foreach(var cellCoordinates in city.controlledTiles.Keys)
             {
-                SetActiveInRadius(cellCoordinates, 2, true);
+                SightData unitSightData;
+                unitSightData.sightRadius = 2;
+                unitSightData.cellCoordinates = cellCoordinates;
+                sightDatas.Add(unitSightData);
             }
         }
 
-        foreach(var unitSightData in unitSightDatas)
+        foreach(var sightData in sightDatas)
         {
-            SetActiveInRadius(unitSightData.unitCell.offsetCoordinates, unitSightData.sightRadius, true);
+            SetActiveInRadius(sightData.cellCoordinates, sightData.sightRadius, true);
         }
     }
 
@@ -264,8 +267,8 @@ public enum HexOrientation
     PointyTop
 }
 
-public struct UnitSightData
+public struct SightData
 {
-    public HexCell unitCell;
+    public Vector2 cellCoordinates;
     public int sightRadius;
 }
