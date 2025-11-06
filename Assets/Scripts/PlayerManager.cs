@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class PlayerManager : MonoBehaviour
 {
     [Header("Player")]
-    public Player player = new Player("Baba", new Color[] { new Color(255, 0, 0), new Color(0, 0, 0) });
+    public Player player = new Player("DefaultPlayer", new Color[] { new Color(255, 255, 255), new Color(34, 120, 15) });
 
     [Header("UI")]
     [SerializeField] private Text goldStockText;

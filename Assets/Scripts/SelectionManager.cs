@@ -1,6 +1,7 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private HexGrid grid;
     [SerializeField] private GameObject selectionOutline;
     [SerializeField] private GameObject innerSelectionOutline;
+    [SerializeField] private GameObject pathPreviewLine;
+    [SerializeField] private GameObject queuedPathPreviewLine;
 
 
     [Header("Data")]
@@ -19,9 +22,15 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector, NonSerialized] public Unit selectedUnit = null;
 
 
+    [SerializeField] public Transform pathPreviewContainer = null;
+    [SerializeField] public Transform queuedPathPreviewContainer = null;
+    [HideInInspector] public List<Vector3> pathPreviewCoordinates = new List<Vector3>();
+    [HideInInspector] public List<Vector3> queuedPathPreviewCoordinates = new List<Vector3>();
+
     private HexCell lastClickedCell;
     private int clickCycleIndex = 0;
     public bool showOverlay = false;
+    public float pathLineOffset = 0.1f;
 
     public static SelectionManager instance;
     private void Awake()
@@ -32,6 +41,8 @@ public class SelectionManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        pathPreviewCoordinates.Clear();
 
         selectionOutline.SetActive(false);
         selectionOutline.transform.localScale *= grid.hexSize;
@@ -80,6 +91,9 @@ public class SelectionManager : MonoBehaviour
             return;
         }
 
+        pathPreviewCoordinates = new List<Vector3>();
+        queuedPathPreviewCoordinates = new List<Vector3>();
+
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
@@ -98,6 +112,11 @@ public class SelectionManager : MonoBehaviour
                         (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
                         currentCell.tile.position.z
                     );
+                }
+
+                if (selectedUnit != null)
+                {
+                    pathPreviewCoordinates = GetPathCoordinates(UnitManager.instance.GetShortestPath(selectedCell, currentCell, selectedUnit.unitType));
                 }
 
                 if (Input.GetMouseButtonDown(0))
@@ -122,6 +141,7 @@ public class SelectionManager : MonoBehaviour
                         {
                             selectedCell = null;
                             selectedUnit = null;
+                            pathPreviewCoordinates = new List<Vector3>();
                         }
                     }
                     else
@@ -156,7 +176,12 @@ public class SelectionManager : MonoBehaviour
              innerSelectionOutline.SetActive(false);
         }
 
-
+        if (selectedUnit != null && UnitManager.instance.queuedUnitMovements.ContainsKey(selectedUnit.id))
+        {
+            queuedPathPreviewCoordinates = GetPathCoordinates(UnitManager.instance.queuedUnitMovements[selectedUnit.id].path);
+        }
+        DrawPathPreview(pathPreviewCoordinates, pathPreviewContainer, pathPreviewLine);
+        DrawPathPreview(queuedPathPreviewCoordinates, queuedPathPreviewContainer, queuedPathPreviewLine);
 
         // Debug Unit, à dégager
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
@@ -247,5 +272,49 @@ public class SelectionManager : MonoBehaviour
 
         // Passe à l’élément suivant, en bouclant
         clickCycleIndex = (clickCycleIndex + 1) % actions.Count;
+    }
+
+    public List<Vector3> GetPathCoordinates(List<HexCell> path)
+    {
+        List<Vector3> pathCoordinates = new List<Vector3>();
+
+        if (path != null)
+        {
+            foreach (HexCell cell in path)
+            {
+                pathCoordinates.Add(new Vector3(cell.tile.position.x, cell.terrainHigh + pathLineOffset, cell.tile.position.z));
+            }
+        }
+
+        return pathCoordinates;
+    }
+
+    public void DrawPathPreview(List<Vector3> pathCoordinates, Transform pathContainer, GameObject linePrefab)
+    {
+        Transform currentLine = null;
+        for(int i=0;  i<pathCoordinates.Count-1; i++)
+        {
+            if (i < pathContainer.childCount)
+            {
+                currentLine = pathContainer.GetChild(i);
+            }
+            else
+            {
+                currentLine = Instantiate(linePrefab, pathContainer).transform;
+                currentLine.localScale = new Vector3(1, 1, grid.hexSize);
+            }
+
+            currentLine.position = pathCoordinates[i];
+            currentLine.LookAt(pathCoordinates[i+1]);
+        }
+
+        if (pathCoordinates.Count > 0 && pathCoordinates.Count-1< pathContainer.childCount)
+        {
+            Destroy(pathContainer.GetChild(pathCoordinates.Count - 1).gameObject);
+        }
+        for (int i = pathCoordinates.Count; i < pathContainer.childCount; i++)
+        {
+            Destroy(pathContainer.GetChild(i).gameObject);
+        }
     }
 }
