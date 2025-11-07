@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 [Serializable]
 public class HexCell
@@ -31,7 +32,7 @@ public class HexCell
     [Header("Units")]
 
     [field: SerializeField] public Unit militaryUnit = null;
-    [field: SerializeField] public Unit civilianUnit { get; set; }
+    [field: SerializeField] public Unit civilianUnit = null;
 
 
     [Header("Properties")]
@@ -96,6 +97,17 @@ public class HexCell
         UnityEngine.Object.Destroy(tile.gameObject);
 
         InstantiateTile(terrainType.prefab, terrainType.prop, terrainHigh);
+
+        if (militaryUnit != null)
+        {
+            militaryUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = true;
+            militaryUnit.unitPin.GetComponentInChildren<Renderer>().enabled = true;
+        }
+        if (civilianUnit != null)
+        {
+            civilianUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = true;
+            civilianUnit.unitPin.GetComponentInChildren<Renderer>().enabled = true;
+        }
 
         if (showOverlay)
         {
@@ -292,6 +304,18 @@ public class HexCell
         foreach (Renderer rend in allRenderers)
         {
             rend.renderingLayerMask = value ? grid.defaultLayer : grid.unactiveLayer;
+        }
+
+
+        if (militaryUnit != null)
+        {
+            militaryUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = value;
+            militaryUnit.unitPin.gameObject.SetActive(value);
+        }
+        if (civilianUnit != null)
+        {
+            civilianUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = value;
+            civilianUnit.unitPin.gameObject.SetActive(value);
         }
 
         isActive = value;

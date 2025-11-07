@@ -202,10 +202,17 @@ public class HexGrid : MonoBehaviour
                 cell.SetActiveTile(false);
             }
 
-            if(cell.militaryUnit != null)
+            if(cell.militaryUnit != null && cell.militaryUnit.master == PlayerManager.instance.player)
             {
                 SightData unitSightData;
                 unitSightData.sightRadius = cell.militaryUnit.unitType.sightRadius;
+                unitSightData.cellCoordinates = cell.offsetCoordinates;
+                sightDatas.Add(unitSightData);
+            }
+            if (cell.civilianUnit != null && cell.civilianUnit.master == PlayerManager.instance.player)
+            {
+                SightData unitSightData;
+                unitSightData.sightRadius = cell.civilianUnit.unitType.sightRadius;
                 unitSightData.cellCoordinates = cell.offsetCoordinates;
                 sightDatas.Add(unitSightData);
             }

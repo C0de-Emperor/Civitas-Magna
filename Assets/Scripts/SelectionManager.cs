@@ -123,7 +123,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 2, showOverlay); // DEVELOPPEMENT, A ENLEVER
+                    grid.RevealTilesInRadius(coord, 10, showOverlay); // DEVELOPPEMENT, A ENLEVER
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
@@ -186,7 +186,7 @@ public class SelectionManager : MonoBehaviour
         // Debug Unit, à dégager
         if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
         {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player1", new Color[]{ new Color(255, 0, 0), new Color(0, 0, 0) }));
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, PlayerManager.instance.player);
         }
         if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
         {
@@ -301,7 +301,7 @@ public class SelectionManager : MonoBehaviour
             else
             {
                 currentLine = Instantiate(linePrefab, pathContainer).transform;
-                currentLine.localScale = new Vector3(1, 1, grid.hexSize);
+                currentLine.localScale = new Vector3(1, 1, grid.hexSize*1.75f);
             }
 
             currentLine.position = pathCoordinates[i];

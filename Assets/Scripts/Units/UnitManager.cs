@@ -18,11 +18,11 @@ public class UnitManager : MonoBehaviour
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
 
-    const float HEURISTIC_SCALING = 1f;
-    const float HEURISTIC_FACTOR = 1f;
-    const int MAX_ITERATIONS = 10000;
-    const float UNITS_SPEED = 0.8f;
-    const float UNITS_TURN_SPEED =0.3f;
+    private float heuristicScaling = 1f;
+    private float heuristicFactor = 1f;
+    private int maxIterations = 10000;
+    private float unitSpeed = 0.8f;
+    private float unitTurnSpeed =0.3f;
     public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa", "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "Arsène", "Arthur", "Aubin", "Auguste", "Augustin", "Aurélien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "Barnabé", "Barnard", "Barthélémy", "Basile", "Bastien", "Baudouin", "Benjamin", "Benoît", "Bérenger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille", "Casimir", "Cédric", "Céleste", "Célestin", "César", "Charles", "Charlie", "Christian", "Christophe", "Claude", "Clément", "Clovis", "Colin", "Côme", "Constant", "Constantin", "Corentin", "Crépin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "Désiré", "Didier", "Dimitri", "Dominique", "Donald", "Donatien", "Dorian", "Eden", "Edgar", "Edgard", "Edmond", "Edouard", "Elias", "Elie", "Eloi", "Emile", "Emilien", "Emmanuel", "Eric", "Ernest", "Erwan", "Erwann", "Etienne", "Eudes", "Eugène", "Evrard", "abien", "Fabrice", "Faustin", "Félicien", "Félix", "Ferdinand", "Fernand", "Fiacre", "Fidèle", "Firmin", "Flavien", "Florent", "Florentin", "Florian", "Floribert", "Fortuné", "Francis", "Franck", "François", "Frédéric", "Fulbert", "Gabin", "Gabriel", "Gaël", "Gaétan", "Gaëtan", "Gaspard", "Gaston", "Gatien", "Gauthier", "Gautier", "Geoffroy", "Georges", "Gérald", "Gérard", "Géraud", "Germain", "Gervais", "Ghislain", "Gilbert", "Gildas", "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "Grégoire", "Gregory", "Guénolé", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain", "Gwenaël", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "Hervé", "Hippolythe", "Honoré", "Honorin", "Horace", "Hubert", "Hugo", "Hugues", "Hyacinthe", "Ignace", "Igor", "Isidore", "Ismaël", "Jacky", "Jacob", "Jacques", "Jean", "Jérémie", "Jérémy", "Jérôme", "Joachim", "Jocelyn", "Joël", "Johan", "Jonas", "Jonathan", "Jordan", "José", "Joseph", "Joshua", "Josselin", "Josué", "Judicaël", "Jules", "Julian", "Julien", "Juste", "Justin", "Kévin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "Léandre", "Léger", "Léo", "Léon", "Léonard", "Léonce", "Léopold", "Lilian", "Lionel", "Loan", "Loïc", "Loïck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "Maël", "Mahé", "Maixent", "Malo", "Manuel", "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "Matéo", "Mathéo", "Mathias", "Mathieu", "Mathis", "Mathurin", "Mathys", "Mattéo", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "Médard", "Melchior", "Merlin", "Michael", "&", "dérivés", "Michel", "Milo", "Modeste", "Morgan", "Naël", "Narcisse", "Nathan", "Nathanaël", "Nestor", "Nicolas", "Noa", "Noah", "Noé", "Noël", "Norbert", "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "Pacôme", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval", "Philémon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "Rafaël", "Raoul", "Raphaël", "Raymond", "Réginald", "Régis", "Rémi", "Rémy", "Renaud", "René", "Reynald", "Richard", "Robert", "Robin", "Rodolphe", "Rodrigue", "Roger", "Roland", "Romain", "Romaric", "Roméo", "Romuald", "Ronan", "Sacha", "Salomon", "Sam", "Sami", "Samson", "Samuel", "Samy", "Sasha", "Saturnin", "Sébastien", "Séraphin", "Serge", "Séverin", "Sidoine", "Siméon", "Simon", "Sixte", "Stanislas", "Stéphane", "Sylvain", "Sylvère", "Sylvestre", "Tancrède", "Tanguy", "Théo", "Théodore", "Théophane", "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse", "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
 
 
@@ -42,6 +42,8 @@ public class UnitManager : MonoBehaviour
     public void Start()
     {
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
+    
+        maxIterations = grid.height * grid.width;
     }
 
     // combat entre une unité et une cité
@@ -115,7 +117,7 @@ public class UnitManager : MonoBehaviour
                     Quaternion rot = Quaternion.LookRotation(currentCellDir);
                     if (rot != Quaternion.identity)
                     {
-                        for (float t = 0; t < 1; t += Time.deltaTime / UNITS_TURN_SPEED)
+                        for (float t = 0; t < 1; t += Time.deltaTime / unitTurnSpeed)
                         {
                             unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t); // rotation progressive de l'unité dans le sens du déplacement
                             yield return null;
@@ -124,7 +126,7 @@ public class UnitManager : MonoBehaviour
                     unit.unitTransform.rotation = rot;
 
                     Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    for (float t = 0; t < 1; t += Time.deltaTime / UNITS_SPEED)
+                    for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
                     {
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
                         yield return null;
@@ -169,14 +171,14 @@ public class UnitManager : MonoBehaviour
                     Vector3 currentCellDir = currentCell.tile.position;
                     currentCellDir.y = unit.unitTransform.position.y;
                     Quaternion rot = Quaternion.LookRotation(currentCellDir);
-                    for (float t=0; t<1; t+=Time.deltaTime / UNITS_TURN_SPEED)
+                    for (float t=0; t<1; t+=Time.deltaTime / unitTurnSpeed)
                     {
                         unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t);
                         yield return null;
                     }
 
                     Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    for (float t = 0; t < 1; t += Time.deltaTime / UNITS_SPEED)
+                    for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
                     {
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t);
                         yield return null;
@@ -339,7 +341,7 @@ public class UnitManager : MonoBehaviour
         Destroy(unit.unitTransform.gameObject); // supprimer l'instance de l'unité
     }
 
-    // ajotuer un type d'unité à une case
+    // ajouter un type d'unité à une case
     public void AddUnit(UnitType unitType, HexCell cell, Player master)
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
@@ -354,6 +356,12 @@ public class UnitManager : MonoBehaviour
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
+
+                if (!cell.isRevealed || !cell.isActive)
+                {
+                    unitTransform.GetComponentInChildren<Renderer>().enabled = false;
+                    unitPin.gameObject.SetActive(false);
+                }
 
                 Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
 
@@ -377,6 +385,12 @@ public class UnitManager : MonoBehaviour
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
+
+                if (!cell.isRevealed)
+                {
+                    unitTransform.GetComponentInChildren<Renderer>().enabled = false;
+                    unitPin.GetComponentInChildren<Renderer>().enabled = false;
+                }
 
                 Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
 
@@ -402,10 +416,12 @@ public class UnitManager : MonoBehaviour
 
         CellData currentCellData = null;
 
+        if (!IsCellTraversable(finishCell.terrainType, unitType)) { return null; }
+
         //System.DateTime startTime = System.DateTime.Now;
 
         int iterations = 0;
-        while (!endCellFound && cellsToVisit.Count > 0 && iterations < MAX_ITERATIONS) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
+        while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
         {
             currentCellData = cellsToVisit[0];
             AddNewCellData(currentCellData, visitedCells); // choisit la case avec le coût le plus faible
@@ -422,7 +438,7 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType)) // si la case est traversable
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non révélée
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
@@ -532,13 +548,12 @@ public class UnitManager : MonoBehaviour
     private CellData CreateCellData(CellData parentCellData, HexCell cell, HexCell destCell)
     {
         float GCost = cell.terrainType.terrainCost;
-        float HCost = GetDistance(cell, destCell) * HEURISTIC_SCALING;
-        float FCost = GCost + HCost * HEURISTIC_FACTOR;
-
-        if (!cell.isActive)
+        if (!cell.isRevealed)
         {
             GCost = 100;
         }
+        float HCost = GetDistance(cell, destCell) * heuristicScaling;
+        float FCost = GCost + HCost * heuristicFactor;
 
         return new CellData(GCost, HCost, FCost, cell, parentCellData);
     }

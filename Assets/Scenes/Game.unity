@@ -8259,6 +8259,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb076ead46a6724bbabff776562c0a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  player:
+    playerName: DefaultPlayer
+    livery:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 0.20581576, g: 0.7132075, b: 0.090160176, a: 1}
   goldStockText: {fileID: 216989702}
   goldStock: 0
 --- !u!1 &1246912215

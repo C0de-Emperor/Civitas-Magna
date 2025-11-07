@@ -60,19 +60,11 @@ public class UnitPin : MonoBehaviour
         healthBar.color = gradient.Evaluate(healthPercentage);
     }
 
-    public void SetPinColour(Color[] livery)
-    {
-        PinBackground.color=livery[0];
-        UnitSprite.color=livery[1];
-        UpdateHealth(1, 1);
-    }
-
     public void InitializePin(Sprite unitSprite, Color[] livery)
     {
         this.PinBackground.color = livery[0];
 
         this.UnitSprite.sprite = unitSprite;
-        //this.UnitSprite.SetNativeSize();
         this.UnitSprite.color = livery[1];
 
         UpdateHealth(1, 1);
