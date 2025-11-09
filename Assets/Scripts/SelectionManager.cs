@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
@@ -64,6 +63,20 @@ public class SelectionManager : MonoBehaviour
         {
             CityManager.instance.CloseCity();
             selectedCell = null;
+        }
+
+        // Close Science Menu
+        if (Input.GetKeyDown(KeyCode.Escape) && ResearchManager.instance.isMenuOpen)
+        {
+            ResearchManager.instance.CloseMenu();
+            if (outlinedCell != null || selectedCell != null || selectedUnit != null)
+            {
+                selectionOutline.gameObject.SetActive(false);
+                innerSelectionOutline.gameObject.SetActive(false);
+                selectedCell = null;
+                outlinedCell = null;
+                selectedUnit = null;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R))

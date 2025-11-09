@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Research", menuName = "Scriptable Objects/Research")]
@@ -9,5 +10,16 @@ public class Research : ScriptableObject
     public string description;
     public int scienceCost;
 
-    public Research[] dependencies;
+    [Header("UI")]
+    public int index;
+    public int depth;
+
+    public Dependency[] dependencies;  
+}
+
+[Serializable]
+public class Dependency
+{
+    public Research research;
+    public float dependencyLineDepth;
 }

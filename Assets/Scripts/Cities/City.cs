@@ -259,8 +259,15 @@ public class City : MonoBehaviour
 
     private void AddTurnScienceProdution()
     {
-        if(ResearchManager.instance.currentResearch != null)
-            ResearchManager.instance.currentResearchProgress += GetCityScienceProduction();
+        ResearchManager manager = ResearchManager.instance;
+        if(manager.currentResearch == null)
+            return;
+
+        manager.currentResearchProgress += GetCityScienceProduction();
+        if (manager.currentResearchProgress >= manager.currentResearch.scienceCost)
+        {
+            manager.ResearchComplete();
+        }
     }
 
     public void TakeDamage(Unit unit)

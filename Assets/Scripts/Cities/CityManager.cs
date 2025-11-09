@@ -42,8 +42,32 @@ public class CityManager : MonoBehaviour
     private bool isProductionPanel = true;
     [SerializeField] public Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
 
-    [Tooltip("Liste des noms de villes disponibles (aucun doublon possible).")]
-    private List<string> availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley", "St. John's", "Buenos Aires", "Yerevan", "Oranjestad", "Canberra", "Vienna", "Baku", "Nassau", "Manama", "Dhaka", "Bridgetown", "Minsk", "Bruxelles-Brussel", "Belmopan", "Cotonou", "Hamilton", "Thimphu", "La Paz", "Sarajevo", "Gaborone", "Brasília", "Road Town", "Bandar Seri Begawan", "Sofia", "Ouagadougou", "Bujumbura", "Praia", "Phnom Penh", "Yaoundé", "Ottawa-Gatineau", "Kralendijk", "George Town", "Bangui", "N'Djaména", "St. Helier", "St. Peter Port", "Santiago", "Beijing", " Hong Kong SAR'", " Macao SAR'", " Taiwan Province of China'", "Bogotá", "Moroni", "Brazzaville", "Rarotonga", "San José", "Abidjan", "Zagreb", "Havana", "Willemstad", "Nicosia", "Prague", "P'yongyang", "Kinshasa", "Copenhagen", "Djibouti", "Roseau", "Santo Domingo", "Quito", "Cairo", "San Salvador", "Malabo", "Asmara", "Tallinn", "Addis Ababa", "Tórshavn", "Stanley", "Suva", "Helsinki", "Paris", "Cayenne", "Papeete", "Libreville", "Banjul", "Tbilisi", "Berlin", "Accra", "Gibraltar", "Athens", "Godthåb", "St.George's", "Basse-Terre", "Hagåtña", "Guatemala City", "Conakry", "Bissau", "Georgetown", "Port-au-Prince", "Vatican City", "Tegucigalpa", "Budapest", "Reykjavík", "Delhi", "Jakarta", "Tehran", "Baghdad", "Dublin", "Douglas", "Jerusalem", "Rome", "Kingston", "Tokyo", "Amman", "Astana", "Nairobi", "Tarawa", "Kuwait City", "Bishkek", "Vientiane", "Riga", "Beirut", "Maseru", "Monrovia", "Tripoli", "Vaduz", "Vilnius", "Luxembourg", "Antananarivo", "Lilongwe", "Kuala Lumpur", "Male", "Bamako", "Valletta", "Majuro", "Fort-de-France", "Nouakchott", "Port Louis", "Mamoudzou", "Mexico City", "Palikir", "Monaco", "Ulaanbaatar", "Podgorica", "Brades Estate", "Rabat", "Maputo", "Nay Pyi Taw", "Windhoek", "Nauru", "Kathmandu", "Amsterdam", "Nouméa", "Wellington", "Managua", "Niamey", "Abuja", "Alofi", "Saipan", "Oslo", "Muscat", "Islamabad", "Koror", "Panama City", "Port Moresby", "Asunción", "Lima", "Manila", "Warsaw", "Lisbon", "San Juan", "Doha", "Seoul", "Chişinău", "Saint-Denis", "Bucharest", "Moscow", "Kigali", "Jamestown", "Basseterre", "Castries", "Saint-Pierre", "Kingstown", "Apia", "San Marino", "São Tomé", "Riyadh", "Dakar", "Belgrade", "Victoria", "Freetown", "Singapore", "Philipsburg", "Bratislava", "Ljubljana", "Honiara", "Mogadishu", "Cape Town", "Juba", "Madrid", "Colombo", "Al-Quds[East Jerusalem]", "Khartoum", "Paramaribo", "Mbabane", "Stockholm", "Bern", "Damascus", "Dushanbe", "Skopje", "Bangkok", "Dili", "Lomé", "Tokelau", "Nuku'alofa", "Port of Spain", "Tunis", "Ankara", "Ashgabat", "Cockburn Town", "Funafuti", "Kampala", "Kiev", "Abu Dhabi", "London", "Dodoma", "'Washington", "Charlotte Amalie", "Montevideo", "Tashkent", "Port Vila", "Caracas", "Hà Noi", "Matu-Utu", "El Aaiún", "Sana'a'", "Lusaka", "Harare" };
+    [Tooltip("Liste des noms de villes disponibles")]
+    private List<string> availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley", 
+        "St. John's", "Buenos Aires", "Yerevan", "Oranjestad", "Canberra", "Vienna", "Baku", "Nassau", "Manama", "Dhaka", 
+        "Bridgetown", "Minsk", "Bruxelles-Brussel", "Belmopan", "Cotonou", "Hamilton", "Thimphu", "La Paz", "Sarajevo", 
+        "Gaborone", "Brasília", "Road Town", "Bandar Seri Begawan", "Sofia", "Ouagadougou", "Bujumbura", "Praia", 
+        "Phnom Penh", "Yaoundé", "Ottawa-Gatineau", "Kralendijk", "George Town", "Bangui", "N'Djaména", "St. Helier", 
+        "St. Peter Port", "Santiago", "Beijing", " Hong Kong SAR'", " Macao SAR'", " Taiwan Province of China'", "Bogotá", 
+        "Moroni", "Brazzaville", "Rarotonga", "San José", "Abidjan", "Zagreb", "Havana", "Willemstad", "Nicosia", "Prague", 
+        "P'yongyang", "Kinshasa", "Copenhagen", "Djibouti", "Roseau", "Santo Domingo", "Quito", "Cairo", "San Salvador", 
+        "Malabo", "Asmara", "Tallinn", "Addis Ababa", "Tórshavn", "Stanley", "Suva", "Helsinki", "Paris", "Cayenne", 
+        "Papeete", "Libreville", "Banjul", "Tbilisi", "Berlin", "Accra", "Gibraltar", "Athens", "Godthåb", "St.George's", 
+        "Basse-Terre", "Hagåtña", "Guatemala City", "Conakry", "Bissau", "Georgetown", "Port-au-Prince", "Vatican City", 
+        "Tegucigalpa", "Budapest", "Reykjavík", "Delhi", "Jakarta", "Tehran", "Baghdad", "Dublin", "Douglas", "Jerusalem", 
+        "Rome", "Kingston", "Tokyo", "Amman", "Astana", "Nairobi", "Tarawa", "Kuwait City", "Bishkek", "Vientiane", "Riga", 
+        "Beirut", "Maseru", "Monrovia", "Tripoli", "Vaduz", "Vilnius", "Luxembourg", "Antananarivo", "Lilongwe", "Kuala Lumpur", 
+        "Male", "Bamako", "Valletta", "Majuro", "Fort-de-France", "Nouakchott", "Port Louis", "Mamoudzou", "Mexico City", "Palikir", 
+        "Monaco", "Ulaanbaatar", "Podgorica", "Brades Estate", "Rabat", "Maputo", "Nay Pyi Taw", "Windhoek", "Nauru", "Kathmandu", 
+        "Amsterdam", "Nouméa", "Wellington", "Managua", "Niamey", "Abuja", "Alofi", "Saipan", "Oslo", "Muscat", "Islamabad", "Koror", 
+        "Panama City", "Port Moresby", "Asunción", "Lima", "Manila", "Warsaw", "Lisbon", "San Juan", "Doha", "Seoul", "Chişinău", 
+        "Saint-Denis", "Bucharest", "Moscow", "Kigali", "Jamestown", "Basseterre", "Castries", "Saint-Pierre", "Kingstown", "Apia", 
+        "San Marino", "São Tomé", "Riyadh", "Dakar", "Belgrade", "Victoria", "Freetown", "Singapore", "Philipsburg", "Bratislava", 
+        "Ljubljana", "Honiara", "Mogadishu", "Cape Town", "Juba", "Madrid", "Colombo", "Al-Quds[East Jerusalem]", "Khartoum", 
+        "Paramaribo", "Mbabane", "Stockholm", "Bern", "Damascus", "Dushanbe", "Skopje", "Bangkok", "Dili", "Lomé", "Tokelau", "Nuku'alofa",
+        "Port of Spain", "Tunis", "Ankara", "Ashgabat", "Cockburn Town", "Funafuti", "Kampala", "Kiev", "Abu Dhabi", "London", "Dodoma", 
+        "'Washington", "Charlotte Amalie", "Montevideo", "Tashkent", "Port Vila", "Caracas", "Hà Noi", "Matu-Utu", "El Aaiún", "Sana'a'", 
+        "Lusaka", "Harare" };
 
     public static CityManager instance;
     private void Awake()
@@ -194,8 +218,7 @@ public class CityManager : MonoBehaviour
         purchaseUnitsScroll.gameObject.SetActive(false);
         productionUnitsScroll.gameObject.SetActive(false);
 
-        // Remonte la ScrollView des bâtiments
-        Canvas.ForceUpdateCanvases(); // important pour forcer le layout avant de modifier la position
+        Canvas.ForceUpdateCanvases();
         purchaseBuildingsScroll.verticalNormalizedPosition = 1f;
         productionBuildingsScroll.verticalNormalizedPosition = 1f;
     }
@@ -211,7 +234,6 @@ public class CityManager : MonoBehaviour
         purchaseUnitsScroll.gameObject.SetActive(!isProductionPanel);
         productionUnitsScroll.gameObject.SetActive(isProductionPanel);
 
-        // Remonte la ScrollView des unités
         Canvas.ForceUpdateCanvases();
         purchaseUnitsScroll.verticalNormalizedPosition = 1f;
         productionUnitsScroll.verticalNormalizedPosition = 1f;
@@ -237,7 +259,7 @@ public class CityManager : MonoBehaviour
 
     public int PopulationFunction(int x)
     {
-        return Mathf.RoundToInt( 0.11f * Mathf.Pow(x, 2f) + 10.2f * x + 2f);
+        return Mathf.RoundToInt( 0.12f * Mathf.Pow(x, 2f) + 11.2f * x + 3f);
     }
 
     public int GetTurnsToProduce(CityProductionItem item, City city)
@@ -250,5 +272,17 @@ public class CityManager : MonoBehaviour
         float net = city.GetCityProduction();
 
         return Mathf.CeilToInt(prodRequired / net);
+    }
+
+    public float GetTotalScienceProduction()
+    {
+        float amount = 0f;
+
+        foreach(City city in cities.Values)
+        {
+            amount += city.GetCityScienceProduction();
+        }
+
+        return amount;
     }
 }

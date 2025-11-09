@@ -10,6 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92af59aa885110a428e51eb90363fa05, type: 3}
-  m_Name: Research
+  m_Name: Celestial Navigation
   m_EditorClassIdentifier: Assembly-CSharp::Research
-  researchName: 
+  icon: {fileID: 21300000, guid: 41d99ed4fb281d147a1c3f02a23173f7, type: 3}
+  researchName: Celestial Navigation
+  description: 
+  scienceCost: 120
+  index: 6
+  depth: 3
+  dependencies:
+  - research: {fileID: 11400000, guid: 8d8fb1bc0d77acc4fbd454c656b6d90a, type: 2}
+    dependencyLineDepth: -1
