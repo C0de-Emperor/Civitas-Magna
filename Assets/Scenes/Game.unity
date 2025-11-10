@@ -3071,7 +3071,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -960, y: 415}
-  m_SizeDelta: {x: 4084.7954, y: 830}
+  m_SizeDelta: {x: 6566.734, y: 830}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &524619486
 GameObject:
@@ -7968,7 +7968,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 331655109}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.2350179
+  m_Size: 0.1461914
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13883,6 +13883,7 @@ MonoBehaviour:
   currentResearch: {fileID: 0}
   currentResearchProgress: 0
   researched: []
+  isMenuOpen: 0
   sciencePanel: {fileID: 250468961}
   scienceButton: {fileID: 1361586002}
   content: {fileID: 501002086}
@@ -13893,24 +13894,50 @@ MonoBehaviour:
   ySpacing: 20
   allResearches:
   - {fileID: 11400000, guid: 38940a1cf46678043a51a40e9435e40f, type: 2}
+  - {fileID: 11400000, guid: 2ffaf81cb99f97c43b0fbbea015f2636, type: 2}
   - {fileID: 11400000, guid: 37fa3f584cdad224c9e76124d0e8781c, type: 2}
+  - {fileID: 11400000, guid: 297207c32170e734898d6ed5ba785668, type: 2}
+  - {fileID: 11400000, guid: 53a1db94de2ce3547abe12fb37082f57, type: 2}
   - {fileID: 11400000, guid: 0f35284d691915a47bc9198c69d216e8, type: 2}
+  - {fileID: 11400000, guid: fff828cfc2229f748bb1cee0260e51c2, type: 2}
+  - {fileID: 11400000, guid: 9428121f065a3e24fad387d755af282b, type: 2}
   - {fileID: 11400000, guid: dc23ec56203f81e42a5daf40a7cce2b4, type: 2}
+  - {fileID: 11400000, guid: 8c8b9760086491a4eb5102d51182e66c, type: 2}
+  - {fileID: 11400000, guid: dad1fca32b8bf3e4d96f98189686d53b, type: 2}
   - {fileID: 11400000, guid: f271b40f53cc07b42bd04c1f6c81bdb3, type: 2}
   - {fileID: 11400000, guid: 05d4625b9023049468cdfeb931a1a94a, type: 2}
+  - {fileID: 11400000, guid: f1cdcf32ca27552428c52b22af592039, type: 2}
+  - {fileID: 11400000, guid: 65daa3297f5120441afadc044736c502, type: 2}
+  - {fileID: 11400000, guid: e971be6f3f1dbb7478a624a8918077ce, type: 2}
   - {fileID: 11400000, guid: 8a6630b92a1746140886ce9820abbe12, type: 2}
+  - {fileID: 11400000, guid: d4f99a6213feb354aa521a9945651d6f, type: 2}
+  - {fileID: 11400000, guid: 1ace661cef0d5b342b1788f71fe43d2a, type: 2}
   - {fileID: 11400000, guid: 0a0e4b59d775d874b8861f03bdf8b61e, type: 2}
+  - {fileID: 11400000, guid: 2ac7f6a8eb06cc341ba5448eb8fd60a6, type: 2}
   - {fileID: 11400000, guid: c8fc603e3a880854f888b91445da4f89, type: 2}
   - {fileID: 11400000, guid: 21288cab2bb7562429410e84f2cfcfea, type: 2}
+  - {fileID: 11400000, guid: 7643436770bcdcb4bb393ea2d43acdcb, type: 2}
   - {fileID: 11400000, guid: 4eb56f9358fc3254ab6a8c77981da999, type: 2}
+  - {fileID: 11400000, guid: 635af91ef8c01074998ec7f1e9fe56f9, type: 2}
   - {fileID: 11400000, guid: 700e269413a2d7e4bb6ba3ff3d9d8eec, type: 2}
+  - {fileID: 11400000, guid: a726e7729b14bb241aefe0961ba03bef, type: 2}
+  - {fileID: 11400000, guid: 1ef165b1d2cee534b9e739cbf2d0037a, type: 2}
+  - {fileID: 11400000, guid: a8c9145df2e03cf40b49d0a87f1305d8, type: 2}
+  - {fileID: 11400000, guid: 1afc45e1300491e47ac5bbeecc659081, type: 2}
   - {fileID: 11400000, guid: 43438f5871a914746806eccfef8dee23, type: 2}
   - {fileID: 11400000, guid: c18a51cf0e6dc8444a9e7a73d037386d, type: 2}
+  - {fileID: 11400000, guid: 728fe8318cfd4b8419ea0dda50ca94da, type: 2}
+  - {fileID: 11400000, guid: eee0b4c5d3acd09459e0bf553629336a, type: 2}
   - {fileID: 11400000, guid: 8d8fb1bc0d77acc4fbd454c656b6d90a, type: 2}
+  - {fileID: 11400000, guid: b13195bcfc23db240adc98571049b4b5, type: 2}
   - {fileID: 11400000, guid: c93e5b7622753384c9af84f463ce49af, type: 2}
+  - {fileID: 11400000, guid: 48517f46893b6494daf7263ca5d584c7, type: 2}
+  - {fileID: 11400000, guid: 94e6e7bdb3dac2849938a987e32c4ee6, type: 2}
+  - {fileID: 11400000, guid: 26d8da46091b20c4d87373917a4b87a0, type: 2}
+  - {fileID: 11400000, guid: 484054444e273004a90e2a3effecfac1, type: 2}
+  - {fileID: 11400000, guid: c18f91881fe00ba45bbc43f9812fe60d, type: 2}
   - {fileID: 11400000, guid: af65086c8c60bb14c94b6e4c114f4c92, type: 2}
   - {fileID: 11400000, guid: d1e47fec33a58114d931cae0d67bb4ea, type: 2}
-  completedResearches: []
 --- !u!1 &2096952961
 GameObject:
   m_ObjectHideFlags: 0

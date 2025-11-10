@@ -15,10 +15,11 @@ MonoBehaviour:
   itemName: Ancestral Hall
   costInProduction: 150
   icon: {fileID: 21300000, guid: c3c5b9f17c7f63e44a3a0766b4f54595, type: 3}
+  requiredReserch: {fileID: 11400000, guid: c8fc603e3a880854f888b91445da4f89, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 2
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 0
-  requierments: []
+  buildingRequierments: []

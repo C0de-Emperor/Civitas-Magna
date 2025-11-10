@@ -78,13 +78,13 @@ public class ResearchManager : MonoBehaviour
         }
 
         // --- Étape 2 : Relier les dépendances ---
-        foreach (var research in allResearches)
+        foreach (Research research in allResearches)
         {
-            foreach (var dep in research.dependencies)
+            foreach (Dependency dep in research.dependencies)
             {
                 if (nodes.ContainsKey(dep.research) && nodes.ContainsKey(research))
                 {
-                    DrawDependencyLine(nodes[dep.research].RectTransform, nodes[research].RectTransform, dep.dependencyLineDepth);
+                    DrawDependencyLine(nodes[dep.research].RectTransform, nodes[research], dep.dependencyLineDepth);
                 }
             }
         }
@@ -98,36 +98,39 @@ public class ResearchManager : MonoBehaviour
         return new Vector2(x, y);
     }
 
-    private void DrawDependencyLine(RectTransform from, RectTransform to, float depLineDepth)
+    private void DrawDependencyLine(RectTransform from, ResearchNodeUI to, float depLineDepth)
     {
         Vector2 start = from.anchoredPosition;
-        Vector2 end = to.anchoredPosition;
+        Vector2 end = to.RectTransform.anchoredPosition;
+        Color color = Color.red;
 
-        if(depLineDepth > 0)
+        if (depLineDepth > 0)
         {
             float x = depLineDepth * (nodeWidth + xSpacing) - (content.sizeDelta.x / 2) + nodeWidth / 2 + 100f;
             float offset = 10f;
 
-            CreateUILine(start, new Vector2(x - offset, start.y));
-            CreateUILine(new Vector2(x - offset, start.y), new Vector2(x + offset, end.y));
-            CreateUILine(new Vector2(x + offset, end.y), end);
+            CreateUILine(start, new Vector2(x - offset, start.y), to);
+            CreateUILine(new Vector2(x - offset, start.y), new Vector2(x + offset, end.y), to);
+            CreateUILine(new Vector2(x + offset, end.y), end, to);
         }
         else
         {
-            CreateUILine(start, end);
+            CreateUILine(start, end, to);
         }
     }
 
-    private void CreateUILine(Vector2 start, Vector2 end)
+    private void CreateUILine(Vector2 start, Vector2 end, ResearchNodeUI parent)
     {
         Image line = Instantiate(linePrefab, lineParent);
-        line.color = Color.white;
+        line.color = new Color(0.5f, 0.45f, 0.4f, 1f);
+
+        parent.images.Add(line);
 
         Vector2 dir = end - start;
         float length = dir.magnitude;
 
         RectTransform rt = line.rectTransform;
-        rt.sizeDelta = new Vector2(length, 3f);
+        rt.sizeDelta = new Vector2(length, 5f);
         rt.anchoredPosition = start + dir / 2;
         rt.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
     }

@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: Renaissance Walls
   costInProduction: 305
   icon: {fileID: 21300000, guid: 7faea66d53eb2944484a00bbd73aedab, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 48517f46893b6494daf7263ca5d584c7, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 0
   bonusProduction: 0
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 110
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: a310f645538750a41b577fd11252539c, type: 2}

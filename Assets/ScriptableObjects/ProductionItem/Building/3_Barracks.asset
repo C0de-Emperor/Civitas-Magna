@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Barracks
   costInProduction: 90
   icon: {fileID: 21300000, guid: 520dd65da06404c42b1d0d983d36a00e, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 0f35284d691915a47bc9198c69d216e8, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 1
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 10
+  buildingRequierments: []

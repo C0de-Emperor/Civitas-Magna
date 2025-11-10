@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: Medieval Walls
   costInProduction: 225
   icon: {fileID: 21300000, guid: 53b0b7996543ddc4389d404dd10b8dcd, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 9428121f065a3e24fad387d755af282b, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 0
   bonusProduction: 0
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 100
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: ea93644cd7dd82648b1072db75a251e7, type: 2}

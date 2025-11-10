@@ -64,7 +64,7 @@ public class BuildButtonManager : MonoBehaviour
             // Condition a l'affichage d'un bouton : recherches / batiments requis
             if (button.item is BuildingProductionItem building)
             {
-                foreach(BuildingProductionItem requirment in building.requierments)
+                foreach(BuildingProductionItem requirment in building.buildingRequierments)
                 {
                     if (!city.builtBuildings.Contains(requirment))
                     {
@@ -72,6 +72,11 @@ public class BuildButtonManager : MonoBehaviour
                         break;
                     }
                 }
+            }
+
+            if (!ResearchManager.instance.researched.Contains(button.item.requiredReserch))
+            {
+                shouldBeVisible = false;
             }
             button.gameObject.SetActive(shouldBeVisible);
 

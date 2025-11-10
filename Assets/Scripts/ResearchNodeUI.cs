@@ -1,5 +1,4 @@
-using System;
-using TreeEditor;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +20,10 @@ public class ResearchNodeUI : MonoBehaviour
     public Sprite discSprite;
     public Sprite knob;
 
+    [HideInInspector] public List<Image> images = new List<Image>();
+
+    public enum State { Researched, InResearch, ToResearch, Blocked }
+    public State state;
 
     public void Init(Research _research)
     {
@@ -38,69 +41,124 @@ public class ResearchNodeUI : MonoBehaviour
     public void UpdateState()
     {
         var manager = ResearchManager.instance;
+        if (manager == null || research == null) return;
 
+        // newState
+        State newState;
         if (manager.researched.Contains(research))
-        {
-            turnText.text = "";
-            background.color = new Color(0.57f, 0.49f, 0.34f, 1f);
-            disc.color = new Color(0.57f, 0.49f, 0.34f, 1f);
-            image.color = Color.white;
-            image.sprite = discSprite;
-
-            slider.gameObject.SetActive(false);
-
-            button.interactable = false;
-        }
+            newState = State.Researched;
         else if (manager.currentResearch == research && AreDependencyResearched(research))
-        {
-            if (CityManager.instance.GetTotalScienceProduction() != 0)
-                turnText.text = Mathf.CeilToInt((research.scienceCost - manager.currentResearchProgress) / CityManager.instance.GetTotalScienceProduction()).ToString();
-            else
-                turnText.text = "_";
-
-            background.color = new Color(0.73f, 0.67f, 0.6f, 1f); 
-            disc.color = new Color(0, 0.5f, 1f, 1f);
-            image.color = Color.white;
-            image.sprite = discSprite;
-
-            slider.gameObject.SetActive(true);
-            slider.value = manager.currentResearchProgress / manager.currentResearch.scienceCost;
-
-            button.interactable = false;
-        }
+            newState = State.InResearch;
         else if (AreDependencyResearched(research))
-        {
-            if (CityManager.instance.GetTotalScienceProduction() != 0)
-                turnText.text = Mathf.CeilToInt(research.scienceCost / CityManager.instance.GetTotalScienceProduction()).ToString();
-            else
-                turnText.text = "-";
-
-            background.color = new Color(0.64f, 0.6f, 0.55f, 1f);
-            disc.color = new Color(0.17f, 0.42f, 0.71f, 1f);
-            image.color = Color.white;
-            image.sprite = discSprite;
-
-            slider.gameObject.SetActive(true);
-            slider.value = 0f;
-
-            button.interactable = true;
-        }
+            newState = State.ToResearch;
         else
+            newState = State.Blocked;
+
+        // MAJ "dynamiques"
+        float totalScience = CityManager.instance != null ? CityManager.instance.GetTotalScienceProduction() : 0f;
+
+        switch (newState)
         {
-            if (CityManager.instance.GetTotalScienceProduction() != 0)
-                turnText.text = Mathf.CeilToInt(research.scienceCost / CityManager.instance.GetTotalScienceProduction()).ToString();
-            else
-                turnText.text = "-";
+            case State.Researched:
+                turnText.text = "";
+                slider.gameObject.SetActive(false);
+                break;
 
-            background.color = new Color(0.36f, 0.35f, 0.34f, 1f); 
-            disc.color = new Color(0.42f, 0.42f, 0.42f, 1f);
-            image.color = new Color(0.42f, 0.42f, 0.42f, 1f);
-            image.sprite = knob;
+            case State.InResearch:
+                if (totalScience > 0f)
+                {
+                    int turns = Mathf.CeilToInt((research.scienceCost - manager.currentResearchProgress) / totalScience);
+                    turnText.text = Mathf.Max(0, turns).ToString();
+                }
+                else
+                {
+                    turnText.text = "_";
+                }
 
-            slider.gameObject.SetActive(false);
-            slider.value = 0f;
+                slider.gameObject.SetActive(true);
+                slider.value = Mathf.Clamp01(manager.currentResearchProgress / Mathf.Max(0.0001f, manager.currentResearch.scienceCost));
+                break;
 
-            button.interactable = false;
+            case State.ToResearch:
+                if (totalScience > 0f)
+                {
+                    int turns = Mathf.CeilToInt(research.scienceCost / totalScience);
+                    turnText.text = Mathf.Max(0, turns).ToString();
+                }
+                else
+                {
+                    turnText.text = "-";
+                }
+
+                slider.gameObject.SetActive(true);
+                slider.value = 0f;
+                break;
+
+            case State.Blocked:
+            default:
+                if (totalScience > 0f)
+                {
+                    int turns = Mathf.CeilToInt(research.scienceCost / totalScience);
+                    turnText.text = Mathf.Max(0, turns).ToString();
+                }
+                else
+                {
+                    turnText.text = "-";
+                }
+
+                slider.gameObject.SetActive(false);
+                slider.value = 0f;
+                break;
+        }
+
+        // appliquer changements "statiques"
+        if (newState != state)
+        {
+            state = newState;
+
+            switch (state)
+            {
+                case State.Researched:
+                    background.color = new Color(0.57f, 0.49f, 0.34f, 1f);
+                    disc.color = new Color(0.57f, 0.49f, 0.34f, 1f);
+                    image.color = Color.white;
+                    image.sprite = discSprite;
+                    button.interactable = false;
+                    foreach (Image im in images)
+                    {
+                        im.color = new Color(0.57f, 0.49f, 0.34f, 1f);
+                        im.transform.SetAsLastSibling();
+                    }
+                    break;
+
+                case State.InResearch:
+                    background.color = new Color(0.73f, 0.67f, 0.6f, 1f);
+                    disc.color = new Color(0, 0.5f, 1f, 1f);
+                    image.color = Color.white;
+                    image.sprite = discSprite;
+                    button.interactable = false;
+                    foreach (Image im in images) im.color = Color.white;
+                    break;
+
+                case State.ToResearch:
+                    background.color = new Color(0.64f, 0.6f, 0.55f, 1f);
+                    disc.color = new Color(0.17f, 0.42f, 0.71f, 1f);
+                    image.color = Color.white;
+                    image.sprite = discSprite;
+                    button.interactable = true;
+                    foreach (Image im in images) im.color = Color.white;
+                    break;
+
+                case State.Blocked:
+                default:
+                    background.color = new Color(0.36f, 0.35f, 0.34f, 1f);
+                    disc.color = new Color(0.42f, 0.42f, 0.42f, 1f);
+                    image.color = new Color(0.42f, 0.42f, 0.42f, 1f);
+                    image.sprite = knob;
+                    button.interactable = false;
+                    foreach (Image im in images) im.color = Color.white * 0.6f;
+                    break;
+            }
         }
     }
 

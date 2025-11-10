@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Hangar
   costInProduction: 465
   icon: {fileID: 21300000, guid: 803962454179c1a40b00131f28cff6e9, type: 3}
+  requiredReserch: {fileID: 11400000, guid: d4f99a6213feb354aa521a9945651d6f, type: 2}
   costInGoldPerTurn: 0.5
   bonusFood: 3
   bonusProduction: 3
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 0
+  buildingRequierments: []

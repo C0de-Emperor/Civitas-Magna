@@ -13,7 +13,7 @@ public class BuildingProductionItem : CityProductionItem
     public int bonusScience;
     public int bonusHealth;
     [Header("Requirements")]
-    public List<BuildingProductionItem> requierments = new List<BuildingProductionItem>();
+    public List<BuildingProductionItem> buildingRequierments = new List<BuildingProductionItem>();
 
     public override void OnProductionComplete(City city)
     {

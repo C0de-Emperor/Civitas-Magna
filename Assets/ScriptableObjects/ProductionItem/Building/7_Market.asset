@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Market
   costInProduction: 120
   icon: {fileID: 21300000, guid: f8457a20ce508c24e845f45a6eacea49, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 05d4625b9023049468cdfeb931a1a94a, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 0
   bonusProduction: 1
   bonusGold: 3
   bonusScience: 0
   bonusHealth: 0
+  buildingRequierments: []

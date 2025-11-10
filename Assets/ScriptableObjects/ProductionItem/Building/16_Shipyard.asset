@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: Shipyard
   costInProduction: 290
   icon: {fileID: 21300000, guid: 5e6104973e0c7b44d8c3067a2ceb06bd, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 635af91ef8c01074998ec7f1e9fe56f9, type: 2}
   costInGoldPerTurn: 1
   bonusFood: 1
   bonusProduction: 2
   bonusGold: 0
   bonusScience: 1
   bonusHealth: 0
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: e8777aed21616e6439e2ebb377efdd3e, type: 2}

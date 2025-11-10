@@ -15,11 +15,13 @@ MonoBehaviour:
   itemName: Armory
   costInProduction: 195
   icon: {fileID: 21300000, guid: 2a298eb833c46854eb58890dcfca5963, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 1ef165b1d2cee534b9e739cbf2d0037a, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 2
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 20
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: c88ea56d12964e441a9bbb0d822b6646, type: 2}
+  - {fileID: 11400000, guid: 40c72efc4e001de4789889fc30aab9ec, type: 2}

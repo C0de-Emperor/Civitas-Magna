@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Water Mill
   costInProduction: 80
   icon: {fileID: 21300000, guid: 40d57629adf6c684ba1b8aad18a1a863, type: 3}
+  requiredReserch: {fileID: 11400000, guid: af65086c8c60bb14c94b6e4c114f4c92, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 2
   bonusProduction: 1
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 0
+  buildingRequierments: []

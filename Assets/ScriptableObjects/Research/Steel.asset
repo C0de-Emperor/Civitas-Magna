@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92af59aa885110a428e51eb90363fa05, type: 3}
+  m_Name: Steel
+  m_EditorClassIdentifier: Assembly-CSharp::Research
+  icon: {fileID: 21300000, guid: 0de72eeecd68fae4a823492e51acd22c, type: 3}
+  researchName: Steel
+  description: 
+  scienceCost: 1140
+  index: 3
+  depth: 11
+  dependencies:
+  - research: {fileID: 11400000, guid: eee0b4c5d3acd09459e0bf553629336a, type: 2}
+    dependencyLineDepth: 10.5
+  - research: {fileID: 11400000, guid: 297207c32170e734898d6ed5ba785668, type: 2}
+    dependencyLineDepth: -1

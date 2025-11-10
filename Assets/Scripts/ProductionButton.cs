@@ -95,6 +95,7 @@ public class ProductionButton : MonoBehaviour
             {
                 image.sprite = unselectedSprite;
                 image.color = builtColor;
+                prodTimeText.text = "-";
                 return;
             }
         }

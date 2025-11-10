@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Lighthouse
   costInProduction: 120
   icon: {fileID: 21300000, guid: 622de91c371a90b4084cb072913dd2f7, type: 3}
+  requiredReserch: {fileID: 11400000, guid: dc23ec56203f81e42a5daf40a7cce2b4, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 2
   bonusProduction: 0
   bonusGold: 1
   bonusScience: 0
   bonusHealth: 0
+  buildingRequierments: []

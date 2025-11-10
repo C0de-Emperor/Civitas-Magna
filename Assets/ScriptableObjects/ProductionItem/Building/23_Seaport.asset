@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: Seaport
   costInProduction: 580
   icon: {fileID: 21300000, guid: 1e14c50ca0f6af4469c001a1ae5192ff, type: 3}
+  requiredReserch: {fileID: 11400000, guid: e971be6f3f1dbb7478a624a8918077ce, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 2
   bonusProduction: 2
   bonusGold: 1
   bonusScience: 0
   bonusHealth: 0
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: 72b14e607c3e66c4cb35e091015f9bce, type: 2}

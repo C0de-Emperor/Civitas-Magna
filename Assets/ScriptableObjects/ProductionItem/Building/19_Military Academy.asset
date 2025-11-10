@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: Military Academy
   costInProduction: 390
   icon: {fileID: 21300000, guid: cfaad3ec9b9c5324a9f79a214b39c0ee, type: 3}
+  requiredReserch: {fileID: 11400000, guid: a8c9145df2e03cf40b49d0a87f1305d8, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 3
   bonusGold: 0
   bonusScience: 1
   bonusHealth: 30
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: 74578e15a6a8f5d4d90574ee44502e02, type: 2}

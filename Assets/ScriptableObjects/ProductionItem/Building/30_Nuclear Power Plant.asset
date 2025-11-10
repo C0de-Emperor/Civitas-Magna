@@ -15,11 +15,13 @@ MonoBehaviour:
   itemName: Nuclear Power Plant
   costInProduction: 600
   icon: {fileID: 21300000, guid: 20049d69dd055554dbb07c81937733ac, type: 3}
+  requiredReserch: {fileID: 0}
   costInGoldPerTurn: 2
   bonusFood: 0
   bonusProduction: 7
   bonusGold: 0
   bonusScience: 5
   bonusHealth: 0
-  requierments:
+  buildingRequierments:
+  - {fileID: 11400000, guid: 1a65e050f58a92f47b909f80bce8bdc7, type: 2}
   - {fileID: 11400000, guid: 12c87b052345cad4f8e836c010d2d97e, type: 2}

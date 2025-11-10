@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Ancient Walls
   costInProduction: 80
   icon: {fileID: 21300000, guid: dbbed498b5a4d374c97c21e9453b4615, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 4eb56f9358fc3254ab6a8c77981da999, type: 2}
   costInGoldPerTurn: 0
   bonusFood: 0
   bonusProduction: 0
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 75
+  buildingRequierments: []

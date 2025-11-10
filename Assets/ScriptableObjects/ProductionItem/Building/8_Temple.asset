@@ -15,11 +15,11 @@ MonoBehaviour:
   itemName: Temple
   costInProduction: 120
   icon: {fileID: 21300000, guid: 8d22f8123130b7b47a5ca6a95dff3f52, type: 3}
+  requiredReserch: {fileID: 11400000, guid: dc23ec56203f81e42a5daf40a7cce2b4, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 2
   bonusProduction: 0
   bonusGold: 0
   bonusScience: 0
   bonusHealth: 0
-  requierments:
-  - {fileID: 11400000, guid: 70235d28a96560140861177b00c4cc6e, type: 2}
+  buildingRequierments: []

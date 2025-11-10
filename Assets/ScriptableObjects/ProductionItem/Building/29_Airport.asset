@@ -15,11 +15,13 @@ MonoBehaviour:
   itemName: Airport
   costInProduction: 600
   icon: {fileID: 21300000, guid: aa0129526ea703b458d41a12afb7212d, type: 3}
+  requiredReserch: {fileID: 0}
   costInGoldPerTurn: 0.75
   bonusFood: 1
   bonusProduction: 5
   bonusGold: 0
   bonusScience: 2
   bonusHealth: 0
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: 64b543690950bbf42a27e3ba20fab60e, type: 2}
+  - {fileID: 11400000, guid: 21e33c490bb57f949bf4d78c2cd269cb, type: 2}

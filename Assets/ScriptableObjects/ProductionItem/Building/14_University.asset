@@ -15,11 +15,12 @@ MonoBehaviour:
   itemName: University
   costInProduction: 250
   icon: {fileID: 21300000, guid: 972bb821cff766e448d4aed23d840c0d, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 65daa3297f5120441afadc044736c502, type: 2}
   costInGoldPerTurn: 0.5
   bonusFood: 0
   bonusProduction: 0
   bonusGold: 0
   bonusScience: 4
   bonusHealth: 0
-  requierments:
+  buildingRequierments:
   - {fileID: 11400000, guid: 052d37d65661b534f8af6b9ff73b9dfc, type: 2}

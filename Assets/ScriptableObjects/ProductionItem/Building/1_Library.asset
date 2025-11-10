@@ -15,9 +15,11 @@ MonoBehaviour:
   itemName: Library
   costInProduction: 90
   icon: {fileID: 21300000, guid: d631ae077ca220047af3eecba595e4b7, type: 3}
+  requiredReserch: {fileID: 11400000, guid: d1e47fec33a58114d931cae0d67bb4ea, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 1
   bonusGold: 0
   bonusScience: 2
   bonusHealth: 0
+  buildingRequierments: []

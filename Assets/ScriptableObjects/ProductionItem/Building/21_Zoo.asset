@@ -15,9 +15,12 @@ MonoBehaviour:
   itemName: Zoo
   costInProduction: 445
   icon: {fileID: 21300000, guid: 1e1c165cf11b619469e41859846cf510, type: 3}
+  requiredReserch: {fileID: 11400000, guid: b13195bcfc23db240adc98571049b4b5, type: 2}
   costInGoldPerTurn: 0.25
   bonusFood: 0
   bonusProduction: 0
   bonusGold: 1
   bonusScience: 3
   bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 78bddcab3076acb45b943a3309503ffe, type: 2}
