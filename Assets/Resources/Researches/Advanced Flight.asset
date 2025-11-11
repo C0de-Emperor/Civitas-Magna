@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92af59aa885110a428e51eb90363fa05, type: 3}
+  m_Name: Advanced Flight
+  m_EditorClassIdentifier: Assembly-CSharp::Research
+  icon: {fileID: 21300000, guid: 8e5a8e229d09da645a87b0be726c5056, type: 3}
+  researchName: Advanced Flight
+  description: 
+  scienceCost: 1410
+  index: 6
+  depth: 13
+  dependencies:
+  - research: {fileID: 11400000, guid: d4f99a6213feb354aa521a9945651d6f, type: 2}
+    dependencyLineDepth: -1
+  - research: {fileID: 11400000, guid: 26d8da46091b20c4d87373917a4b87a0, type: 2}
+    dependencyLineDepth: 11.5
+  unlocks:
+  - icon: {fileID: 21300000, guid: aa0129526ea703b458d41a12afb7212d, type: 3}
+    type: 0

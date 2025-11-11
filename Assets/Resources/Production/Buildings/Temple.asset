@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Temple
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Temple
+  costInProduction: 120
+  icon: {fileID: 21300000, guid: 8d22f8123130b7b47a5ca6a95dff3f52, type: 3}
+  requiredReserch: {fileID: 11400000, guid: dc23ec56203f81e42a5daf40a7cce2b4, type: 2}
+  ID: 8
+  costInGoldPerTurn: 0.25
+  bonusFood: 2
+  bonusProduction: 0
+  bonusGold: 0
+  bonusScience: 0
+  bonusHealth: 0
+  buildingRequierments: []

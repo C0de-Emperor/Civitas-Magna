@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92af59aa885110a428e51eb90363fa05, type: 3}
+  m_Name: Masonry
+  m_EditorClassIdentifier: Assembly-CSharp::Research
+  icon: {fileID: 21300000, guid: 873f5b0309648fb458bf9d40a60cbf6a, type: 3}
+  researchName: Masonry
+  description: 
+  scienceCost: 80
+  index: 2
+  depth: 2
+  dependencies:
+  - research: {fileID: 11400000, guid: 43438f5871a914746806eccfef8dee23, type: 2}
+    dependencyLineDepth: 1.5
+  unlocks:
+  - icon: {fileID: 21300000, guid: dbbed498b5a4d374c97c21e9453b4615, type: 3}
+    type: 0

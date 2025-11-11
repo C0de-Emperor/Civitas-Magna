@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -99,8 +100,7 @@ public class SelectionManager : MonoBehaviour
                 outlinedCell = null;
                 selectedUnit = null;
             }
-                
-
+            
             return;
         }
 
@@ -130,6 +130,11 @@ public class SelectionManager : MonoBehaviour
                 if (selectedUnit != null)
                 {
                     pathPreviewCoordinates = GetPathCoordinates(UnitManager.instance.GetShortestPath(selectedCell, currentCell, selectedUnit.unitType));
+                }
+
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
                 }
 
                 if (Input.GetMouseButtonDown(0))

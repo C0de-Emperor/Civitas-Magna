@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ProductionButton : MonoBehaviour
 {
     [Header("Parameters")]
-    public CityProductionItem item;
+    [HideInInspector] public CityProductionItem item;
 
     [Header("References")]
     [SerializeField] private Button button;
@@ -17,13 +17,15 @@ public class ProductionButton : MonoBehaviour
     [SerializeField] private Image prodIcon;
     [SerializeField] private Transform bonusPanel;
 
-    private void Awake()
+    public void Init(CityProductionItem _item)
     {
-        if (item == null || button == null || image == null || prodNameText == null || prodTimeText == null || prodIcon == null)
+        if (_item == null || button == null || image == null || prodNameText == null || prodTimeText == null || prodIcon == null)
         {
             Debug.LogWarning($"ProductionButton sur {gameObject.name} : référence manquante.");
             return;
         }
+
+        item = _item;
 
         prodIcon.sprite = item.icon;
         prodNameText.text = item.itemName;

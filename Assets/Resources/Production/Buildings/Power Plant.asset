@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Power Plant
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Power Plant
+  costInProduction: 580
+  icon: {fileID: 21300000, guid: 20049d69dd055554dbb07c81937733ac, type: 3}
+  requiredReserch: {fileID: 11400000, guid: e971be6f3f1dbb7478a624a8918077ce, type: 2}
+  ID: 25
+  costInGoldPerTurn: 1.5
+  bonusFood: 0
+  bonusProduction: 7
+  bonusGold: 0
+  bonusScience: 2
+  bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 23f7199283463d444a21650d520ec6f5, type: 2}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,13 +26,14 @@ public class ResearchManager : MonoBehaviour
     private float nodeWidth;
     private float nodeHeight;
 
-    public List<Research> allResearches;
+    [HideInInspector] public Research[] allResearches;
 
     private Dictionary<Research, ResearchNodeUI> nodes = new();
 
     public static ResearchManager instance;
     private void Awake()
     {
+        allResearches = Resources.LoadAll<Research>("Researches");
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de ResearchManager dans la scène");
@@ -54,7 +56,7 @@ public class ResearchManager : MonoBehaviour
         GenerateTree(allResearches);
     }
 
-    public void GenerateTree(List<Research> allResearches)
+    public void GenerateTree(Research[] allResearches)
     {
         // Vide le contenu (sauf les lignes)
         foreach (Transform child in content)

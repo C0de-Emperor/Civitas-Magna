@@ -21,6 +21,9 @@ public class ResearchNodeUI : MonoBehaviour
     public Sprite knob;
     public Sprite p;
 
+    public Transform unlockPrefab;
+    public Transform unlockParent;
+
     [HideInInspector] public List<Image> images = new List<Image>();
 
     public enum State { Researched, InResearch, ToResearch, Blocked }
@@ -37,6 +40,34 @@ public class ResearchNodeUI : MonoBehaviour
         {
             OnButtonClick();
         });
+
+        if(research.unlocks == null)
+        {
+            return;
+        }
+
+        foreach(Unlock unlock in research.unlocks)
+        {
+            RectTransform obj = Instantiate(unlockPrefab, unlockParent).GetComponent<RectTransform>();
+
+            switch (unlock.type)
+            {
+                case Unlock.UnlockType.Building:
+                    obj.GetComponent<Image>().color = new Color(0.6f, 0.44f, 0.1f, 1f);
+                    break;
+
+                case Unlock.UnlockType.Unit:
+                    obj.GetComponent<Image>().color = new Color(0.3f, 0.5f, 0.13f, 1f);
+                    break;
+
+                case Unlock.UnlockType.Amenagement:
+                    obj.GetComponent<Image>().color = new Color(0.21f, 0.23f, 0.3f, 1f);
+                    break;
+            }
+
+            Image icon = obj.transform.Find("Icon").GetComponent<Image>();
+            icon.sprite = unlock.icon;
+        }
     }
 
     public void UpdateState()
@@ -73,7 +104,7 @@ public class ResearchNodeUI : MonoBehaviour
                 }
                 else
                 {
-                    turnText.text = "_";
+                    turnText.text = "--";
                 }
 
                 slider.gameObject.SetActive(true);
@@ -88,7 +119,7 @@ public class ResearchNodeUI : MonoBehaviour
                 }
                 else
                 {
-                    turnText.text = "-";
+                    turnText.text = "--";
                 }
 
                 slider.gameObject.SetActive(true);
@@ -100,11 +131,14 @@ public class ResearchNodeUI : MonoBehaviour
                 if (totalScience > 0f)
                 {
                     int turns = Mathf.CeilToInt(research.scienceCost / totalScience);
-                    turnText.text = Mathf.Max(0, turns).ToString();
+                    if(turns <= 999f)
+                        turnText.text = Mathf.Max(0, turns).ToString();
+                    else
+                        turnText.text = "--";
                 }
                 else
                 {
-                    turnText.text = "-";
+                    turnText.text = "--";
                 }
 
                 slider.gameObject.SetActive(false);
@@ -127,7 +161,9 @@ public class ResearchNodeUI : MonoBehaviour
                     button.interactable = false;
                     foreach (Image im in images)
                     {
-                        im.color = new Color(0.57f, 0.49f, 0.34f, 1f);
+                        RectTransform rt = im.rectTransform;
+                        rt.sizeDelta = new Vector2(rt.sizeDelta.x, 10f);
+                        im.color = new Color(0.28f, 0.23f, 0.18f, 1f);
                         im.sprite = null;
                         im.transform.SetAsLastSibling();
                     }

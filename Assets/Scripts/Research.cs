@@ -15,6 +15,7 @@ public class Research : ScriptableObject
     public int depth;
 
     public Dependency[] dependencies;  
+    public Unlock[] unlocks;  
 }
 
 [Serializable]
@@ -22,4 +23,12 @@ public class Dependency
 {
     public Research research;
     public float dependencyLineDepth;
+}
+
+[Serializable]
+public class Unlock
+{
+    public Sprite icon;
+    public enum UnlockType { Building, Unit, Amenagement }
+    public UnlockType type;
 }

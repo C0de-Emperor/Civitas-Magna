@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Renaissance Walls
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Renaissance Walls
+  costInProduction: 305
+  icon: {fileID: 21300000, guid: 7faea66d53eb2944484a00bbd73aedab, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 48517f46893b6494daf7263ca5d584c7, type: 2}
+  ID: 17
+  costInGoldPerTurn: 0
+  bonusFood: 0
+  bonusProduction: 0
+  bonusGold: 0
+  bonusScience: 0
+  bonusHealth: 110
+  buildingRequierments:
+  - {fileID: 11400000, guid: a310f645538750a41b577fd11252539c, type: 2}

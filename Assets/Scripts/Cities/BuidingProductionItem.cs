@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/ProductionItem/Building")]
 public class BuildingProductionItem : CityProductionItem
 {
+    public int ID = -1;
     [Header("Cost")]
     public float costInGoldPerTurn;
     [Header("Bonuses")]

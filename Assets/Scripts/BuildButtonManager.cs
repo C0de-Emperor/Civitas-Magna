@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +11,7 @@ public class BuildButtonManager : MonoBehaviour
     public RectTransform buildingContentPanel;
     public RectTransform unitContentPanel;
     public Transform bonusPrefab;
+    public Transform buildButtonPrefab;
 
     [Header("Colors")]
     public Color activeColor = new Color(1, 0.8f, 0.8f, 1);
@@ -25,48 +28,103 @@ public class BuildButtonManager : MonoBehaviour
     public Sprite science;
     public Sprite health;
 
-    public static BuildButtonManager instance; 
+    [Header("Data")]
+    private BuildingProductionItem[] allBuildings;
+    private UnitProductionItem[] allUnits;
+
+
+    public static BuildButtonManager instance;
     private void Awake()
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de BuildButtonManager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de BuildButtonManager dans la scène !");
             return;
         }
         instance = this;
 
-        buildingButtons = new ProductionButton[buildingContentPanel.childCount];
-        unitButtons = new ProductionButton[unitContentPanel.childCount];
+        // -- Chargement des données --
+        allBuildings = Resources.LoadAll<BuildingProductionItem>("Production/Buildings");
+        allUnits = Resources.LoadAll<UnitProductionItem>("Production/Units");
 
-        for (int i = 0; i < buildingContentPanel.childCount; i++)
+        // -- Buildings --
+        if (allBuildings == null || allBuildings.Length == 0)
         {
-            buildingButtons[i] = buildingContentPanel.GetChild(i).GetComponent<ProductionButton>();
+            Debug.LogWarning("Aucun BuildingProductionItem trouvé dans 'Resources/Buildings' !");
+            return;
         }
-        for (int i = 0; i < unitContentPanel.childCount; i++)
+
+        Array.Sort(allBuildings, (a, b) => a.ID.CompareTo(b.ID));
+        buildingButtons = new ProductionButton[allBuildings.Length];
+
+        for (int i = 0; i < allBuildings.Length; i++)
         {
-            unitButtons[i] = unitContentPanel.GetChild(i).GetComponent<ProductionButton>();
+            var buttonGO = Instantiate(buildButtonPrefab, buildingContentPanel);
+            var button = buttonGO.GetComponent<ProductionButton>();
+
+            if (button == null)
+            {
+                Debug.LogError($"Le prefab {buildButtonPrefab.name} n’a pas de ProductionButton !");
+                continue;
+            }
+
+            button.item = allBuildings[i];
+            button.Init(allBuildings[i]);
+
+            buildingButtons[i] = button;
+        }
+
+        // -- Units --
+        if (allUnits == null || allUnits.Length == 0)
+        {
+            Debug.LogWarning("Aucun UnitProductionItem trouvé dans 'Resources/Units' !");
+            return;
+        }
+
+        unitButtons = new ProductionButton[allUnits.Length];
+
+        for (int i = 0; i < allUnits.Length; i++)
+        {
+            var buttonGO = Instantiate(buildButtonPrefab, unitContentPanel);
+            var button = buttonGO.GetComponent<ProductionButton>();
+
+            if (button == null)
+            {
+                Debug.LogError($"Le prefab {buildButtonPrefab.name} n’a pas de ProductionButton !");
+                continue;
+            }
+
+            button.item = allUnits[i];
+            button.Init(allUnits[i]);
+
+            unitButtons[i] = button;
         }
     }
 
     public void RefreshUI(bool isBuildingMenu)
     {
-        ProductionButton[] b = isBuildingMenu? buildingButtons : unitButtons;
-        int showedButton = 0;
-
-        City city = CityManager.instance.openedCity;
-        if (city == null || b.Length == 0)
+        ProductionButton[] buttons = isBuildingMenu ? buildingButtons : unitButtons;
+        if (buttons == null || buttons.Length == 0)
             return;
 
-        foreach (ProductionButton button in b)
+        City city = CityManager.instance.openedCity;
+        if (city == null)
+            return;
+
+        int showedButton = 0;
+        float buttonHeight = buttons[0].GetComponent<RectTransform>().rect.height;
+        float spacing = 5f; // même valeur spacing
+
+        foreach (ProductionButton button in buttons)
         {
             bool shouldBeVisible = true;
 
-            // Condition a l'affichage d'un bouton : recherches / batiments requis
+            // --- Conditions d'affichage : bâtiments requis ---
             if (button.item is BuildingProductionItem building)
             {
-                foreach(BuildingProductionItem requirment in building.buildingRequierments)
+                foreach (BuildingProductionItem requirement in building.buildingRequierments)
                 {
-                    if (!city.builtBuildings.Contains(requirment))
+                    if (!city.builtBuildings.Contains(requirement))
                     {
                         shouldBeVisible = false;
                         break;
@@ -74,10 +132,15 @@ public class BuildButtonManager : MonoBehaviour
                 }
             }
 
-            if (!ResearchManager.instance.researched.Contains(button.item.requiredReserch))
+            // --- Condition de recherche requise ---
+            if(button.item.requiredReserch != null)
             {
-                shouldBeVisible = false;
+                if (!ResearchManager.instance.researched.Contains(button.item.requiredReserch))
+                {
+                    shouldBeVisible = false;
+                }
             }
+
             button.gameObject.SetActive(shouldBeVisible);
 
             if (shouldBeVisible)
@@ -85,18 +148,15 @@ public class BuildButtonManager : MonoBehaviour
                 showedButton++;
                 button.UpdateVisual(selectedSprite, activeColor, unselectedSprite, unactiveColor, builtColor);
             }
+        }
 
-            // --- Ajustement de la taille du Content ---
-            if (showedButton > 0)
-            {
-                float buttonHeight = b[0].GetComponent<RectTransform>().rect.height;
-                float spacing = 5f; // ou la même valeur que ton VerticalLayoutGroup spacing
-                float totalHeight = buttonHeight * showedButton + spacing * (showedButton - 1);
+        // --- Ajustement ContentPanel---
+        if (showedButton > 0)
+        {
+            float totalHeight = buttonHeight * showedButton + spacing * (showedButton - 1);
 
-                RectTransform contentRect = (isBuildingMenu? buildingContentPanel : unitContentPanel).GetComponent<RectTransform>();
-                contentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
-            }
+            RectTransform contentRect = (isBuildingMenu ? buildingContentPanel : unitContentPanel);
+            contentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
         }
     }
-
 }
