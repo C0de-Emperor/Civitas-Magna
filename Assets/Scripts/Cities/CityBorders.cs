@@ -86,12 +86,8 @@ public class CityBorders : MonoBehaviour
             newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 2, SelectionManager.instance.showOverlay);
             city.controlledTiles.Add(newTile.offsetCoordinates, newTile);
             CityManager.instance.tileToCity.Add(newTile.offsetCoordinates, city);
-
-            // sorte d'animation
-            // UpdateBorders();
         }
-
-        UpdateBorders();
+        // UpdateBorders();
     }
 
     private int GetWeightedRandom()

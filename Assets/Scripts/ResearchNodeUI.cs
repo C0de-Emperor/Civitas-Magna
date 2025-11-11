@@ -19,6 +19,7 @@ public class ResearchNodeUI : MonoBehaviour
 
     public Sprite discSprite;
     public Sprite knob;
+    public Sprite p;
 
     [HideInInspector] public List<Image> images = new List<Image>();
 
@@ -127,6 +128,7 @@ public class ResearchNodeUI : MonoBehaviour
                     foreach (Image im in images)
                     {
                         im.color = new Color(0.57f, 0.49f, 0.34f, 1f);
+                        im.sprite = null;
                         im.transform.SetAsLastSibling();
                     }
                     break;
@@ -137,7 +139,11 @@ public class ResearchNodeUI : MonoBehaviour
                     image.color = Color.white;
                     image.sprite = discSprite;
                     button.interactable = false;
-                    foreach (Image im in images) im.color = Color.white;
+                    foreach (Image im in images) 
+                    { 
+                        im.color = Color.white;
+                        im.sprite = null;
+                    }
                     break;
 
                 case State.ToResearch:
@@ -146,7 +152,11 @@ public class ResearchNodeUI : MonoBehaviour
                     image.color = Color.white;
                     image.sprite = discSprite;
                     button.interactable = true;
-                    foreach (Image im in images) im.color = Color.white;
+                    foreach (Image im in images)
+                    {
+                        im.color = Color.white;
+                        im.sprite = null;
+                    }
                     break;
 
                 case State.Blocked:
@@ -156,7 +166,11 @@ public class ResearchNodeUI : MonoBehaviour
                     image.color = new Color(0.42f, 0.42f, 0.42f, 1f);
                     image.sprite = knob;
                     button.interactable = false;
-                    foreach (Image im in images) im.color = Color.white * 0.6f;
+                    foreach (Image im in images) 
+                    {
+                        im.color = new Color(0.37f, 0.33f, 0.27f, 1f);
+                        im.sprite = p;
+                    }
                     break;
             }
         }

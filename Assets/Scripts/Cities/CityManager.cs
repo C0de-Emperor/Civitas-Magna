@@ -82,6 +82,11 @@ public class CityManager : MonoBehaviour
         cityPanel.gameObject.SetActive(false);
     }
 
+    private void Start()
+    {
+        TurnManager.instance.OnTurnChange += ProcessQueuedExpansions;
+    }
+
     public void CreateCity(HexCell cell)
     {
         if (cell == null 
@@ -284,5 +289,30 @@ public class CityManager : MonoBehaviour
         }
 
         return amount;
+    }
+
+    private List<City> pendingExpansions = new List<City>();
+
+    public void QueueCityExpansion(City city)
+    {
+        if (!pendingExpansions.Contains(city))
+            pendingExpansions.Add(city);
+    }
+
+    private void ProcessQueuedExpansions()
+    {
+        // Étendre toutes les villes
+        foreach (var city in pendingExpansions)
+        {
+            city.borders.ExpandCity();
+        }
+
+        // Maj des frontières
+        foreach (var city in cities.Values)
+        {
+            city.borders.UpdateBorders();
+        }
+
+        pendingExpansions.Clear();
     }
 }

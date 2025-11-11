@@ -42,13 +42,12 @@ public class City : MonoBehaviour
 
     private void Awake()
     {
-        damage = 0f;
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
+        damage = 0f;
         TurnManager.instance.OnTurnChange += AddTurnProduction;
         TurnManager.instance.OnTurnChange += AddTurnGoldProdution;
         TurnManager.instance.OnTurnChange += AddTurnScienceProdution;
         TurnManager.instance.OnTurnChange += UpdateBanner;
-
         TurnManager.instance.OnTurnChange += RegenerateFactors;
     }
 
@@ -152,7 +151,8 @@ public class City : MonoBehaviour
             {
                 foodStock -= CityManager.instance.PopulationFunction(population);
                 population++;
-                borders.ExpandCity();
+                //borders.ExpandCity();
+                CityManager.instance.QueueCityExpansion(this);
             }
         }
         else if (net < 0)
