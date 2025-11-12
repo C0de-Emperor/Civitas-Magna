@@ -14,7 +14,7 @@ public class City : MonoBehaviour
     public Player master;
 
     [Header("Base Production Point")]
-    private float baseFood = 2f;
+    private float baseFood = 1f;
     private float baseProduction = 1f;
     private float baseGold = 0f;
     private float baseScience = 0f;
