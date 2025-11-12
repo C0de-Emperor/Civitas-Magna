@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Fission Power Plant
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Fission Power Plant
+  costInProduction: 600
+  icon: {fileID: 21300000, guid: 20049d69dd055554dbb07c81937733ac, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 286b777737407f543bbb8a3473de303d, type: 2}
+  ID: 34
+  costInGoldPerTurn: 2
+  bonusFood: 0
+  bonusProduction: 7
+  bonusGold: 0
+  bonusScience: 5
+  bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 1a65e050f58a92f47b909f80bce8bdc7, type: 2}
+  - {fileID: 11400000, guid: d8bd7af8c2725b9469fa8d085b872938, type: 2}

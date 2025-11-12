@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Broadcast Center
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Broadcast Center
+  costInProduction: 620
+  icon: {fileID: 21300000, guid: 9fc533e68bb6e204fa2eb68cdb9a18cf, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 327ed8e7843d9aa4e8508aa7bae45983, type: 2}
+  ID: 32
+  costInGoldPerTurn: 1
+  bonusFood: 0
+  bonusProduction: 3
+  bonusGold: 0
+  bonusScience: 4
+  bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 7fdade1baf79cc24a81eed120be65888, type: 2}

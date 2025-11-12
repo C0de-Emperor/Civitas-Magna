@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Fusion Power Plant
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Fusion Power Plant
+  costInProduction: 720
+  icon: {fileID: 21300000, guid: 8195c390bf09f70439ac7601d3fd28dc, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 955e7ec15143e414384ab5bbb7aa5b3f, type: 2}
+  ID: 37
+  costInGoldPerTurn: 2
+  bonusFood: 0
+  bonusProduction: 6
+  bonusGold: 0
+  bonusScience: 5
+  bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 491953d5ac9040f48bb46c6638c61c60, type: 2}
+  - {fileID: 11400000, guid: 1a65e050f58a92f47b909f80bce8bdc7, type: 2}

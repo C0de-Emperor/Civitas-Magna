@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1cb3881f829004889fb076efbb0668, type: 3}
+  m_Name: Coal Power Plant
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingProductionItem
+  itemName: Coal Power Plant
+  costInProduction: 300
+  icon: {fileID: 21300000, guid: 98155c7989783b04ebb2455d22a5b257, type: 3}
+  requiredReserch: {fileID: 11400000, guid: 26d8da46091b20c4d87373917a4b87a0, type: 2}
+  ID: 20
+  costInGoldPerTurn: 0.5
+  bonusFood: 0
+  bonusProduction: 4
+  bonusGold: 0
+  bonusScience: 1
+  bonusHealth: 0
+  buildingRequierments:
+  - {fileID: 11400000, guid: 23f7199283463d444a21650d520ec6f5, type: 2}

@@ -24,4 +24,4 @@ MonoBehaviour:
   bonusScience: 2
   bonusHealth: 0
   buildingRequierments:
-  - {fileID: 11400000, guid: 23f7199283463d444a21650d520ec6f5, type: 2}
+  - {fileID: 11400000, guid: 425fa727e1dcb18428c9882c7d8b7b29, type: 2}

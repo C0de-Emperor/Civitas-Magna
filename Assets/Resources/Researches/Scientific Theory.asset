@@ -24,3 +24,5 @@ MonoBehaviour:
   unlocks:
   - icon: {fileID: 21300000, guid: 1e1c165cf11b619469e41859846cf510, type: 3}
     type: 0
+  - icon: {fileID: 21300000, guid: f1570f314b8f2434ba87a41967856eb1, type: 3}
+    type: 0

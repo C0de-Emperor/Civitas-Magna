@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Shoping Mall
   costInProduction: 580
   icon: {fileID: 21300000, guid: 61113d6d289ab5e48991efe5e625c94e, type: 3}
-  requiredReserch: {fileID: 11400000, guid: 4a8301874cc0e8041ad341507e63b7af, type: 2}
+  requiredReserch: {fileID: 11400000, guid: fea67a6e67ecd164c877cd83f3c61c29, type: 2}
   ID: 29
   costInGoldPerTurn: 0
   bonusFood: 1
