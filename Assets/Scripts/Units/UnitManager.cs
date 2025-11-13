@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -605,7 +605,7 @@ public class UnitManager : MonoBehaviour
             unitsData[i] = new UnitData
             {
                 id = unit.id,
-                position = unit.unitTransform,
+                position = unit.unitTransform.position,
                 unitType = unit.unitType,
                 master = unit.master,
                 unitName = unit.unitName,
@@ -682,7 +682,7 @@ public class Unit
 
         this.movesDone = 0;
         this.lastDamagingTurn = -1;
-        this.unitName = UnitManager.instance.NAMES_LIST[Random.Range(0, UnitManager.instance.NAMES_LIST.Length - 1)];
+        this.unitName = UnitManager.instance.NAMES_LIST[UnityEngine.Random.Range(0, UnitManager.instance.NAMES_LIST.Length - 1)];
 
         unitPin.InitializePin(this.unitType.unitIcon, this.master.livery);
         unitPin.worldTarget = this.unitTransform;
@@ -740,6 +740,7 @@ public class Unit
 }
 
 // struct pour enregistrer les éléments du mouvement d'une unité
+[Serializable]
 public struct queuedMovementData
 {
     public int unitToAttackId;

@@ -192,7 +192,7 @@ public class CityData
 public class UnitData
 {
     public int id;
-    public Transform position;
+    public Vector3 position;
     public UnitType unitType;
     public Player master;
     public string unitName;
