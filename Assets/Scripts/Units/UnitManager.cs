@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -594,6 +594,37 @@ public class UnitManager : MonoBehaviour
         return true;
     }
 
+    public UnitData[] GetAllUnitData()
+    {
+        UnitData[] unitsData = new UnitData[units.Count];
+
+        int i = 0;
+
+        foreach (Unit unit in units.Values)
+        {
+            unitsData[i] = new UnitData
+            {
+                id = unit.id,
+                position = unit.unitTransform,
+                unitType = unit.unitType,
+                master = unit.master,
+                unitName = unit.unitName,
+
+                currentHealth = unit.currentHealth,
+
+                movesDone = unit.movesDone,
+                lastDamagingTurn = unit.lastDamagingTurn,
+
+                queuedMovementData = queuedUnitMovements.TryGetValue(unit.id, out var moveData)
+                    ? moveData
+                    : new queuedMovementData()
+            };
+            i++;
+        }
+
+        return unitsData;
+    }
+
     // classe utile pour stocker les données de chaque case dans le cadre de l'algorithme A*
     private class CellData
     {
@@ -633,7 +664,7 @@ public class Unit
 
     private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
     private CivilianUnitType civilianUnitType; // type de l'unité spécial civil
-    private float currentHealth; // vie actuelle de l'unité
+    public float currentHealth { get; private set; } // vie actuelle de l'unité
 
     public float movesDone; // le nombre de déplacements effectués ce tour
     public int lastDamagingTurn { get; private set; } // le dernier où l'unité a subi des dégats

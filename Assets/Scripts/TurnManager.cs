@@ -18,7 +18,7 @@ public class TurnManager : MonoBehaviour
         }
         instance = this;
 
-        OnTurnChange += O;
+        OnTurnChange += Log;
     }
 
     public void ChangeTurn()
@@ -28,7 +28,7 @@ public class TurnManager : MonoBehaviour
         OnTurnChange?.Invoke();
     }
 
-    private void O()
+    private void Log()
     {
         Debug.Log("Turn is now : " + currentTurn.ToString());
     }

@@ -26,7 +26,7 @@ public class City : Building
 
     [Header("Health")]
     public float damage = 0;
-    private float maxHealth = 200f;
+    public float baseHealth = 200f;
 
     [Header("Production")]
     public CityProductionItem currentProduction;
@@ -35,7 +35,7 @@ public class City : Building
 
     public float cityFactor = 1;
 
-    [HideInInspector] public Dictionary<Vector2, HexCell> controlledTiles = new Dictionary<Vector2, HexCell>();
+    [HideInInspector] public Dictionary<Vector2Int, HexCell> controlledTiles = new Dictionary<Vector2Int, HexCell>();
     [HideInInspector] public CityBorders borders;
     [HideInInspector] public CityBannerUI bannerUI;
 
@@ -43,7 +43,7 @@ public class City : Building
 
     private void Awake()
     {
-        buildingName = Building.BuildingNames.City;
+        //buildingName = Building.BuildingNames.City;
 
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         damage = 0f;
@@ -65,8 +65,6 @@ public class City : Building
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // tile bonus
-            amount += cell.food;
             // base amount
             amount += cell.terrainType.food;
         }
@@ -85,8 +83,6 @@ public class City : Building
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // tile bonus
-            amount += cell.production;
             // base amount
             amount += cell.terrainType.production;
         }
@@ -125,7 +121,7 @@ public class City : Building
 
     public float GetCityMaxHealth()
     {
-        float amount = maxHealth;
+        float amount = baseHealth;
 
         foreach (BuildingProductionItem building in builtBuildings)
         {
@@ -196,8 +192,6 @@ public class City : Building
 
     public void UpdateBanner()
     {
-        damage += 1;
-
         int turns = GetTurnsToNextPopulation();
         if(currentProduction != null)
             bannerUI.UpdateInfo(
@@ -277,10 +271,10 @@ public class City : Building
     {
         damage += unit.GetUnitMilitaryData().AttackPower;
 
-        if (damage >= maxHealth)
+        if (damage >= GetCityMaxHealth())
         {
             master = unit.master;
-            damage = Mathf.Round(maxHealth/2);
+            damage = Mathf.Round(GetCityMaxHealth()/2);
             cityFactor -= RUINED_CITY_FACTOR_REDUCTION;
         }
     }

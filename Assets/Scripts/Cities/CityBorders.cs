@@ -39,7 +39,7 @@ public class CityBorders : MonoBehaviour
                 if (cell.neighbours != null && i < 6)
                     neighbor = cell.neighbours[i];
 
-                Vector2 neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2(-1, -1);
+                Vector2Int neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2Int(-1, -1);
 
                 if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !CityManager.instance.IsToACity(neighbor))
                 {

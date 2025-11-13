@@ -140,7 +140,7 @@ public class MapGenerator : MonoBehaviour
                     for (int x = 0; x < width; x++)
                     {
                         HexCell cell = new HexCell();
-                        cell.SetCoordinates(new Vector2(x, y), hexGrid.orientation);
+                        cell.SetCoordinates(new Vector2Int(x, y), hexGrid.orientation);
                         float c = continentNoise[x, y];
                         float d = ressourcesNoise[x, y];
 

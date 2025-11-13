@@ -17,7 +17,7 @@ public class HexCell
 
 
     [Header("Positions")]
-    [field:SerializeField] public Vector2 offsetCoordinates {  get; set; }
+    [field:SerializeField] public Vector2Int offsetCoordinates {  get; set; }
     [field:SerializeField] public Vector3 cubeCoordinates {  get; private set; }
     [field:SerializeField] public Vector2 axialCoordinates {  get; private set; }
 
@@ -40,12 +40,7 @@ public class HexCell
     [field: SerializeField] public bool isActive { get; set; }
     [field: SerializeField] public Building.BuildingNames buildingName;
 
-
-    [Header("Ressources Bonuses")]
-    [field: SerializeField] public int food { get; set; }
-    [field: SerializeField] public int production { get; set; }
-
-    public void SetCoordinates(Vector2 _offsetCoordinates, HexOrientation orientation)
+    public void SetCoordinates(Vector2Int _offsetCoordinates, HexOrientation orientation)
     {
         this.orientation = orientation;
         offsetCoordinates = _offsetCoordinates;
@@ -74,6 +69,7 @@ public class HexCell
 
         isRevealed = false;
         isActive = true;
+        buildingName = Building.BuildingNames.None;
 
         InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }
@@ -260,13 +256,13 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null && !(buildingName == Building.BuildingNames.City))
+        if (ressource != null && buildingName != Building.BuildingNames.City)
             ressource.gameObject.SetActive(false);
 
         if (ressource != null && buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().HideForOverlay();
 
-        tileOverlay.Init(food + terrainType.food, production + terrainType.production);
+        tileOverlay.Init(terrainType.food, terrainType.production);
         tileOverlay.gameObject.SetActive(true);
     }
 

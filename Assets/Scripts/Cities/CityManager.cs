@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,7 +44,7 @@ public class CityManager : MonoBehaviour
     [SerializeField] public Dictionary<Vector2, City> tileToCity = new Dictionary<Vector2, City>();
 
     [Tooltip("Liste des noms de villes disponibles")]
-    private List<string> availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley", 
+    [HideInInspector] public List<string> availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley", 
         "St. John's", "Buenos Aires", "Yerevan", "Oranjestad", "Canberra", "Vienna", "Baku", "Nassau", "Manama", "Dhaka", 
         "Bridgetown", "Minsk", "Bruxelles-Brussel", "Belmopan", "Cotonou", "Hamilton", "Thimphu", "La Paz", "Sarajevo", 
         "Gaborone", "Brasília", "Road Town", "Bandar Seri Begawan", "Sofia", "Ouagadougou", "Bujumbura", "Praia", 
@@ -99,7 +100,6 @@ public class CityManager : MonoBehaviour
         {
             return;
         }
-            
 
         Transform obj = cell.InstantiateRessource(cityPrefab);
 
@@ -315,5 +315,40 @@ public class CityManager : MonoBehaviour
         }
 
         pendingExpansions.Clear();
+    }
+
+    public CityData[] GetAllCityData()
+    {
+        CityData[] citiesData = new CityData[cities.Count];
+
+        int i = 0;
+
+        foreach (City city in cities.Values)
+        {
+            citiesData[i] = new CityData
+            {
+                cityName = city.cityName,
+                master = city.master,
+
+                offsetCoordinates = city.occupiedCell.offsetCoordinates,
+
+                population = city.population,
+                foodStock = city.foodStock,
+
+                damage = city.damage,
+                baseHealth = city.baseHealth,
+
+
+                currentProduction = city.currentProduction,
+                currentProductionProgress = city.currentProductionProgress,
+                builtBuildings = city.builtBuildings.ToArray(),
+                cityFactor = city.cityFactor,
+
+                controlledTilesOffsetsCoordinates = city.controlledTiles.Keys.ToArray()
+            };
+            i++;
+        }
+
+        return citiesData;
     }
 }

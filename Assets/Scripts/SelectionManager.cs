@@ -9,7 +9,7 @@ public class SelectionManager : MonoBehaviour
 
 
     [Header("References")]
-    [SerializeField] private HexGrid grid;
+    public HexGrid grid;
     [SerializeField] private GameObject selectionOutline;
     [SerializeField] private GameObject innerSelectionOutline;
     [SerializeField] private GameObject pathPreviewLine;

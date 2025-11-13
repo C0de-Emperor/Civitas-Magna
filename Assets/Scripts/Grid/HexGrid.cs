@@ -12,6 +12,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int height { get; private set; }
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
+
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
     [field: SerializeField] public Transform tileContainer { get; private set; }
@@ -265,6 +266,30 @@ public class HexGrid : MonoBehaviour
         {
             cell.HideOverlay();
         }
+    }
+
+    public HexCellData[] GetAllCellData()
+    {
+        HexCellData[] cellsData = new HexCellData[cells.Count];
+
+        int i = 0;
+
+        foreach (HexCell cell in cells.Values)
+        {
+            cellsData[i] = new HexCellData
+            {
+                terrainType = cell.terrainType,
+                terrainHigh = cell.terrainHigh,
+                offsetCoordinates = cell.offsetCoordinates,
+
+                isRevealed = cell.isRevealed,
+                isActive = cell.isActive,
+                buildingName = cell.buildingName
+            };
+            i++;
+        }
+
+        return cellsData;
     }
 }
 

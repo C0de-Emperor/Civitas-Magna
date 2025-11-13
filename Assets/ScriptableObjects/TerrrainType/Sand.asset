@@ -17,7 +17,7 @@ MonoBehaviour:
   <prefab>k__BackingField: {fileID: -8679921383154817045, guid: 7114684f71ee1954a906a5add162e617, type: 3}
   <prop>k__BackingField: {fileID: 0}
   <terrainCost>k__BackingField: 1
-  <traversable>k__BackingField: 1
-  <build>k__BackingField: 00000000
+  <isWater>k__BackingField: 0
+  <build>k__BackingField: 01000000
   food: 1
   production: 0

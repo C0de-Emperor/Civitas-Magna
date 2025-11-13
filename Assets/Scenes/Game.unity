@@ -3113,7 +3113,7 @@ MonoBehaviour:
   <width>k__BackingField: 20
   <height>k__BackingField: 20
   <hexSize>k__BackingField: 1
-  <batchSize>k__BackingField: 200
+  <batchSize>k__BackingField: 500
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
   <undiscoveredTileHigh>k__BackingField: 1
   <tileContainer>k__BackingField: {fileID: 1327948545}
@@ -3409,8 +3409,6 @@ MonoBehaviour:
     <isRevealed>k__BackingField: 0
     <isActive>k__BackingField: 0
     buildingName: 0
-    <food>k__BackingField: 0
-    <production>k__BackingField: 0
   pathPreviewContainer: {fileID: 1476485973}
   queuedPathPreviewContainer: {fileID: 1435981671}
   pathPreviewCoordinates: []
@@ -4471,6 +4469,241 @@ MonoBehaviour:
   purchaseUnitsScroll: {fileID: 1790163457}
   gameUICanvas: {fileID: 425153386}
   cityBannerPrefab: {fileID: 29318512801802164, guid: fe1bb1d996db6ab498f582fae774dd1d, type: 3}
+  availableNames:
+  - Kabul
+  - Tirana
+  - Algiers
+  - Pago Pago
+  - Andorra la Vella
+  - Luanda
+  - The Valley
+  - St. John's
+  - Buenos Aires
+  - Yerevan
+  - Oranjestad
+  - Canberra
+  - Vienna
+  - Baku
+  - Nassau
+  - Manama
+  - Dhaka
+  - Bridgetown
+  - Minsk
+  - Bruxelles-Brussel
+  - Belmopan
+  - Cotonou
+  - Hamilton
+  - Thimphu
+  - La Paz
+  - Sarajevo
+  - Gaborone
+  - "Bras\xEDlia"
+  - Road Town
+  - Bandar Seri Begawan
+  - Sofia
+  - Ouagadougou
+  - Bujumbura
+  - Praia
+  - Phnom Penh
+  - "Yaound\xE9"
+  - Ottawa-Gatineau
+  - Kralendijk
+  - George Town
+  - Bangui
+  - "N'Djam\xE9na"
+  - St. Helier
+  - St. Peter Port
+  - Santiago
+  - Beijing
+  - ' Hong Kong SAR'''
+  - ' Macao SAR'''
+  - ' Taiwan Province of China'''
+  - "Bogot\xE1"
+  - Moroni
+  - Brazzaville
+  - Rarotonga
+  - "San Jos\xE9"
+  - Abidjan
+  - Zagreb
+  - Havana
+  - Willemstad
+  - Nicosia
+  - Prague
+  - P'yongyang
+  - Kinshasa
+  - Copenhagen
+  - Djibouti
+  - Roseau
+  - Santo Domingo
+  - Quito
+  - Cairo
+  - San Salvador
+  - Malabo
+  - Asmara
+  - Tallinn
+  - Addis Ababa
+  - "T\xF3rshavn"
+  - Stanley
+  - Suva
+  - Helsinki
+  - Paris
+  - Cayenne
+  - Papeete
+  - Libreville
+  - Banjul
+  - Tbilisi
+  - Berlin
+  - Accra
+  - Gibraltar
+  - Athens
+  - "Godth\xE5b"
+  - St.George's
+  - Basse-Terre
+  - "Hag\xE5t\xF1a"
+  - Guatemala City
+  - Conakry
+  - Bissau
+  - Georgetown
+  - Port-au-Prince
+  - Vatican City
+  - Tegucigalpa
+  - Budapest
+  - "Reykjav\xEDk"
+  - Delhi
+  - Jakarta
+  - Tehran
+  - Baghdad
+  - Dublin
+  - Douglas
+  - Jerusalem
+  - Rome
+  - Kingston
+  - Tokyo
+  - Amman
+  - Astana
+  - Nairobi
+  - Tarawa
+  - Kuwait City
+  - Bishkek
+  - Vientiane
+  - Riga
+  - Beirut
+  - Maseru
+  - Monrovia
+  - Tripoli
+  - Vaduz
+  - Vilnius
+  - Luxembourg
+  - Antananarivo
+  - Lilongwe
+  - Kuala Lumpur
+  - Male
+  - Bamako
+  - Valletta
+  - Majuro
+  - Fort-de-France
+  - Nouakchott
+  - Port Louis
+  - Mamoudzou
+  - Mexico City
+  - Palikir
+  - Monaco
+  - Ulaanbaatar
+  - Podgorica
+  - Brades Estate
+  - Rabat
+  - Maputo
+  - Nay Pyi Taw
+  - Windhoek
+  - Nauru
+  - Kathmandu
+  - Amsterdam
+  - "Noum\xE9a"
+  - Wellington
+  - Managua
+  - Niamey
+  - Abuja
+  - Alofi
+  - Saipan
+  - Oslo
+  - Muscat
+  - Islamabad
+  - Koror
+  - Panama City
+  - Port Moresby
+  - "Asunci\xF3n"
+  - Lima
+  - Manila
+  - Warsaw
+  - Lisbon
+  - San Juan
+  - Doha
+  - Seoul
+  - "Chi\u015Fin\u0103u"
+  - Saint-Denis
+  - Bucharest
+  - Moscow
+  - Kigali
+  - Jamestown
+  - Basseterre
+  - Castries
+  - Saint-Pierre
+  - Kingstown
+  - Apia
+  - San Marino
+  - "S\xE3o Tom\xE9"
+  - Riyadh
+  - Dakar
+  - Belgrade
+  - Victoria
+  - Freetown
+  - Singapore
+  - Philipsburg
+  - Bratislava
+  - Ljubljana
+  - Honiara
+  - Mogadishu
+  - Cape Town
+  - Juba
+  - Madrid
+  - Colombo
+  - 'Al-Quds[East Jerusalem]'
+  - Khartoum
+  - Paramaribo
+  - Mbabane
+  - Stockholm
+  - Bern
+  - Damascus
+  - Dushanbe
+  - Skopje
+  - Bangkok
+  - Dili
+  - "Lom\xE9"
+  - Tokelau
+  - Nuku'alofa
+  - Port of Spain
+  - Tunis
+  - Ankara
+  - Ashgabat
+  - Cockburn Town
+  - Funafuti
+  - Kampala
+  - Kiev
+  - Abu Dhabi
+  - London
+  - Dodoma
+  - '''Washington'
+  - Charlotte Amalie
+  - Montevideo
+  - Tashkent
+  - Port Vila
+  - Caracas
+  - "H\xE0 Noi"
+  - Matu-Utu
+  - "El Aai\xFAn"
+  - Sana'a'
+  - Lusaka
+  - Harare
 --- !u!114 &968964938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6053,6 +6286,52 @@ MonoBehaviour:
     - {r: 0.20581576, g: 0.7132075, b: 0.090160176, a: 1}
   goldStockText: {fileID: 216989702}
   goldStock: 0
+--- !u!1 &1238306614
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1238306616}
+  - component: {fileID: 1238306615}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1238306615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238306614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43c7cd6020d5104a91fa86b1b7799dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  canSave: 1
+  isWorking: 0
+--- !u!4 &1238306616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238306614}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1246912215
 GameObject:
   m_ObjectHideFlags: 0
@@ -9776,3 +10055,4 @@ SceneRoots:
   - {fileID: 753925496}
   - {fileID: 309054250}
   - {fileID: 1158680267}
+  - {fileID: 1238306616}
