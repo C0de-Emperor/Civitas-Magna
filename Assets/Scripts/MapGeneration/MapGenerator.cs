@@ -164,7 +164,7 @@ public class MapGenerator : MonoBehaviour
                         cells.Add(cell);
                     }
                 }
-                hexGrid.SetHexCells(cells);
+                StartCoroutine(hexGrid.SetHexCells(cells));
             });
         };
 

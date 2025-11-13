@@ -1,9 +1,9 @@
-// HexGrid.cs
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
 {
@@ -31,6 +31,11 @@ public class HexGrid : MonoBehaviour
     public readonly uint defaultLayer = 1;
     public readonly uint unactiveLayer = 2;
 
+    public Slider progressBar;
+    public Text loading;
+
+    private int generationProgress;
+
     private void Awake()
     {
         raycastTarget.gameObject.SetActive(true);
@@ -39,8 +44,8 @@ public class HexGrid : MonoBehaviour
 
         gridOrigin = transform.position;
 
-        OnCellInstancesGenerated += AssignNeighbours;
-        OnCellInstancesGenerated += SetTileOverlays;
+        OnCellInstancesGenerated += () => StartCoroutine(AssignNeighbours());
+        OnCellInstancesGenerated += () => StartCoroutine(SetTileOverlays());
     }
 
     private void Start()
@@ -48,13 +53,22 @@ public class HexGrid : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateActiveTiles;
     }
 
-    public void SetHexCells(List<HexCell> newCells)
+    public IEnumerator SetHexCells(List<HexCell> newCells)
     {
+        generationProgress = 0;
+        progressBar.gameObject.SetActive(true);
+        progressBar.maxValue = width * height * 4;
+        loading.gameObject.SetActive(true);
         cells.Clear();
 
         foreach (var cell in newCells)
         {
             cells[cell.offsetCoordinates] = cell;
+            generationProgress++;
+            progressBar.value = generationProgress;
+
+            if (generationProgress % 200 == 0)
+                yield return null;
         }
 
         StartCoroutine(InstantiateCells());
@@ -75,14 +89,15 @@ public class HexGrid : MonoBehaviour
                 OnCellBatchGenerated?.Invoke((float)batchCount / totalBatches);
                 yield return null;
             }
-
+            generationProgress++;
+            progressBar.value = generationProgress;
             batchCount++;
         }
 
         OnCellInstancesGenerated?.Invoke();
     }
 
-    public void AssignNeighbours()
+    public IEnumerator AssignNeighbours()
     {
         foreach (var cell in cells.Values)
         {
@@ -119,9 +134,18 @@ public class HexGrid : MonoBehaviour
             }
 
             cell.SetNeighbours(neighbours);
+            generationProgress++;
+            progressBar.value = generationProgress;
+
+            // Donne une frame à Unity pour rafraîchir l’UI
+            if (generationProgress % 200 == 0)
+                yield return null;
         }
 
-        Debug.Log($"Neighbours assigned for {cells.Count} cells.");
+        progressBar.gameObject.SetActive(false);
+        loading.gameObject.SetActive(false);
+
+        UnityEngine.Debug.Log($"Neighbours assigned for {cells.Count} cells.");
 
         MapGenerator.instance.isMapReady = true;
     }
@@ -236,7 +260,7 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    public void SetTileOverlays()
+    public IEnumerator SetTileOverlays()
     {
         foreach (HexCell cell in cells.Values)
         {
@@ -248,6 +272,12 @@ public class HexGrid : MonoBehaviour
             overlay.transform.rotation = Quaternion.Euler(90f, 0f, 0f); // face vers le haut, par ex.
 
             cell.SetupOverlay(overlay);
+            generationProgress++;
+            progressBar.value = generationProgress;
+
+            // Donne une frame à Unity pour rafraîchir l’UI
+            if (generationProgress % 200 == 0)
+                yield return null;
         }
     }
 
