@@ -13,6 +13,7 @@ public class UnitType : ScriptableObject
     public bool IsABoat;
 
     public int baseProductionCost;
+    public int baseGoldCost;
 
     [HideInInspector] public UnitCategory unitCategory;
 }

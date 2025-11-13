@@ -38,7 +38,7 @@ public class HexCell
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
-    [field: SerializeField] public bool isACity { get; set; }
+    [field: SerializeField] public Building.BuildingNames buildingName;
 
 
     [Header("Ressources Bonuses")]
@@ -74,7 +74,6 @@ public class HexCell
 
         isRevealed = false;
         isActive = true;
-        isACity = false;
 
         InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }
@@ -261,10 +260,10 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null && !isACity)
+        if (ressource != null && !(buildingName == Building.BuildingNames.City))
             ressource.gameObject.SetActive(false);
 
-        if (ressource != null && isACity)
+        if (ressource != null && buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().HideForOverlay();
 
         tileOverlay.Init(food + terrainType.food, production + terrainType.production);
@@ -276,7 +275,7 @@ public class HexCell
         if (ressource != null)
             ressource.gameObject.SetActive(true);
 
-        if (isACity)
+        if (buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().ShowForOverlay();
 
         tileOverlay.gameObject.SetActive(false);
@@ -319,6 +318,24 @@ public class HexCell
         }
 
         isActive = value;
+    }
+
+    public void CreateBuilding(Building.BuildingNames _buildingName, Unit builder)
+    {
+        switch (_buildingName)
+        {
+            case Building.BuildingNames.City:
+                CityManager.instance.CreateCity(this, builder.master);
+                break;
+            case Building.BuildingNames.Farm:
+                terrainType.food *= 2;
+				buildingName = Building.BuildingNames.Farm;
+                break;
+            case Building.BuildingNames.Mine:
+                terrainType.production *= 2;
+				buildingName = Building.BuildingNames.Mine;
+                break;
+		}
     }
 }
  

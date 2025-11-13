@@ -87,13 +87,13 @@ public class CityManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += ProcessQueuedExpansions;
     }
 
-    public void CreateCity(HexCell cell)
+    public void CreateCity(HexCell cell, Player master)
     {
         if (cell == null 
             || cell.ressource != null 
             || cell.isActive == false 
             || cell.isRevealed == false 
-            || !cell.terrainType.build.Contains(TerrainType.Build.City)
+            || !cell.terrainType.build.Contains(Building.BuildingNames.City)
             || IsToACity(cell)
             )
         {
@@ -104,6 +104,7 @@ public class CityManager : MonoBehaviour
         Transform obj = cell.InstantiateRessource(cityPrefab);
 
         City component = obj.GetComponent<City>();
+        component.master = master;
         if(component == null)
         {
             Debug.LogError("City Prefab ne convient pas, il manque un City component");
@@ -112,7 +113,7 @@ public class CityManager : MonoBehaviour
         component.occupiedCell = cell;
 
         cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
-        cell.isACity = true;
+        cell.buildingName = Building.BuildingNames.City;
 
         if(SelectionManager.instance.showOverlay)
         {

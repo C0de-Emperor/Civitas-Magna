@@ -4,7 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MilitaryUnit", menuName = "Scriptable Objects/Unit/MilitaryUnit")]
 public class MilitaryUnitType : UnitType
 {
-
     [Header("Combat properties")]
     public float AttackPower;
     public float DefensePower;

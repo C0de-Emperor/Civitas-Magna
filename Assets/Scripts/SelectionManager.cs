@@ -164,12 +164,8 @@ public class SelectionManager : MonoBehaviour
                     }
                     else
                     {
-                        CityManager.instance.CreateCity(currentCell);
+                        CityManager.instance.CreateCity(currentCell, PlayerManager.instance.player);
                     }
-                }
-                if (Input.GetKeyUp(KeyCode.X))
-                {
-                    Debug.Log(UnitManager.instance.GetDistance(selectedCell, currentCell));
                 }
             }
             else
@@ -222,6 +218,10 @@ public class SelectionManager : MonoBehaviour
 		{
 			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Color[] { new Color(0, 123, 67), new Color(4, 89, 176) }));
 		}
+		if (Input.GetKeyUp(KeyCode.X) && selectedCell != null)
+		{
+			UnitManager.instance.AddUnit(UnitManager.instance.civilianUnits[0], selectedCell, PlayerManager.instance.player);
+		}
 		if (Input.GetKeyUp(KeyCode.P))
         {
             TurnManager.instance.ChangeTurn();
@@ -232,6 +232,11 @@ public class SelectionManager : MonoBehaviour
     {
         if (currentCell == null)
             return;
+        if (selectedUnit != null && selectedUnit.unitType.unitCategory == UnitType.UnitCategory.civilian)
+        {
+			selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
+		}
+
 
         // Si on clique sur une nouvelle cellule - reset le cycle
         if (lastClickedCell != currentCell)
@@ -256,14 +261,16 @@ public class SelectionManager : MonoBehaviour
         if (currentCell.civilianUnit != null)
         {
             actions.Add(() =>
-            {
-                selectedUnit = currentCell.civilianUnit;
+			{
+				selectedUnit = currentCell.civilianUnit;
+				selectedUnit.unitCanvaTransform.gameObject.SetActive(true);
             });
         }
 
         // Ajoute une action pour la ville
-        if (currentCell.isACity)
+        if (currentCell.buildingName == Building.BuildingNames.City)
         {
+            selectedUnit = null;
             actions.Add(() =>
             {
                 if (CityManager.instance.cities.TryGetValue(coord, out City city))

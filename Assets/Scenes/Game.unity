@@ -3408,7 +3408,7 @@ MonoBehaviour:
     <tileOverlay>k__BackingField: {fileID: 0}
     <isRevealed>k__BackingField: 0
     <isActive>k__BackingField: 0
-    <isACity>k__BackingField: 0
+    buildingName: 0
     <food>k__BackingField: 0
     <production>k__BackingField: 0
   pathPreviewContainer: {fileID: 1476485973}
@@ -3561,7 +3561,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 094014399dcb6194d9e995877c2a8970, type: 2}
   - {fileID: 11400000, guid: ef48326d9bc955a449a6079ba1ebe33f, type: 2}
   - {fileID: 11400000, guid: 50bcd20bd0c7e5744baace06f9bde43f, type: 2}
-  civilianUnits: []
+  civilianUnits:
+  - {fileID: 11400000, guid: 51d15db999083164e9a75cead99ae6d0, type: 2}
   nextAvailableId: 0
   NAMES_LIST:
   - Abel

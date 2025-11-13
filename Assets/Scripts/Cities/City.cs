@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CityBorders))]
-public class City : MonoBehaviour
+public class City : Building
 {
     const float RUINED_CITY_FACTOR_REDUCTION = 0.5f;
     const float FACTOR_REGENERATION = 0.05f;
@@ -42,6 +43,8 @@ public class City : MonoBehaviour
 
     private void Awake()
     {
+        buildingName = Building.BuildingNames.City;
+
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         damage = 0f;
         TurnManager.instance.OnTurnChange += AddTurnProduction;

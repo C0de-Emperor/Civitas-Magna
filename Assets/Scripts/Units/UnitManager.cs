@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitManager : MonoBehaviour
 {
@@ -44,6 +45,21 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
     
         maxIterations = grid.height * grid.width;
+    }
+
+    public void CivilianUnitAction(string actionType)
+    {
+        switch (SelectionManager.instance.selectedUnit.GetUnitCivilianData().job)
+        {
+            case CivilianUnitType.CivilianJob.Settler:
+                if(actionType == "Settle")
+                {
+                    SelectionManager.instance.selectedCell.CreateBuilding(Building.BuildingNames.City, SelectionManager.instance.selectedUnit);
+                    SelectionManager.instance.selectedUnit = null;
+                }
+                RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                break;
+        }
     }
 
     // combat entre une unité et une cité
@@ -146,7 +162,7 @@ public class UnitManager : MonoBehaviour
 
             if (cellToAttack != null)
             {
-                if (cellToAttack.isACity)
+                if (cellToAttack.buildingName == Building.BuildingNames.City)
                 {
                     CityFight(currentCell, cellToAttack);
                 }
@@ -252,7 +268,7 @@ public class UnitManager : MonoBehaviour
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            if (destCell.isACity && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
+            if (destCell.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
             {
                 movementData.attacksACity = true;
             }
@@ -383,6 +399,11 @@ public class UnitManager : MonoBehaviour
                     new Quaternion(0, 0, 0, 1),
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
+
+                foreach(var button in unitTransform.GetChild(1).GetComponentsInChildren<Button>())
+                {
+                    button.onClick.AddListener(delegate { CivilianUnitAction(button.GetComponentInChildren<Text>().text); });
+                }
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
@@ -605,8 +626,9 @@ public class Unit
     public readonly int id; // id
     public Transform unitTransform; // le transform de l'unité
     public readonly UnitType unitType; // le type d'unité (classe générale)
-    public readonly Player master; // le maître de l'unité (le joueur ou l'IA)
+    public Player master; // le maître de l'unité (le joueur ou l'IA)
     public readonly UnitPin unitPin; // le pin de l'unité (pour le repérer sur la carte)
+    public Transform unitCanvaTransform;
     public string unitName; // le nom de l'unité (personnalisable)
 
     private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
@@ -638,6 +660,12 @@ public class Unit
         {
             this.militaryUnitType = unitType as MilitaryUnitType;
             this.currentHealth = this.militaryUnitType.MaxHealth;
+        }
+        else
+        {
+            this.civilianUnitType = unitType as CivilianUnitType;
+            unitCanvaTransform = unitTransform.GetChild(1);
+            unitCanvaTransform.gameObject.SetActive(false);
         }
     }
 
@@ -672,6 +700,11 @@ public class Unit
     public MilitaryUnitType GetUnitMilitaryData()
     {
         return this.militaryUnitType;
+    }
+
+    public CivilianUnitType GetUnitCivilianData()
+    {
+        return this.civilianUnitType;
     }
 }
 
