@@ -2204,10 +2204,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -3405,8 +3405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 1
-  <width>k__BackingField: 200
-  <height>k__BackingField: 200
+  <width>k__BackingField: 20
+  <height>k__BackingField: 20
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
@@ -3858,6 +3858,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 50bcd20bd0c7e5744baace06f9bde43f, type: 2}
   civilianUnits:
   - {fileID: 11400000, guid: 51d15db999083164e9a75cead99ae6d0, type: 2}
+  - {fileID: 11400000, guid: 7009f5a8b191c9046908b909c9514f3a, type: 2}
   nextAvailableId: 0
   NAMES_LIST:
   - Abel

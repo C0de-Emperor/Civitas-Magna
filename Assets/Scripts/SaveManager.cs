@@ -157,7 +157,7 @@ public class HexCellData
     [Header("Properties")]
     public bool isRevealed;
     public bool isActive;
-    public Building.BuildingNames buildingName;
+    public HexCell.BuildingNames buildingName;
 }
 
 [Serializable]

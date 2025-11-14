@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CityBorders))]
-public class City : Building
+public class City : MonoBehaviour
 {
     const float RUINED_CITY_FACTOR_REDUCTION = 0.5f;
     const float FACTOR_REGENERATION = 0.05f;

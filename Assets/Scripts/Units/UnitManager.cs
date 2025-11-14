@@ -49,15 +49,49 @@ public class UnitManager : MonoBehaviour
 
     public void CivilianUnitAction(string actionType)
     {
+        if(SelectionManager.instance.selectedUnit == null)
+        {
+            return;
+        }
+
+        Debug.Log(actionType);
         switch (SelectionManager.instance.selectedUnit.GetUnitCivilianData().job)
         {
             case CivilianUnitType.CivilianJob.Settler:
                 if(actionType == "Settle")
                 {
-                    SelectionManager.instance.selectedCell.CreateBuilding(Building.BuildingNames.City, SelectionManager.instance.selectedUnit);
-                    SelectionManager.instance.selectedUnit = null;
+                    if(SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.City, SelectionManager.instance.selectedUnit))
+                    {
+                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+                        {
+                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                            SelectionManager.instance.selectedUnit = null;
+                        }
+                    }
                 }
-                RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                break;
+            case CivilianUnitType.CivilianJob.Builder:
+                if (actionType == "Build Farm")
+                {
+                    if(SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.Farm, SelectionManager.instance.selectedUnit)){
+                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+                        {
+                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                            SelectionManager.instance.selectedUnit = null;
+                        }
+                    }
+                }
+                if (actionType == "Build Mine")
+                {
+                    if (SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.Mine, SelectionManager.instance.selectedUnit))
+                    {
+                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+                        {
+                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                            SelectionManager.instance.selectedUnit = null;
+                        }
+                    }
+                }
                 break;
         }
     }
@@ -162,7 +196,7 @@ public class UnitManager : MonoBehaviour
 
             if (cellToAttack != null)
             {
-                if (cellToAttack.buildingName == Building.BuildingNames.City)
+                if (cellToAttack.buildingName == HexCell.BuildingNames.City)
                 {
                     CityFight(currentCell, cellToAttack);
                 }
@@ -268,7 +302,7 @@ public class UnitManager : MonoBehaviour
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            if (destCell.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
+            if (destCell.buildingName == HexCell.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
             {
                 movementData.attacksACity = true;
             }
@@ -400,7 +434,7 @@ public class UnitManager : MonoBehaviour
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
 
-                foreach(var button in unitTransform.GetChild(1).GetComponentsInChildren<Button>())
+                foreach(var button in unitTransform.GetChild(0).GetComponentsInChildren<Button>())
                 {
                     button.onClick.AddListener(delegate { CivilianUnitAction(button.GetComponentInChildren<Text>().text); });
                 }
@@ -668,6 +702,7 @@ public class Unit
 
     public float movesDone; // le nombre de déplacements effectués ce tour
     public int lastDamagingTurn { get; private set; } // le dernier où l'unité a subi des dégats
+    public int chargesLeft { get; private set; }
 
     // constructeur de la classe
     public Unit(Transform unitTransform, UnitType unitType, UnitPin unitPin, Player master)
@@ -695,8 +730,9 @@ public class Unit
         else
         {
             this.civilianUnitType = unitType as CivilianUnitType;
-            unitCanvaTransform = unitTransform.GetChild(1);
+            unitCanvaTransform = unitTransform.GetChild(0);
             unitCanvaTransform.gameObject.SetActive(false);
+            this.chargesLeft = this.civilianUnitType.actionCharges;
         }
     }
 
@@ -736,6 +772,13 @@ public class Unit
     public CivilianUnitType GetUnitCivilianData()
     {
         return this.civilianUnitType;
+    }
+
+    public bool ConsumeCharge()
+    {
+        this.chargesLeft -= 1;
+        this.movesDone = this.unitType.MoveReach;
+        return this.chargesLeft <= 0;
     }
 }
 

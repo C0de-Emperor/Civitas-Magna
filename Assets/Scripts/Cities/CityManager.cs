@@ -88,17 +88,17 @@ public class CityManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += ProcessQueuedExpansions;
     }
 
-    public void CreateCity(HexCell cell, Player master)
+    public bool CreateCity(HexCell cell, Player master)
     {
         if (cell == null 
             || cell.ressource != null 
             || cell.isActive == false 
             || cell.isRevealed == false 
-            || !cell.terrainType.build.Contains(Building.BuildingNames.City)
+            || !cell.terrainType.build.Contains(HexCell.BuildingNames.City)
             || IsToACity(cell)
             )
         {
-            return;
+            return false;
         }
 
         Transform obj = cell.InstantiateRessource(cityPrefab);
@@ -108,12 +108,12 @@ public class CityManager : MonoBehaviour
         if(component == null)
         {
             Debug.LogError("City Prefab ne convient pas, il manque un City component");
-            return;
+            return false;
         }
         component.occupiedCell = cell;
 
         cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
-        cell.buildingName = Building.BuildingNames.City;
+        cell.buildingName = HexCell.BuildingNames.City;
 
         if(SelectionManager.instance.showOverlay)
         {
@@ -140,9 +140,13 @@ public class CityManager : MonoBehaviour
         CityBannerUI banner = bannerObj.GetComponent<CityBannerUI>();
 
         banner.worldTarget = obj.transform;
+        banner.transform.GetChild(0).GetComponent<Image>().color = master.livery[0];
+        banner.transform.GetChild(1).GetComponent<Text>().color = master.livery[1];
         component.bannerUI = banner;
 
         component.UpdateBanner();
+
+        return true;
     }
 
     public bool IsToACity(HexCell cell)

@@ -11,7 +11,7 @@ public class TerrainType : ScriptableObject
     [field: SerializeField] public Transform prop { get; private set; }
     [field: SerializeField] public float terrainCost { get; private set; } 
     [field: SerializeField] public bool isWater { get; private set; }
-    [field: SerializeField] public List<Building.BuildingNames> build { get; private set; } = new List<Building.BuildingNames>();
+    [field: SerializeField] public List<HexCell.BuildingNames> build { get; private set; } = new List<HexCell.BuildingNames>();
 
     [Header("Base Ressources")]
     [field: SerializeField] public int food;

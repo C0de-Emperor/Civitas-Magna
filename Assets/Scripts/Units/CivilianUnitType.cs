@@ -7,6 +7,7 @@ public class CivilianUnitType : UnitType
 
     [Header("Job specifications")]
     public CivilianJob job;
+    public int actionCharges;
 
     private void Awake()
     {
