@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
 [Serializable]
 public class HexCell
 {
-    public enum BuildingNames { None, City, Farm, Mine }
-
     [Header("Cell Properties")]
     [Header("Terrain")]
     [SerializeField] public HexOrientation orientation;
@@ -40,7 +39,7 @@ public class HexCell
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
-    [field: SerializeField] public BuildingNames buildingName;
+    [field: SerializeField] public Building building;
 
     public void SetCoordinates(Vector2Int _offsetCoordinates, HexOrientation orientation)
     {
@@ -71,7 +70,7 @@ public class HexCell
 
         isRevealed = false;
         isActive = true;
-        buildingName = BuildingNames.None;
+        building = grid.NoneBuilding;
 
         InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
     }
@@ -180,6 +179,11 @@ public class HexCell
 
     public Transform InstantiateRessource(Transform ressourcePrefab)
     {
+        if(ressource != null)
+        {
+            grid.DestroyRessource(this);
+        }
+
         Vector3 centerPosition = HexMetrics.Center(
             hexSize,
             (int)offsetCoordinates.x,
@@ -258,10 +262,10 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null && buildingName != BuildingNames.City)
+        if (ressource != null && building.buildingName != Building.BuildingNames.City)
             ressource.gameObject.SetActive(false);
 
-        if (ressource != null && buildingName == BuildingNames.City)
+        if (ressource != null && building.buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().HideForOverlay();
 
         tileOverlay.Init(terrainType.food, terrainType.production);
@@ -273,7 +277,7 @@ public class HexCell
         if (ressource != null)
             ressource.gameObject.SetActive(true);
 
-        if (buildingName == BuildingNames.City)
+        if (building.buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().ShowForOverlay();
 
         tileOverlay.gameObject.SetActive(false);
@@ -318,28 +322,24 @@ public class HexCell
         isActive = value;
     }
 
-    public bool CreateBuilding(BuildingNames _buildingName, Unit builder)
+    public bool CreateBuilding(Building _building, Unit builder)
     {
-        if(_buildingName == buildingName || !terrainType.build.Contains(_buildingName) || buildingName == BuildingNames.City)
+        if(_building.buildingName == building.buildingName || !terrainType.build.Contains(_building.buildingName) || building.buildingName == Building.BuildingNames.City)
         {
             return false;
         }
 
-        switch (_buildingName)
+        if(_building.buildingName == Building.BuildingNames.City)
         {
-            case BuildingNames.City:
-                return CityManager.instance.CreateCity(this, builder.master);
-            case BuildingNames.Farm:
-                terrainType.food *= 2;
-				buildingName = BuildingNames.Farm;
-                return true;
-            case BuildingNames.Mine:
-                terrainType.production *= 2;
-				buildingName = BuildingNames.Mine;
-                return true;
-		}
+            CityManager.instance.CreateCity(this, builder.master);
+        }
+        else if(_building.buildingPrefab != null)
+        {
+            InstantiateRessource(_building.buildingPrefab.transform);
+        }
+        building = _building;
 
-        return false;
+        return true;
     }
 }
  

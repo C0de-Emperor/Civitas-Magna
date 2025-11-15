@@ -20,6 +20,12 @@ MonoBehaviour:
   IsABoat: 0
   baseProductionCost: 50
   baseGoldCost: 200
+  speciallyAccessibleTerrains:
+  - {fileID: 11400000, guid: 103ba90da1abed1449217c63ac38e23f, type: 2}
   unitCategory: 1
   job: 1
+  buildableBuildings:
+  - {fileID: 11400000, guid: 016552e38f0f1cd40b15fa1b6c3b9e3c, type: 2}
+  - {fileID: 11400000, guid: fb35615aed530e94d9eb0726605674be, type: 2}
+  - {fileID: 11400000, guid: 500a066bb61d75244a610123536cc5d8, type: 2}
   actionCharges: 3

@@ -16,6 +16,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
     [field: SerializeField] public Transform tileContainer { get; private set; }
+    [SerializeField] public Building NoneBuilding;
 
     [field: SerializeField] private Transform raycastTarget;
 
@@ -314,12 +315,17 @@ public class HexGrid : MonoBehaviour
 
                 isRevealed = cell.isRevealed,
                 isActive = cell.isActive,
-                buildingName = cell.buildingName
+                buildingName = cell.building.buildingName
             };
             i++;
         }
 
         return cellsData;
+    }
+
+    public void DestroyRessource(HexCell cell)
+    {
+        Destroy(cell.ressource.gameObject);
     }
 }
 

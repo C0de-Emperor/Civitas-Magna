@@ -3405,13 +3405,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 1
-  <width>k__BackingField: 20
-  <height>k__BackingField: 20
+  <width>k__BackingField: 100
+  <height>k__BackingField: 100
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
   <undiscoveredTileHigh>k__BackingField: 1
   <tileContainer>k__BackingField: {fileID: 1327948545}
+  NoneBuilding: {fileID: 11400000, guid: a6cb6a2f64fb8d4489ad3f4787c960d3, type: 2}
   raycastTarget: {fileID: 1805208650}
   overlayParent: {fileID: 1327948545}
   overlayPrefab: {fileID: 4272545335857838435, guid: 2b050faf0e5fb00419b17986bd8dacdc, type: 3}
@@ -3705,7 +3706,7 @@ MonoBehaviour:
     <tileOverlay>k__BackingField: {fileID: 0}
     <isRevealed>k__BackingField: 0
     <isActive>k__BackingField: 0
-    buildingName: 0
+    building: {fileID: 0}
   pathPreviewContainer: {fileID: 1476485973}
   queuedPathPreviewContainer: {fileID: 1435981671}
   pathPreviewCoordinates: []
@@ -3853,9 +3854,9 @@ MonoBehaviour:
   unitPinCanvas: {fileID: 1048308442}
   unitContainer: {fileID: 1873286444}
   militaryUnits:
-  - {fileID: 11400000, guid: 094014399dcb6194d9e995877c2a8970, type: 2}
-  - {fileID: 11400000, guid: ef48326d9bc955a449a6079ba1ebe33f, type: 2}
-  - {fileID: 11400000, guid: 50bcd20bd0c7e5744baace06f9bde43f, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   civilianUnits:
   - {fileID: 11400000, guid: 51d15db999083164e9a75cead99ae6d0, type: 2}
   - {fileID: 11400000, guid: 7009f5a8b191c9046908b909c9514f3a, type: 2}
@@ -9957,7 +9958,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 158.2024, y: 35.78772}
+  m_AnchoredPosition: {x: 158.2024, y: 35.787598}
   m_SizeDelta: {x: 276.4048, y: 37.5755}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1884945166

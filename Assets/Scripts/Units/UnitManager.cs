@@ -47,52 +47,20 @@ public class UnitManager : MonoBehaviour
         maxIterations = grid.height * grid.width;
     }
 
-    public void CivilianUnitAction(string actionType)
+    public void CivilianUnitAction(int actionType)
     {
         if(SelectionManager.instance.selectedUnit == null)
         {
             return;
         }
 
-        Debug.Log(actionType);
-        switch (SelectionManager.instance.selectedUnit.GetUnitCivilianData().job)
+        if (SelectionManager.instance.selectedCell.CreateBuilding(SelectionManager.instance.selectedUnit.GetUnitCivilianData().buildableBuildings[actionType], SelectionManager.instance.selectedUnit))
         {
-            case CivilianUnitType.CivilianJob.Settler:
-                if(actionType == "Settle")
-                {
-                    if(SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.City, SelectionManager.instance.selectedUnit))
-                    {
-                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
-                        {
-                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
-                            SelectionManager.instance.selectedUnit = null;
-                        }
-                    }
-                }
-                break;
-            case CivilianUnitType.CivilianJob.Builder:
-                if (actionType == "Build Farm")
-                {
-                    if(SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.Farm, SelectionManager.instance.selectedUnit)){
-                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
-                        {
-                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
-                            SelectionManager.instance.selectedUnit = null;
-                        }
-                    }
-                }
-                if (actionType == "Build Mine")
-                {
-                    if (SelectionManager.instance.selectedCell.CreateBuilding(HexCell.BuildingNames.Mine, SelectionManager.instance.selectedUnit))
-                    {
-                        if (SelectionManager.instance.selectedUnit.ConsumeCharge())
-                        {
-                            RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
-                            SelectionManager.instance.selectedUnit = null;
-                        }
-                    }
-                }
-                break;
+            if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+            {
+                RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                SelectionManager.instance.selectedUnit = null;
+            }
         }
     }
 
@@ -196,7 +164,7 @@ public class UnitManager : MonoBehaviour
 
             if (cellToAttack != null)
             {
-                if (cellToAttack.buildingName == HexCell.BuildingNames.City)
+                if (cellToAttack.building.buildingName == Building.BuildingNames.City)
                 {
                     CityFight(currentCell, cellToAttack);
                 }
@@ -267,7 +235,7 @@ public class UnitManager : MonoBehaviour
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -302,7 +270,7 @@ public class UnitManager : MonoBehaviour
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            if (destCell.buildingName == HexCell.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
+            if (destCell.building.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
             {
                 movementData.attacksACity = true;
             }
@@ -425,7 +393,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if (cell.militaryUnit == null && IsCellTraversable(cell.terrainType, unitType))
+            if (cell.civilianUnit == null && IsCellTraversable(cell.terrainType, unitType))
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
@@ -433,11 +401,6 @@ public class UnitManager : MonoBehaviour
                     new Quaternion(0, 0, 0, 1),
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
-
-                foreach(var button in unitTransform.GetChild(0).GetComponentsInChildren<Button>())
-                {
-                    button.onClick.AddListener(delegate { CivilianUnitAction(button.GetComponentInChildren<Text>().text); });
-                }
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
@@ -616,6 +579,11 @@ public class UnitManager : MonoBehaviour
     // renvoie si la case est traversable par l'unité ou non
     private bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
     {
+        if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
+        {
+            return true;
+        }
+
         if(terrainType.terrainCost > unitType.MoveReach)
         {
             return false;
@@ -733,6 +701,13 @@ public class Unit
             unitCanvaTransform = unitTransform.GetChild(0);
             unitCanvaTransform.gameObject.SetActive(false);
             this.chargesLeft = this.civilianUnitType.actionCharges;
+
+            for (int i = 0; i<this.civilianUnitType.buildableBuildings.Count; i++)
+            {
+                int currentIndex = i;
+                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponent<Button>().onClick.AddListener(delegate { UnitManager.instance.CivilianUnitAction(currentIndex); });
+                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponentInChildren<Text>().text = this.civilianUnitType.buildableBuildings[i].buildActionName;
+            }
         }
     }
 

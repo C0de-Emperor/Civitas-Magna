@@ -94,7 +94,7 @@ public class CityManager : MonoBehaviour
             || cell.ressource != null 
             || cell.isActive == false 
             || cell.isRevealed == false 
-            || !cell.terrainType.build.Contains(HexCell.BuildingNames.City)
+            || !cell.terrainType.build.Contains(Building.BuildingNames.City)
             || IsToACity(cell)
             )
         {
@@ -113,7 +113,6 @@ public class CityManager : MonoBehaviour
         component.occupiedCell = cell;
 
         cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
-        cell.buildingName = HexCell.BuildingNames.City;
 
         if(SelectionManager.instance.showOverlay)
         {

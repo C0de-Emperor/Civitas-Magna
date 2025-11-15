@@ -65,8 +65,7 @@ public class City : MonoBehaviour
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // base amount
-            amount += cell.terrainType.food;
+            amount += cell.terrainType.food * cell.building.foodFactor;
         }
 
         return amount * cityFactor;
@@ -83,8 +82,7 @@ public class City : MonoBehaviour
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // base amount
-            amount += cell.terrainType.production;
+            amount += cell.terrainType.production*cell.building.productionFactor;
         }
 
         return amount * cityFactor;

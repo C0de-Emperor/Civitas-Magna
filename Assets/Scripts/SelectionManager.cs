@@ -277,7 +277,7 @@ public class SelectionManager : MonoBehaviour
         }
 
         // Ajoute une action pour la ville
-        if (currentCell.buildingName == HexCell.BuildingNames.City)
+        if (currentCell.building.buildingName == Building.BuildingNames.City)
         {
             selectedUnit = null;
             actions.Add(() =>
