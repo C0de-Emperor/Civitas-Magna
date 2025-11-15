@@ -173,6 +173,10 @@ public class MapGenerator : MonoBehaviour
                         cell.hexSize = hexGrid.hexSize;
                         cell.SetTerrainType(terrainMap[x, y]);
 
+                        cell.militaryUnit = null;
+                        cell.civilianUnit = null;
+
+                        cell.building = hexGrid.NoneBuilding;
                         cell.isActive = false;
                         cell.isRevealed = false;
 
@@ -207,6 +211,8 @@ public class MapGenerator : MonoBehaviour
             cell.hexSize = data.hexSize;
             cell.SetTerrainType(GetTerrainTypeByID(cellData.terrainTypeID));
 
+            cell.building = cellData.building;
+
             cell.isActive = cellData.isActive;
             cell.isRevealed = cellData.isRevealed;
 
@@ -228,7 +234,7 @@ public class MapGenerator : MonoBehaviour
     }
 }
 
-[System.Serializable]
+[Serializable]
 public struct TerrainHeight
 {
     public float height; // 0-1

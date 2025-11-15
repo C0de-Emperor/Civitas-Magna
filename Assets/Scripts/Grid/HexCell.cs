@@ -110,7 +110,7 @@ public class HexCell
 
 
 
-    public void RevealExistingTile(bool showOverlay)
+    public void RevealExistingTile(bool showOverlay, bool _isActive)
     {
         if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
         {
@@ -118,8 +118,12 @@ public class HexCell
             return;
         }
 
+
+
         if (isRevealed)
         {
+            if(_isActive && !isActive)
+                SetActiveRevealedTile(true);
             return;
         }
         isRevealed = true;
@@ -144,6 +148,23 @@ public class HexCell
             ShowOverlay();
             if(ressource != null)
                 ressource.gameObject.SetActive(false);
+        }
+
+        if (!_isActive)
+        {
+            isActive = false;
+            var allRenderers = tile.GetComponentsInChildren<Renderer>(true).ToList();
+
+            if (ressource != null)
+            {
+                allRenderers.AddRange(ressource.GetComponentsInChildren<Renderer>(true));
+            }
+
+            // Apply layer mask
+            foreach (Renderer rend in allRenderers)
+            {
+                rend.renderingLayerMask = grid.unactiveLayer;
+            }
         }
     }
 
@@ -317,7 +338,7 @@ public class HexCell
         tileOverlay.gameObject.SetActive(false);
     }
 
-    public void SetActiveExistingTile(bool value)
+    public void SetActiveRevealedTile(bool value)
     {
         if (isActive == value)
             return;

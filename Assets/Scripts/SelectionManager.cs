@@ -141,7 +141,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 10, showOverlay); // DEVELOPPEMENT, A ENLEVER
+                    grid.RevealTilesInRadius(coord, 10, showOverlay, false); // DEVELOPPEMENT, A ENLEVER
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);

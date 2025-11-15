@@ -171,7 +171,7 @@ public class HexGrid : MonoBehaviour
         return cells.ContainsKey(coordinates);
     }
 
-    public void RevealTilesInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool showOverlay)
+    public void RevealTilesInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool showOverlay, bool isActive)
     {
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
 
@@ -189,7 +189,7 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    neighbour.RevealExistingTile(showOverlay);
+                    neighbour.RevealExistingTile(showOverlay, isActive);
                 }
             }
         }
@@ -213,7 +213,7 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    neighbour.SetActiveExistingTile(activate);
+                    neighbour.SetActiveRevealedTile(activate);
                 }
             }
         }
@@ -221,8 +221,6 @@ public class HexGrid : MonoBehaviour
 
     public void UpdateActiveTiles()
     {
-        
-
         List<SightData> sightDatas = new List<SightData>();
 
         foreach (var cell in cells.Values)
@@ -230,7 +228,7 @@ public class HexGrid : MonoBehaviour
             if (cell.isRevealed)
             {
                 
-                cell.SetActiveExistingTile(false);
+                cell.SetActiveRevealedTile(false);
             }
 
             if(cell.militaryUnit != null && cell.militaryUnit.master == PlayerManager.instance.player)
@@ -326,7 +324,7 @@ public class HexGrid : MonoBehaviour
 
                 isRevealed = cell.isRevealed,
                 isActive = cell.isActive,
-                buildingName = cell.building.buildingName
+                building = cell.building
             };
             i++;
         }

@@ -3853,13 +3853,8 @@ MonoBehaviour:
   unitPinPrefab: {fileID: 8195661760947147849, guid: d73081b6833a0544a94f4d6e74fd2d11, type: 3}
   unitPinCanvas: {fileID: 1048308442}
   unitContainer: {fileID: 1873286444}
-  militaryUnits:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  civilianUnits:
-  - {fileID: 11400000, guid: 51d15db999083164e9a75cead99ae6d0, type: 2}
-  - {fileID: 11400000, guid: 7009f5a8b191c9046908b909c9514f3a, type: 2}
+  militaryUnits: []
+  civilianUnits: []
   nextAvailableId: 0
   NAMES_LIST:
   - Abel

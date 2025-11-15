@@ -112,7 +112,7 @@ public class CityManager : MonoBehaviour
         }
         component.occupiedCell = cell;
 
-        cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay);
+        cell.grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
 
         if(SelectionManager.instance.showOverlay)
         {
