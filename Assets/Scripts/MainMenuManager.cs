@@ -15,24 +15,29 @@ public class MainMenuManager : MonoBehaviour
 
     private void NewGameButtonPressed()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
+        UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
+
+        callback = (scene, mode) =>
         {
             SaveManager.instance.TriggerSaveLoaded(null);
-            SceneManager.sceneLoaded -= (scene, mode) => { };
+            SceneManager.sceneLoaded -= callback;
         };
 
-        SceneManager.LoadScene(1);
+        SceneManager.sceneLoaded += callback;
+        SceneManager.LoadScene("Game");
     }
 
     private void LoadGameButtonPressed()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
+        UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
+
+        callback = (scene, mode) =>
         {
             SaveManager.instance.TriggerSaveLoaded(SaveManager.instance.LoadData());
-            SceneManager.sceneLoaded -= (scene, mode) => { };
+            SceneManager.sceneLoaded -= callback;
         };
 
-
+        SceneManager.sceneLoaded += callback;
         SceneManager.LoadScene("Game");
     }
 }

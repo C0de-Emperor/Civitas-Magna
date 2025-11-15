@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Unity.Cinemachine.CinemachineSplineRoll;
 
 [RequireComponent(typeof(HexGrid))]
 public class MapGenerator : MonoBehaviour
@@ -36,6 +37,7 @@ public class MapGenerator : MonoBehaviour
     public static MapGenerator instance;
     private void Awake()
     {
+        SaveManager.instance.OnSaveLoaded += OnLoad;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de MapGenerator dans la scène");
@@ -49,9 +51,17 @@ public class MapGenerator : MonoBehaviour
 
         // Tri des biomes par hauteur
         biomes.Sort((a, b) => a.height.CompareTo(b.height));
+
+
     }
 
-    private void Start() => GenerateMap();
+    public void OnLoad(SaveData data)
+    {
+        if (data == null)
+            GenerateMap();
+        else
+            GenerateMapFromSave(data);
+    }
 
     public void GenerateMap()
     {
@@ -140,6 +150,7 @@ public class MapGenerator : MonoBehaviour
                     for (int x = 0; x < width; x++)
                     {
                         HexCell cell = new HexCell();
+                        cell.grid = hexGrid;
                         cell.SetCoordinates(new Vector2Int(x, y), hexGrid.orientation);
                         float c = continentNoise[x, y];
                         float d = ressourcesNoise[x, y];
@@ -161,6 +172,10 @@ public class MapGenerator : MonoBehaviour
                         cell.terrainHigh = terrainHeight + 1f;
                         cell.hexSize = hexGrid.hexSize;
                         cell.SetTerrainType(terrainMap[x, y]);
+
+                        cell.isActive = false;
+                        cell.isRevealed = false;
+
                         cells.Add(cell);
                     }
                 }
@@ -172,6 +187,44 @@ public class MapGenerator : MonoBehaviour
             Task.Run(generateAction);
         else
             generateAction.Invoke();
+    }
+
+    public void GenerateMapFromSave(SaveData data)
+    {
+        seed = data.seed;
+
+        hexGrid.InitGrid(data);
+
+        List<HexCell> cells = new List<HexCell>();
+
+        foreach(HexCellData cellData in data.cells)
+        {
+            HexCell cell = new HexCell();
+            cell.grid = hexGrid;
+            cell.SetCoordinates(cellData.offsetCoordinates, data.orientation);
+
+            cell.terrainHigh = cellData.terrainHigh;
+            cell.hexSize = data.hexSize;
+            cell.SetTerrainType(GetTerrainTypeByID(cellData.terrainTypeID));
+
+            cell.isActive = cellData.isActive;
+            cell.isRevealed = cellData.isRevealed;
+
+            cells.Add(cell);
+        }
+
+        StartCoroutine(hexGrid.SetHexCells(cells));
+    }
+
+    public TerrainType GetTerrainTypeByID(int id)
+    {
+        foreach(TerrainHeight t in biomes)
+        {
+            if(t.terrainType.ID == id)
+                return t.terrainType;
+        }
+        Debug.LogError($"TerrainType not found for ID {id}");
+        return null;
     }
 }
 

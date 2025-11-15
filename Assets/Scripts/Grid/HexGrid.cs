@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,6 +52,15 @@ public class HexGrid : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateActiveTiles;
     }
 
+    public void InitGrid(SaveData data)
+    {
+        orientation = data.orientation;
+        width = data.width;
+        height = data.height;
+        hexSize = data.hexSize;
+        batchSize = data.batchSize;
+    }
+
     public IEnumerator SetHexCells(List<HexCell> newCells)
     {
         generationProgress = 0;
@@ -70,7 +78,7 @@ public class HexGrid : MonoBehaviour
             if (generationProgress % 200 == 0)
                 yield return null;
         }
-
+        
         StartCoroutine(InstantiateCells());
     }
 
@@ -81,7 +89,6 @@ public class HexGrid : MonoBehaviour
 
         foreach (var cell in cells.Values)
         {
-            cell.grid = this;
             cell.CreateTerrain(); // Instancie le prefab et le positionne
 
             if (batchCount % batchSize == 0 && batchCount != 0)
@@ -145,7 +152,7 @@ public class HexGrid : MonoBehaviour
         progressBar.gameObject.SetActive(false);
         loading.gameObject.SetActive(false);
 
-        UnityEngine.Debug.Log($"Neighbours assigned for {cells.Count} cells.");
+        Debug.Log($"Neighbours assigned for {cells.Count} cells.");
 
         MapGenerator.instance.isMapReady = true;
     }
@@ -163,11 +170,6 @@ public class HexGrid : MonoBehaviour
         return cells.ContainsKey(coordinates);
     }
 
-    /// <summary>
-    /// Révèle toutes les tuiles dans un rayon donn autour d'une cellule.
-    /// </summary>
-    /// <param name="centerCellOffsetpositions">Les coordonnées de la tuile centrale</param>
-    /// <param name="radius">Le rayon (en nombre de tuiles hexagonales)</param>
     public void RevealTilesInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool showOverlay)
     {
         List<HexCell> toReveal = new List<HexCell>(1 + 3 * radius * (radius + 1));
@@ -186,7 +188,7 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    neighbour.RevealTile(showOverlay);
+                    neighbour.RevealExistingTile(showOverlay);
                 }
             }
         }
@@ -210,7 +212,7 @@ public class HexGrid : MonoBehaviour
 
                 if (cells.TryGetValue(offset, out HexCell neighbour))
                 {
-                    neighbour.SetActiveTile(activate);
+                    neighbour.SetActiveExistingTile(activate);
                 }
             }
         }
@@ -218,13 +220,16 @@ public class HexGrid : MonoBehaviour
 
     public void UpdateActiveTiles()
     {
+        
+
         List<SightData> sightDatas = new List<SightData>();
 
         foreach (var cell in cells.Values)
         {
             if (cell.isRevealed)
             {
-                cell.SetActiveTile(false);
+                
+                cell.SetActiveExistingTile(false);
             }
 
             if(cell.militaryUnit != null && cell.militaryUnit.master == PlayerManager.instance.player)
@@ -264,6 +269,12 @@ public class HexGrid : MonoBehaviour
     {
         foreach (HexCell cell in cells.Values)
         {
+            if(cell.tile == null)
+            {
+                Debug.LogWarning("cell.tile est null");
+                continue;
+            }
+
             TileOverlay overlay = Instantiate(overlayPrefab, overlayParent);
             overlay.transform.localPosition = new Vector3(
                 cell.tile.transform.position.x, 
@@ -308,7 +319,7 @@ public class HexGrid : MonoBehaviour
         {
             cellsData[i] = new HexCellData
             {
-                terrainType = cell.terrainType,
+                terrainTypeID = cell.terrainType.ID,
                 terrainHigh = cell.terrainHigh,
                 offsetCoordinates = cell.offsetCoordinates,
 

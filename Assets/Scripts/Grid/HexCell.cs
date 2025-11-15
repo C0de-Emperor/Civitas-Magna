@@ -63,18 +63,53 @@ public class HexCell
 
         if (isRevealed)
         {
-            Debug.LogError("Unable to create a revealed tile");
+            CreateRevealedTile();
+
+            SetActiveCreatedTile(isActive);
+        }
+        else
+        {
+            InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
+        }
+    }
+
+    // Only for generation !!!!!
+    private void CreateRevealedTile()
+    {
+        if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
+        {
+            Debug.LogError("Missing data for terrain creation");
             return;
         }
 
-        isRevealed = false;
-        isActive = true;
-        buildingName = Building.BuildingNames.None;
-
-        InstantiateTile(grid.undiscoveredTilePrefab.transform, null, grid.undiscoveredTileHigh);
+        InstantiateTile(terrainType.prefab, terrainType.prop, terrainHigh);
     }
 
-    public void RevealTile(bool showOverlay)
+    private void SetActiveCreatedTile (bool value)
+    {
+        if (!isRevealed)
+        {
+            Debug.LogError("On ne peut pas rendre active une tile non découverte");
+            return;
+        }
+
+        var allRenderers = tile.GetComponentsInChildren<Renderer>(true).ToList();
+
+        if (ressource != null)
+        {
+            allRenderers.AddRange(ressource.GetComponentsInChildren<Renderer>(true));
+        }
+
+        // Apply layer mask
+        foreach (Renderer rend in allRenderers)
+        {
+            rend.renderingLayerMask = value ? grid.defaultLayer : grid.unactiveLayer;
+        }
+    }
+
+
+
+    public void RevealExistingTile(bool showOverlay)
     {
         if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
         {
@@ -87,7 +122,6 @@ public class HexCell
             return;
         }
         isRevealed = true;
-        isActive = true; // A virer par la suite
 
         UnityEngine.Object.Destroy(tile.gameObject);
 
@@ -277,7 +311,7 @@ public class HexCell
         tileOverlay.gameObject.SetActive(false);
     }
 
-    public void SetActiveTile(bool value)
+    public void SetActiveExistingTile(bool value)
     {
         if (isActive == value)
             return;

@@ -6,6 +6,10 @@ public class SaveManager : MonoBehaviour
 {
     public bool canSave;
     public bool isWorking = false;
+
+    public SaveData lastSave;
+    public bool hasLoaded = false;
+
     public static SaveManager instance;
 
     private string savePath;
@@ -14,6 +18,8 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
+        canSave = false;
+
         if (instance != null)
         {
             Destroy(gameObject);
@@ -23,17 +29,15 @@ public class SaveManager : MonoBehaviour
 
         savePath = Path.Combine(Application.persistentDataPath, "save.json");
 
-        OnSaveLoaded += B;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void TriggerSaveLoaded(SaveData data)
     {
+        canSave = true;
+        lastSave = data;
+        hasLoaded = true;
         OnSaveLoaded?.Invoke(data);
-    }
-
-    private void B(SaveData s)
-    {
-        Debug.Log(s.cells[0].terrainType);
     }
 
     private void Update()
@@ -63,6 +67,7 @@ public class SaveManager : MonoBehaviour
 
                 currentTurn = TurnManager.instance.currentTurn,
 
+                seed = MapGenerator.instance.seed,
                 orientation = grid.orientation,
                 width = grid.width,
                 height = grid.height,
@@ -122,6 +127,7 @@ public class SaveData
     public int currentTurn;
 
     [Header("Grid")]
+    public int seed;
     public HexOrientation orientation;
     public int width;
     public int height;
@@ -148,7 +154,7 @@ public class SaveData
 public class HexCellData
 {
     [Header("Terrain")]
-    public TerrainType terrainType;
+    public int terrainTypeID;
     public float terrainHigh;
 
     [Header("Position")]

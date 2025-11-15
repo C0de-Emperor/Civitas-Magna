@@ -5,7 +5,7 @@ using UnityEngine;
 public class TerrainType : ScriptableObject
 {
     [Header("Basic Properties")]
-    [SerializeField] private int ID;
+    [SerializeField] public int ID;
     [field: SerializeField] public string Name { get; private set; }
     [field: SerializeField] public Transform prefab { get; private set; }
     [field: SerializeField] public Transform prop { get; private set; }
