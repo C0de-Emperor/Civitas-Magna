@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitType : ScriptableObject
+public abstract class UnitType : ScriptableObject
 {
     public enum UnitCategory { military, civilian };
 
@@ -14,6 +15,8 @@ public class UnitType : ScriptableObject
 
     public int baseProductionCost;
     public int baseGoldCost;
+
+    public List<TerrainType> speciallyAccessibleTerrains = new List<TerrainType>();
 
     [HideInInspector] public UnitCategory unitCategory;
 }

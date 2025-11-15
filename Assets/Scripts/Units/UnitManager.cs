@@ -47,18 +47,20 @@ public class UnitManager : MonoBehaviour
         maxIterations = grid.height * grid.width;
     }
 
-    public void CivilianUnitAction(string actionType)
+    public void CivilianUnitAction(int actionType)
     {
-        switch (SelectionManager.instance.selectedUnit.GetUnitCivilianData().job)
+        if(SelectionManager.instance.selectedUnit == null)
         {
-            case CivilianUnitType.CivilianJob.Settler:
-                if(actionType == "Settle")
-                {
-                    SelectionManager.instance.selectedCell.CreateBuilding(Building.BuildingNames.City, SelectionManager.instance.selectedUnit);
-                    SelectionManager.instance.selectedUnit = null;
-                }
+            return;
+        }
+
+        if (SelectionManager.instance.selectedCell.CreateBuilding(SelectionManager.instance.selectedUnit.GetUnitCivilianData().buildableBuildings[actionType], SelectionManager.instance.selectedUnit))
+        {
+            if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+            {
                 RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
-                break;
+                SelectionManager.instance.selectedUnit = null;
+            }
         }
     }
 
@@ -162,7 +164,7 @@ public class UnitManager : MonoBehaviour
 
             if (cellToAttack != null)
             {
-                if (cellToAttack.buildingName == Building.BuildingNames.City)
+                if (cellToAttack.building.buildingName == Building.BuildingNames.City)
                 {
                     CityFight(currentCell, cellToAttack);
                 }
@@ -233,7 +235,7 @@ public class UnitManager : MonoBehaviour
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -268,7 +270,7 @@ public class UnitManager : MonoBehaviour
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            if (destCell.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
+            if (destCell.building.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
             {
                 movementData.attacksACity = true;
             }
@@ -391,7 +393,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if (cell.militaryUnit == null && IsCellTraversable(cell.terrainType, unitType))
+            if (cell.civilianUnit == null && IsCellTraversable(cell.terrainType, unitType))
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
@@ -399,11 +401,6 @@ public class UnitManager : MonoBehaviour
                     new Quaternion(0, 0, 0, 1),
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
-
-                foreach(var button in unitTransform.GetChild(1).GetComponentsInChildren<Button>())
-                {
-                    button.onClick.AddListener(delegate { CivilianUnitAction(button.GetComponentInChildren<Text>().text); });
-                }
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
@@ -582,6 +579,11 @@ public class UnitManager : MonoBehaviour
     // renvoie si la case est traversable par l'unité ou non
     private bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
     {
+        if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
+        {
+            return true;
+        }
+
         if(terrainType.terrainCost > unitType.MoveReach)
         {
             return false;
@@ -668,6 +670,7 @@ public class Unit
 
     public float movesDone; // le nombre de déplacements effectués ce tour
     public int lastDamagingTurn { get; private set; } // le dernier où l'unité a subi des dégats
+    public int chargesLeft { get; private set; }
 
     // constructeur de la classe
     public Unit(Transform unitTransform, UnitType unitType, UnitPin unitPin, Player master)
@@ -695,8 +698,16 @@ public class Unit
         else
         {
             this.civilianUnitType = unitType as CivilianUnitType;
-            unitCanvaTransform = unitTransform.GetChild(1);
+            unitCanvaTransform = unitTransform.GetChild(0);
             unitCanvaTransform.gameObject.SetActive(false);
+            this.chargesLeft = this.civilianUnitType.actionCharges;
+
+            for (int i = 0; i<this.civilianUnitType.buildableBuildings.Count; i++)
+            {
+                int currentIndex = i;
+                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponent<Button>().onClick.AddListener(delegate { UnitManager.instance.CivilianUnitAction(currentIndex); });
+                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponentInChildren<Text>().text = this.civilianUnitType.buildableBuildings[i].buildActionName;
+            }
         }
     }
 
@@ -736,6 +747,13 @@ public class Unit
     public CivilianUnitType GetUnitCivilianData()
     {
         return this.civilianUnitType;
+    }
+
+    public bool ConsumeCharge()
+    {
+        this.chargesLeft -= 1;
+        this.movesDone = this.unitType.MoveReach;
+        return this.chargesLeft <= 0;
     }
 }
 

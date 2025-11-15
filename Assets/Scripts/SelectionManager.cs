@@ -157,6 +157,11 @@ public class SelectionManager : MonoBehaviour
                     {
                         if(UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory))
                         {
+                            if (selectedUnit.unitType.unitCategory == UnitType.UnitCategory.civilian)
+                            {
+                                selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
+                            }
+
                             selectedCell = null;
                             selectedUnit = null;
                             pathPreviewCoordinates = new List<Vector3>();
@@ -222,7 +227,11 @@ public class SelectionManager : MonoBehaviour
 		{
 			UnitManager.instance.AddUnit(UnitManager.instance.civilianUnits[0], selectedCell, PlayerManager.instance.player);
 		}
-		if (Input.GetKeyUp(KeyCode.P))
+        if (Input.GetKeyUp(KeyCode.C) && selectedCell != null)
+        {
+            UnitManager.instance.AddUnit(UnitManager.instance.civilianUnits[1], selectedCell, PlayerManager.instance.player);
+        }
+        if (Input.GetKeyUp(KeyCode.P))
         {
             TurnManager.instance.ChangeTurn();
         }
@@ -268,7 +277,7 @@ public class SelectionManager : MonoBehaviour
         }
 
         // Ajoute une action pour la ville
-        if (currentCell.buildingName == Building.BuildingNames.City)
+        if (currentCell.building.buildingName == Building.BuildingNames.City)
         {
             selectedUnit = null;
             actions.Add(() =>

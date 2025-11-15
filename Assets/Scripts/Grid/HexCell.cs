@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -38,7 +39,7 @@ public class HexCell
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
-    [field: SerializeField] public Building.BuildingNames buildingName;
+    [field: SerializeField] public Building building;
 
     public void SetCoordinates(Vector2Int _offsetCoordinates, HexOrientation orientation)
     {
@@ -212,6 +213,11 @@ public class HexCell
 
     public Transform InstantiateRessource(Transform ressourcePrefab)
     {
+        if(ressource != null)
+        {
+            grid.DestroyRessource(this);
+        }
+
         Vector3 centerPosition = HexMetrics.Center(
             hexSize,
             (int)offsetCoordinates.x,
@@ -290,10 +296,10 @@ public class HexCell
 
     public void ShowOverlay()
     {
-        if (ressource != null && buildingName != Building.BuildingNames.City)
+        if (ressource != null && building.buildingName != Building.BuildingNames.City)
             ressource.gameObject.SetActive(false);
 
-        if (ressource != null && buildingName == Building.BuildingNames.City)
+        if (ressource != null && building.buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().HideForOverlay();
 
         tileOverlay.Init(terrainType.food, terrainType.production);
@@ -305,7 +311,7 @@ public class HexCell
         if (ressource != null)
             ressource.gameObject.SetActive(true);
 
-        if (buildingName == Building.BuildingNames.City)
+        if (building.buildingName == Building.BuildingNames.City)
             ressource.gameObject.GetComponent<City>().ShowForOverlay();
 
         tileOverlay.gameObject.SetActive(false);
@@ -350,22 +356,24 @@ public class HexCell
         isActive = value;
     }
 
-    public void CreateBuilding(Building.BuildingNames _buildingName, Unit builder)
+    public bool CreateBuilding(Building _building, Unit builder)
     {
-        switch (_buildingName)
+        if(_building.buildingName == building.buildingName || !terrainType.build.Contains(_building.buildingName) || building.buildingName == Building.BuildingNames.City)
         {
-            case Building.BuildingNames.City:
-                CityManager.instance.CreateCity(this, builder.master);
-                break;
-            case Building.BuildingNames.Farm:
-                terrainType.food *= 2;
-				buildingName = Building.BuildingNames.Farm;
-                break;
-            case Building.BuildingNames.Mine:
-                terrainType.production *= 2;
-				buildingName = Building.BuildingNames.Mine;
-                break;
-		}
+            return false;
+        }
+
+        if(_building.buildingName == Building.BuildingNames.City)
+        {
+            CityManager.instance.CreateCity(this, builder.master);
+        }
+        else if(_building.buildingPrefab != null)
+        {
+            InstantiateRessource(_building.buildingPrefab.transform);
+        }
+        building = _building;
+
+        return true;
     }
 }
  

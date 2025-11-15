@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CityBorders))]
-public class City : Building
+public class City : MonoBehaviour
 {
     const float RUINED_CITY_FACTOR_REDUCTION = 0.5f;
     const float FACTOR_REGENERATION = 0.05f;
@@ -65,8 +65,7 @@ public class City : Building
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // base amount
-            amount += cell.terrainType.food;
+            amount += cell.terrainType.food * cell.building.foodFactor;
         }
 
         return amount * cityFactor;
@@ -83,8 +82,7 @@ public class City : Building
 
         foreach (HexCell cell in controlledTiles.Values)
         {
-            // base amount
-            amount += cell.terrainType.production;
+            amount += cell.terrainType.production*cell.building.productionFactor;
         }
 
         return amount * cityFactor;

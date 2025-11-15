@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f732404695118a4f800d0f771c9352d, type: 3}
+  m_Name: Builder
+  m_EditorClassIdentifier: Assembly-CSharp::CivilianUnitType
+  unitPrefab: {fileID: 5046622356644407998, guid: a74da02f18eaa58419193e8b19010c47, type: 3}
+  unitSprite: {fileID: 21300000, guid: e24de92293b2e264c9a837abf55745c5, type: 3}
+  unitIcon: {fileID: 21300000, guid: b6a525f048182fe4a9e0c765654cc566, type: 3}
+  MoveReach: 2
+  sightRadius: 2
+  IsABoat: 0
+  baseProductionCost: 50
+  baseGoldCost: 200
+  speciallyAccessibleTerrains:
+  - {fileID: 11400000, guid: 103ba90da1abed1449217c63ac38e23f, type: 2}
+  unitCategory: 1
+  job: 1
+  buildableBuildings:
+  - {fileID: 11400000, guid: 016552e38f0f1cd40b15fa1b6c3b9e3c, type: 2}
+  - {fileID: 11400000, guid: fb35615aed530e94d9eb0726605674be, type: 2}
+  - {fileID: 11400000, guid: 500a066bb61d75244a610123536cc5d8, type: 2}
+  actionCharges: 3

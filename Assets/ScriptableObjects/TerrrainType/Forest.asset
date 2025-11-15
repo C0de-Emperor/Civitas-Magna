@@ -18,6 +18,6 @@ MonoBehaviour:
   <prop>k__BackingField: {fileID: -8679921383154817045, guid: baa90d1f7a229074fb54ebecf39f9fcb, type: 3}
   <terrainCost>k__BackingField: 2
   <isWater>k__BackingField: 0
-  <build>k__BackingField: 
+  <build>k__BackingField: 04000000
   food: 1
   production: 2
