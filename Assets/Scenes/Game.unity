@@ -4900,6 +4900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e40ad2d1769de6f469acc380acb6b43a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  grid: {fileID: 664016684}
   cityPrefab: {fileID: 1758533404836330832, guid: c1e03cd848362124bbff6e44eebcda55, type: 3}
   cityPanel: {fileID: 1133835121}
   openedCity: {fileID: 0}

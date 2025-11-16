@@ -51,8 +51,6 @@ public class MapGenerator : MonoBehaviour
 
         // Tri des biomes par hauteur
         biomes.Sort((a, b) => a.height.CompareTo(b.height));
-
-
     }
 
     public void OnLoad(SaveData data)

@@ -241,8 +241,8 @@ public class HexCell
 
         Vector3 centerPosition = HexMetrics.Center(
             hexSize,
-            (int)offsetCoordinates.x,
-            (int)offsetCoordinates.y,
+            offsetCoordinates.x,
+            offsetCoordinates.y,
             orientation
         ) + grid.transform.position;
 

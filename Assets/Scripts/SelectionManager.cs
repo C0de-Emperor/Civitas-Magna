@@ -167,10 +167,6 @@ public class SelectionManager : MonoBehaviour
                             pathPreviewCoordinates = new List<Vector3>();
                         }
                     }
-                    else
-                    {
-                        CityManager.instance.CreateCity(currentCell, PlayerManager.instance.player);
-                    }
                 }
             }
             else
@@ -255,7 +251,7 @@ public class SelectionManager : MonoBehaviour
         }
 
         // Crée une liste dynamique des éléments disponibles sur la cellule
-        List<System.Action> actions = new List<System.Action>();
+        List<Action> actions = new List<Action>();
 
         // Ajoute une action pour l’unité militaire
         if (currentCell.militaryUnit != null)
@@ -284,6 +280,7 @@ public class SelectionManager : MonoBehaviour
             {
                 if (CityManager.instance.cities.TryGetValue(coord, out City city))
                 {
+                    Debug.Log("e");
                     CityManager.instance.OpenCity(city);
                 }
             });

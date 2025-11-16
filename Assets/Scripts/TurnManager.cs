@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    public int currentTurn = 0;
+    public int currentTurn;
 
     // toute fonction ajouté à cet event sera executé au changement de tour
     public event Action OnTurnChange;
@@ -11,6 +11,7 @@ public class TurnManager : MonoBehaviour
     public static TurnManager instance;
     private void Awake()
     {
+        SaveManager.instance.OnSaveLoaded += OnLoad;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de TurnManager dans la scène");
@@ -19,6 +20,14 @@ public class TurnManager : MonoBehaviour
         instance = this;
 
         OnTurnChange += Log;
+    }
+
+    private void OnLoad(SaveData data)
+    {
+        if(data != null)
+            currentTurn = data.currentTurn;
+        else
+            currentTurn = 0;
     }
 
     public void ChangeTurn()

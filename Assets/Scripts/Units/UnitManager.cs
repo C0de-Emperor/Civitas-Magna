@@ -15,7 +15,7 @@ public class UnitManager : MonoBehaviour
     [HideInInspector] public MilitaryUnitType[] militaryUnits;
     [HideInInspector] public CivilianUnitType[] civilianUnits;
 
-    [HideInInspector] public int nextAvailableId = 0;
+    [HideInInspector] public int nextAvailableId;
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
 
@@ -58,6 +58,7 @@ public class UnitManager : MonoBehaviour
 
     private void Awake()
     {
+        SaveManager.instance.OnSaveLoaded += OnLoad;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de UnitManager dans la scene");
@@ -75,6 +76,18 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
     
         maxIterations = grid.height * grid.width;
+    }
+
+    private void OnLoad(SaveData data)
+    {
+        if (data == null)
+        {
+            nextAvailableId = 0;
+        }
+        else
+        {
+            nextAvailableId = data.nextAvailableId;
+        }
     }
 
     public void CivilianUnitAction(int actionType)
@@ -409,10 +422,9 @@ public class UnitManager : MonoBehaviour
                 {
                     if(unitType is MilitaryUnitType m)
                     {
-                        Debug.Log("e");
                         grid.RevealTilesInRadius(cell.offsetCoordinates, m.sightRadius, SelectionManager.instance.showOverlay, true);
                     }
-                    else if (unitType is CivilianUnitType c)
+                    if (unitType is CivilianUnitType c)
                     {
                         grid.RevealTilesInRadius(cell.offsetCoordinates, c.sightRadius, SelectionManager.instance.showOverlay, true);
                     }

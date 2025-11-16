@@ -26,7 +26,7 @@ public class ResearchNodeUI : MonoBehaviour
 
     [HideInInspector] public List<Image> images = new List<Image>();
 
-    public enum State { Researched, InResearch, ToResearch, Blocked }
+    public enum State { Researched, InResearch, ToResearch, Blocked, None }
     public State state;
 
     public void Init(Research _research)
@@ -68,6 +68,8 @@ public class ResearchNodeUI : MonoBehaviour
             Image icon = obj.transform.Find("Icon").GetComponent<Image>();
             icon.sprite = unlock.icon;
         }
+
+        state = State.None;
     }
 
     public void UpdateState()
@@ -75,7 +77,6 @@ public class ResearchNodeUI : MonoBehaviour
         var manager = ResearchManager.instance;
         if (manager == null || research == null) return;
 
-        // newState
         State newState;
         if (manager.researched.Contains(research))
             newState = State.Researched;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +35,9 @@ public class ResearchManager : MonoBehaviour
     private void Awake()
     {
         allResearches = Resources.LoadAll<Research>("Researches");
+
+        SaveManager.instance.OnSaveLoaded += OnLoad;
+
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de ResearchManager dans la scène");
@@ -54,6 +58,16 @@ public class ResearchManager : MonoBehaviour
     private void Start()
     {
         GenerateTree(allResearches);
+    }
+
+    private void OnLoad(SaveData data)
+    {
+        if(data != null)
+        {
+            currentResearch = data.currentResearch;
+            currentResearchProgress = data.currentResearchProgress;
+            researched = data.researched.ToList();
+        }
     }
 
     public void GenerateTree(Research[] allResearches)
