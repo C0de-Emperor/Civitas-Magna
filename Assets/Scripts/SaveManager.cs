@@ -7,7 +7,8 @@ public class SaveManager : MonoBehaviour
     public bool canSave;
     public bool isWorking = false;
 
-    public SaveData lastSave;
+    [field:NonSerialized] public SaveData lastSave { get; private set; }
+
     public bool hasLoaded = false;
 
     public static SaveManager instance;
@@ -40,10 +41,9 @@ public class SaveManager : MonoBehaviour
         OnSaveLoaded?.Invoke(data);
     }
 
-    private void Update()
+    public void ClearAllSaveLoadedSubscribers()
     {
-        if (Input.GetKeyDown(KeyCode.T) && canSave && !isWorking)
-            SaveData();
+        OnSaveLoaded = null;
     }
 
     public void SaveData()

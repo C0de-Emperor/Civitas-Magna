@@ -33,4 +33,12 @@ public class MainThreadDispatcher : MonoBehaviour
             _executionQueue.Dequeue().Invoke();
         }
     }
+
+    public void Clear()
+    {
+        lock (_executionQueue)
+        {
+            _executionQueue.Clear();
+        }
+    }
 }
