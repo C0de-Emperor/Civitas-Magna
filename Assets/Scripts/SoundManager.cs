@@ -13,23 +13,26 @@ public class SoundManager : MonoBehaviour
     public AudioMixer mainMixer;
     public float baseVolume = -30f;
 
+    private bool isFistLoad;
+
     public static SoundManager instance;
     private void Awake()
     {
         if (instance != null)
         {
+            isFistLoad = false;
             return;
         }
+        isFistLoad = true;
         instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        
     }
 
     private void Start()
     {
-        mainMixer.SetFloat("Volume", baseVolume);
+        if(isFistLoad)
+            mainMixer.SetFloat("Volume", baseVolume);
     }
 
     private void Update()

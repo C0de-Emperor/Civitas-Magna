@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SettingsController))]
 public class MainMenuManager : MonoBehaviour
 {
     public Button newGameButton;
@@ -14,8 +15,12 @@ public class MainMenuManager : MonoBehaviour
     public Transform mainMenuPanel;
     public Transform settingsPanel;
 
+    private SettingsController controller;
+
     private void Awake()
     {
+        controller = GetComponent<SettingsController>();
+
         newGameButton.onClick.AddListener(() => NewGameButtonPressed());
         loadGameButton.onClick.AddListener(() => LoadGameButtonPressed());
         settingsButton.onClick.AddListener(() => OpenSettingsMenu());
@@ -28,6 +33,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void OpenSettingsMenu()
     {
+        controller.UpdateUI();
         mainMenuPanel.gameObject.SetActive(false);
         settingsPanel.gameObject.SetActive(true);
     }

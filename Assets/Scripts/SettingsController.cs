@@ -19,8 +19,6 @@ public class SettingsController : MonoBehaviour
         fullScreenToggle.onValueChanged.AddListener(SetFullScreen);
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
 
-        volumeSlider.value = SoundManager.instance.baseVolume;
-
         resolutions = Screen.resolutions.Select(resolution => new Resolution { width = resolution.width, height = resolution.height }).Distinct().ToArray(); 
         resolutionDropdown.ClearOptions();
 
@@ -41,6 +39,12 @@ public class SettingsController : MonoBehaviour
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+    }
+
+    public void UpdateUI()
+    {
+        if(SoundManager.instance.mainMixer.GetFloat("Volume", out float value))
+            volumeSlider.value = value;
     }
 
     private void SetVolume(float volume)
