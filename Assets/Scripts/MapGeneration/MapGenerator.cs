@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using static Unity.Cinemachine.CinemachineSplineRoll;
 
 [RequireComponent(typeof(HexGrid))]
 public class MapGenerator : MonoBehaviour
@@ -55,6 +55,8 @@ public class MapGenerator : MonoBehaviour
 
     public void OnLoad(SaveData data)
     {
+        //SaveManager.instance.OnSaveLoaded -= OnLoad;
+
         if (data == null)
             GenerateMap();
         else
@@ -181,14 +183,22 @@ public class MapGenerator : MonoBehaviour
                         cells.Add(cell);
                     }
                 }
-                StartCoroutine(hexGrid.SetHexCells(cells));
+                if (hexGrid != null)
+                    StartCoroutine(GetComponent<HexGrid>().SetHexCells(cells));
+                else
+                    Debug.Log("null grid : ");
             });
         };
 
         if (useThreadedGeneration)
+        {
             Task.Run(generateAction);
+        }
         else
+        {
+            
             generateAction.Invoke();
+        }
     }
 
     public void GenerateMapFromSave(SaveData data)
@@ -230,6 +240,7 @@ public class MapGenerator : MonoBehaviour
         Debug.LogError($"TerrainType not found for ID {id}");
         return null;
     }
+
 }
 
 [Serializable]

@@ -17,10 +17,12 @@ public class MainMenuManager : MonoBehaviour
     {
         UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
 
+        SaveManager.instance.ClearAllSaveLoadedSubscribers();
+
         callback = (scene, mode) =>
         {
-            SaveManager.instance.TriggerSaveLoaded(null);
             SceneManager.sceneLoaded -= callback;
+            SaveManager.instance.TriggerSaveLoaded(null);
         };
 
         SceneManager.sceneLoaded += callback;
@@ -31,10 +33,12 @@ public class MainMenuManager : MonoBehaviour
     {
         UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
 
+        SaveManager.instance.ClearAllSaveLoadedSubscribers();
+
         callback = (scene, mode) =>
         {
-            SaveManager.instance.TriggerSaveLoaded(SaveManager.instance.LoadData());
             SceneManager.sceneLoaded -= callback;
+            SaveManager.instance.TriggerSaveLoaded(SaveManager.instance.LoadData());
         };
 
         SceneManager.sceneLoaded += callback;

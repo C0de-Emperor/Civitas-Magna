@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -59,26 +60,44 @@ public class SelectionManager : MonoBehaviour
 
     private void Update()
     {
-        // Unselect city
-        if (Input.GetKeyDown(KeyCode.Escape) && CityManager.instance.openedCity != null)
-        {
-            CityManager.instance.CloseCity();
-            selectedCell = null;
-        }
 
-        // Close Science Menu
-        if (Input.GetKeyDown(KeyCode.Escape) && ResearchManager.instance.isMenuOpen)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ResearchManager.instance.CloseMenu();
-            if (outlinedCell != null || selectedCell != null || selectedUnit != null)
+            // Unselect city
+            if (CityManager.instance.openedCity != null)
             {
-                selectionOutline.gameObject.SetActive(false);
-                innerSelectionOutline.gameObject.SetActive(false);
+                CityManager.instance.CloseCity();
                 selectedCell = null;
-                outlinedCell = null;
-                selectedUnit = null;
+            }
+
+            // Close Science Menu
+            else if (ResearchManager.instance.isMenuOpen)
+            {
+                ResearchManager.instance.CloseMenu();
+                if (outlinedCell != null || selectedCell != null || selectedUnit != null)
+                {
+                    selectionOutline.gameObject.SetActive(false);
+                    innerSelectionOutline.gameObject.SetActive(false);
+                    selectedCell = null;
+                    outlinedCell = null;
+                    selectedUnit = null;
+                }
+            }
+
+            // Close Settings Window
+            else if (PauseMenuManager.instance.isMenuOpen)
+            {
+                PauseMenuManager.instance.CloseMenu();
+            }
+
+            // Open Settings Window
+            else
+            {
+                PauseMenuManager.instance.OpenMenu();
             }
         }
+
+
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -90,7 +109,7 @@ public class SelectionManager : MonoBehaviour
             showOverlay = !showOverlay;
         }
 
-        if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract)
+        if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract || EventSystem.current.IsPointerOverGameObject())
         {
             if (outlinedCell != null || selectedCell != null || selectedUnit != null)
             {
@@ -130,11 +149,6 @@ public class SelectionManager : MonoBehaviour
                 if (selectedUnit != null)
                 {
                     pathPreviewCoordinates = GetPathCoordinates(UnitManager.instance.GetShortestPath(selectedCell, currentCell, selectedUnit.unitType));
-                }
-
-                if (EventSystem.current.IsPointerOverGameObject())
-                {
-                    return;
                 }
 
                 if (Input.GetMouseButtonDown(0))
