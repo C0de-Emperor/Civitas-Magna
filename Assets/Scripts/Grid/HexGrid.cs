@@ -308,11 +308,13 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    public HexCellData[] GetAllCellData()
+    public AllCellData GetAllCellData()
     {
         HexCellData[] cellsData = new HexCellData[cells.Count];
+        UnitData[] unitDatas = new UnitData[UnitManager.instance.units.Count];
 
         int i = 0;
+        int j = 0;
 
         foreach (HexCell cell in cells.Values)
         {
@@ -326,10 +328,58 @@ public class HexGrid : MonoBehaviour
                 isActive = cell.isActive,
                 building = cell.building
             };
+            if(cell.militaryUnit != null)
+            {
+                unitDatas[j] = new UnitData
+                {
+                    id = cell.militaryUnit.id,
+                    cellCoordinates = cell.offsetCoordinates,
+                    unitType = cell.militaryUnit.unitType,
+                    masterId = cell.militaryUnit.master.id,
+                    unitName = cell.militaryUnit.unitName,
+
+                    currentHealth = cell.militaryUnit.currentHealth,
+
+                    movesDone = cell.militaryUnit.movesDone,
+                    lastDamagingTurn = cell.militaryUnit.lastDamagingTurn,
+                    chargesLeft = 0,
+
+                    queuedMovementData = UnitManager.instance.queuedUnitMovements.TryGetValue(cell.militaryUnit.id, out var moveData)
+                    ? moveData
+                    : new queuedMovementData()
+                };
+                j++;
+            }
+            if (cell.civilianUnit != null)
+            {
+                unitDatas[j] = new UnitData
+                {
+                    id = cell.civilianUnit.id,
+                    cellCoordinates = cell.offsetCoordinates,
+                    unitType = cell.civilianUnit.unitType,
+                    masterId = cell.civilianUnit.master.id,
+                    unitName = cell.civilianUnit.unitName,
+
+                    currentHealth = cell.civilianUnit.currentHealth,
+
+                    movesDone = cell.civilianUnit.movesDone,
+                    lastDamagingTurn = cell.civilianUnit.lastDamagingTurn,
+                    chargesLeft = cell.civilianUnit.chargesLeft,
+
+                    queuedMovementData = UnitManager.instance.queuedUnitMovements.TryGetValue(cell.civilianUnit.id, out var moveData)
+                    ? moveData
+                    : new queuedMovementData()
+                };
+                j++;
+            }
             i++;
         }
 
-        return cellsData;
+        AllCellData allCellData = new AllCellData();
+        allCellData.cellData = cellsData;
+        allCellData.unitData = unitDatas;
+
+        return allCellData;
     }
 
     public void DestroyRessource(HexCell cell)
@@ -348,4 +398,10 @@ public struct SightData
 {
     public Vector2 cellCoordinates;
     public int sightRadius;
+}
+
+public struct AllCellData
+{
+    public HexCellData[] cellData;
+    public UnitData[] unitData;
 }

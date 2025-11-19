@@ -58,6 +58,8 @@ public class SaveManager : MonoBehaviour
             UnitManager unitM = UnitManager.instance;
             PlayerManager playerM = PlayerManager.instance;
 
+            AllCellData allCellData = grid.GetAllCellData();
+
             SaveData data = new SaveData
             {
                 creationTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -73,7 +75,7 @@ public class SaveManager : MonoBehaviour
                 height = grid.height,
                 hexSize = grid.hexSize,
                 batchSize = grid.batchSize,
-                cells = grid.GetAllCellData(),
+                cells = allCellData.cellData,
 
                 maxCityRadius = cityM.maxCityRadius,
                 availableNames = cityM.availableNames.ToArray(),
@@ -83,8 +85,7 @@ public class SaveManager : MonoBehaviour
                 currentResearchProgress = researchM.currentResearchProgress,
                 researched = researchM.researched.ToArray(),
 
-                nextAvailableId = unitM.nextAvailableId,
-                units = unitM.GetAllUnitData()
+                units = allCellData.unitData
             };
 
             string json = JsonUtility.ToJson(data, true);
@@ -146,7 +147,6 @@ public class SaveData
     public Research[] researched;
 
     [Header("Units")]
-    public int nextAvailableId;
     public UnitData[] units;
 }
 
@@ -198,15 +198,16 @@ public class CityData
 public class UnitData
 {
     public int id;
-    public Vector3 position;
+    public Vector2 cellCoordinates;
     public UnitType unitType;
-    public Player master;
+    public int masterId;
     public string unitName;
 
     public float currentHealth;
 
     public float movesDone;
     public int lastDamagingTurn;
+    public int chargesLeft;
 
     public queuedMovementData queuedMovementData;
 

@@ -15,7 +15,7 @@ public class UnitManager : MonoBehaviour
     [HideInInspector] public MilitaryUnitType[] militaryUnits;
     [HideInInspector] public CivilianUnitType[] civilianUnits;
 
-    [HideInInspector] public int nextAvailableId;
+    [HideInInspector] public int nextAvailableId = 1;
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
 
@@ -58,7 +58,7 @@ public class UnitManager : MonoBehaviour
 
     private void Awake()
     {
-        SaveManager.instance.OnSaveLoaded += OnLoad;
+        grid.OnCellInstancesGenerated += OnLoad;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de UnitManager dans la scene");
@@ -78,15 +78,26 @@ public class UnitManager : MonoBehaviour
         maxIterations = grid.height * grid.width;
     }
 
-    private void OnLoad(SaveData data)
+    private void OnLoad()
     {
-        if (data == null)
+        SaveData data = SaveManager.instance.lastSave;
+
+        if (data != null)
         {
-            nextAvailableId = 0;
-        }
-        else
-        {
-            nextAvailableId = data.nextAvailableId;
+            foreach(var unitData in data.units)
+            {
+                Debug.Log(unitData.masterId + " " + PlayerManager.instance.player.id);
+                Unit unit = AddUnit(unitData.unitType, grid.GetTile(unitData.cellCoordinates), PlayerManager.instance.playerEntities[unitData.masterId]);
+                unit.currentHealth = unitData.currentHealth;
+                unit.movesDone = unitData.movesDone;
+                unit.lastDamagingTurn = unitData.lastDamagingTurn;
+                unit.chargesLeft = unitData.chargesLeft;
+
+                if (unitData.queuedMovementData.path.Count > 1) 
+                { 
+                    queuedUnitMovements.Add(unit.id, unitData.queuedMovementData); 
+                }
+            }
         }
     }
 
@@ -394,7 +405,7 @@ public class UnitManager : MonoBehaviour
         else
         {
             unit = unitCell.civilianUnit;
-            unitCell.civilianUnit = null; // retirer l'untié de la case
+            unitCell.civilianUnit = null; // retirer l'unité de la case
         }
 
         units.Remove(unit.id);
@@ -403,7 +414,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // ajouter un type d'unité à une case
-    public void AddUnit(UnitType unitType, HexCell cell, Player master)
+    public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
@@ -420,14 +431,7 @@ public class UnitManager : MonoBehaviour
 
                 if (master == PlayerManager.instance.player)
                 {
-                    if(unitType is MilitaryUnitType m)
-                    {
-                        grid.RevealTilesInRadius(cell.offsetCoordinates, m.sightRadius, SelectionManager.instance.showOverlay, true);
-                    }
-                    if (unitType is CivilianUnitType c)
-                    {
-                        grid.RevealTilesInRadius(cell.offsetCoordinates, c.sightRadius, SelectionManager.instance.showOverlay, true);
-                    }
+                    grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
                 }
 
                 if (!cell.isRevealed || !cell.isActive)
@@ -440,6 +444,8 @@ public class UnitManager : MonoBehaviour
 
                 cell.militaryUnit = unit;
                 units.Add(unit.id, unit);
+
+                return unit;
             }
             else
             {
@@ -459,6 +465,11 @@ public class UnitManager : MonoBehaviour
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
+                if (master == PlayerManager.instance.player)
+                {
+                    grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
+                }
+
                 if (!cell.isRevealed)
                 {
                     unitTransform.GetComponentInChildren<Renderer>().enabled = false;
@@ -469,12 +480,16 @@ public class UnitManager : MonoBehaviour
 
                 cell.civilianUnit = unit;
                 units.Add(unit.id, unit);
+
+                return unit;
             }
             else
             {
                 Debug.LogError("trying to add a support unit on an already occupied tile");
             }
         }
+
+        return null;
     }
 
     // renvoie une liste de cases qui correspond au chemin le plus court entre deux cases
@@ -651,37 +666,6 @@ public class UnitManager : MonoBehaviour
         return true;
     }
 
-    public UnitData[] GetAllUnitData()
-    {
-        UnitData[] unitsData = new UnitData[units.Count];
-
-        int i = 0;
-
-        foreach (Unit unit in units.Values)
-        {
-            unitsData[i] = new UnitData
-            {
-                id = unit.id,
-                position = unit.unitTransform.position,
-                unitType = unit.unitType,
-                master = unit.master,
-                unitName = unit.unitName,
-
-                currentHealth = unit.currentHealth,
-
-                movesDone = unit.movesDone,
-                lastDamagingTurn = unit.lastDamagingTurn,
-
-                queuedMovementData = queuedUnitMovements.TryGetValue(unit.id, out var moveData)
-                    ? moveData
-                    : new queuedMovementData()
-            };
-            i++;
-        }
-
-        return unitsData;
-    }
-
     // classe utile pour stocker les données de chaque case dans le cadre de l'algorithme A*
     private class CellData
     {
@@ -721,11 +705,11 @@ public class Unit
 
     private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
     private CivilianUnitType civilianUnitType; // type de l'unité spécial civil
-    public float currentHealth { get; private set; } // vie actuelle de l'unité
+    public float currentHealth = 0; // vie actuelle de l'unité
 
-    public float movesDone; // le nombre de déplacements effectués ce tour
-    public int lastDamagingTurn { get; private set; } // le dernier où l'unité a subi des dégats
-    public int chargesLeft { get; private set; }
+    public float movesDone = 0; // le nombre de déplacements effectués ce tour
+    public int lastDamagingTurn = -1; // le dernier où l'unité a subi des dégats
+    public int chargesLeft = 0;
 
     // constructeur de la classe
     public Unit(Transform unitTransform, UnitType unitType, UnitPin unitPin, Player master)

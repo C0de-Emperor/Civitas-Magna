@@ -177,6 +177,8 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
+            selectedCell = null;
+            selectedUnit = null;
             outlinedCell = null;
             selectionOutline.SetActive(false);
         }
