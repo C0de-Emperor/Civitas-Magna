@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Text goldStockText;
 
-    [HideInInspector] public float goldStock = 0f;
+    [HideInInspector] public float goldStock;
 
     public static PlayerManager instance;
     private void Awake()
@@ -39,15 +39,17 @@ public class PlayerManager : MonoBehaviour
         goldStockText.text = Mathf.RoundToInt(goldStock).ToString();
     }
 
-    public void OnLoad(SaveData saveData)
+    public void OnLoad(SaveData data)
     {
-        if(saveData != null)
+        if(data != null)
         {
-            player = new Player(saveData.player.playerName, saveData.player.livery);
+            player = new Player(data.player.playerName, data.player.livery);
+            goldStock = data.goldStock;
         }
         else
         {
             player = new Player("bruh", new Color[] { new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) });
+            goldStock = 0f;
         }
     }
 }

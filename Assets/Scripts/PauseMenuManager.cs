@@ -53,12 +53,14 @@ public class PauseMenuManager : MonoBehaviour
     public void OpenMenu()
     {
         menuPanel.gameObject.SetActive(true);
+        CameraController.instance.canMove = false;
         isMenuOpen = true;
     }
 
     public void CloseMenu()
     {
         menuPanel.gameObject.SetActive(false);
+        CameraController.instance.canMove = true;
         isMenuOpen = false;
     }
 }

@@ -97,8 +97,6 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (showOverlay)
@@ -109,7 +107,13 @@ public class SelectionManager : MonoBehaviour
             showOverlay = !showOverlay;
         }
 
-        if (selectionOutline == null || innerSelectionOutline == null || !MapGenerator.instance.isMapReady || !canInteract || EventSystem.current.IsPointerOverGameObject())
+        if (selectionOutline == null 
+            || innerSelectionOutline == null 
+            || !MapGenerator.instance.isMapReady 
+            || !canInteract 
+            || EventSystem.current.IsPointerOverGameObject()
+            || PauseMenuManager.instance.isMenuOpen
+            )
         {
             if (outlinedCell != null || selectedCell != null || selectedUnit != null)
             {
