@@ -105,6 +105,7 @@ public class UnitManager : MonoBehaviour
     {
         if(SelectionManager.instance.selectedUnit == null)
         {
+            Debug.LogError("trying to execute action with no selected unit ?!");
             return;
         }
 

@@ -226,7 +226,11 @@ public class HexCell
         int randomRotation = UnityEngine.Random.Range(0, 6);
         tile.Rotate(new Vector3(0, randomRotation * 60, 0));
 
-        if (ressourcePrefab != null)
+        if (building.buildingName != Building.BuildingNames.None && building.buildingName != Building.BuildingNames.City)
+        {
+            InstantiateRessource(building.buildingPrefab.transform);
+        }
+        else if (ressourcePrefab != null)
         {
             InstantiateRessource(ressourcePrefab);
         }
