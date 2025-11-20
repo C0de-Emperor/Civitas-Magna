@@ -22,8 +22,8 @@ public class UnitManager : MonoBehaviour
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
     private int maxIterations = 10000;
-    private float unitSpeed = 0.8f;
-    private float unitTurnSpeed =0.3f;
+    [SerializeField] private float unitSpeed = 0.35f;
+    [SerializeField] private float unitTurnSpeed =0.05f;
     [HideInInspector] public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", 
         "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa", 
         "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "Arsène", "Arthur",

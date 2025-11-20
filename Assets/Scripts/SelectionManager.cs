@@ -292,7 +292,6 @@ public class SelectionManager : MonoBehaviour
             {
                 if (CityManager.instance.cities.TryGetValue(coord, out City city))
                 {
-                    Debug.Log("e");
                     CityManager.instance.OpenCity(city);
                 }
             });

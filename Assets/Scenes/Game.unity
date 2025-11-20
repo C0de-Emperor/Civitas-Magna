@@ -4057,6 +4057,8 @@ MonoBehaviour:
   militaryUnits: []
   civilianUnits: []
   nextAvailableId: 0
+  unitSpeed: 0.35
+  unitTurnSpeed: 0.05
   NAMES_LIST:
   - Abel
   - Achille
