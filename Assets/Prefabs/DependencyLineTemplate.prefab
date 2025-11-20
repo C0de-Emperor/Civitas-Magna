@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2262892413410425554}
   - component: {fileID: 6813971303005822608}
   m_Layer: 5
-  m_Name: Image
+  m_Name: DependencyLineTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

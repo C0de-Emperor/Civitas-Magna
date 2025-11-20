@@ -111,7 +111,6 @@ public class SelectionManager : MonoBehaviour
             || innerSelectionOutline == null 
             || !MapGenerator.instance.isMapReady 
             || !canInteract 
-            || EventSystem.current.IsPointerOverGameObject()
             || PauseMenuManager.instance.isMenuOpen
             )
         {
