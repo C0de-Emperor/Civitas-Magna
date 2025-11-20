@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(SettingsController))]
 public class PauseMenuManager : MonoBehaviour
 {
     public Transform menuPanel;
@@ -13,9 +14,13 @@ public class PauseMenuManager : MonoBehaviour
     public Button mainmenuButton;
     public Button quitButton;
 
+    private SettingsController controller;
+
     public static PauseMenuManager instance;
     private void Awake()
     {
+        controller = GetComponent<SettingsController>();
+
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de PauseMenuManager dans la scène");
@@ -52,13 +57,16 @@ public class PauseMenuManager : MonoBehaviour
 
     public void OpenMenu()
     {
+        controller.UpdateUI();
         menuPanel.gameObject.SetActive(true);
+        CameraController.instance.canMove = false;
         isMenuOpen = true;
     }
 
     public void CloseMenu()
     {
         menuPanel.gameObject.SetActive(false);
+        CameraController.instance.canMove = true;
         isMenuOpen = false;
     }
 }

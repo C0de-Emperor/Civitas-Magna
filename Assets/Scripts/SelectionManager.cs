@@ -97,8 +97,6 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (showOverlay)
