@@ -225,7 +225,7 @@ public class SelectionManager : MonoBehaviour
         }
 		if (Input.GetKeyUp(KeyCode.J) && selectedCell != null)
 		{
-			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Color[] { new Color(0, 0, 0), new Color(255, 0, 255) }));
+			UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Galley"), selectedCell, PlayerManager.instance.player);
 		}
 		if (Input.GetKeyUp(KeyCode.K) && selectedCell != null)
 		{
