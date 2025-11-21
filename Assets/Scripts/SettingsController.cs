@@ -25,7 +25,7 @@ public class SettingsController : MonoBehaviour
         List<string> options = new List<string>();
 
         int currentResolutionIndex = 0;
-        for (int i = 0; i < resolutions.Length; i++)
+        for (int i = resolutions.Length - 1; i > 0 ; i--)
         {
             string option = resolutions[i].width + "x" + resolutions[i].height;
             options.Add(option);
@@ -45,6 +45,10 @@ public class SettingsController : MonoBehaviour
     {
         if(SoundManager.instance.mainMixer.GetFloat("Volume", out float value))
             volumeSlider.value = value;
+
+        fullScreenToggle.isOn = Screen.fullScreen;
+
+
     }
 
     private void SetVolume(float volume)

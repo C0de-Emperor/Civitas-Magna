@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
     public int currentTurn;
+    private bool canChangeTurn;
 
     // toute fonction ajouté à cet event sera executé au changement de tour
     public event Action OnTurnChange;
@@ -11,6 +13,8 @@ public class TurnManager : MonoBehaviour
     public static TurnManager instance;
     private void Awake()
     {
+        canChangeTurn = false;
+
         SaveManager.instance.OnSaveLoaded += OnLoad;
         if (instance != null)
         {
@@ -20,6 +24,8 @@ public class TurnManager : MonoBehaviour
         instance = this;
 
         OnTurnChange += Log;
+
+        StartCoroutine(ResetChangeTurn());
     }
 
     private void OnLoad(SaveData data)
@@ -32,9 +38,22 @@ public class TurnManager : MonoBehaviour
 
     public void ChangeTurn()
     {
+        if (!canChangeTurn)
+            return;
+
+        canChangeTurn = false;
         currentTurn += 1;
 
         OnTurnChange?.Invoke();
+
+        StartCoroutine(ResetChangeTurn());
+    }
+
+    private IEnumerator ResetChangeTurn()
+    {
+        yield return new WaitForSeconds(1f);
+
+        canChangeTurn = true;
     }
 
     private void Log()

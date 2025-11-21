@@ -262,10 +262,11 @@ public class SelectionManager : MonoBehaviour
             return;
         if (selectedUnit != null && selectedUnit.unitType.unitCategory == UnitType.UnitCategory.civilian)
         {
-			selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
+            UnitManager.instance.HideActionPanel();
+			//selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
 		}
-
-
+        
+        
         // Si on clique sur une nouvelle cellule - reset le cycle
         if (lastClickedCell != currentCell)
         {
@@ -291,7 +292,8 @@ public class SelectionManager : MonoBehaviour
             actions.Add(() =>
 			{
 				selectedUnit = currentCell.civilianUnit;
-				selectedUnit.unitCanvaTransform.gameObject.SetActive(true);
+                UnitManager.instance.ShowActionPanel(selectedUnit.unitType as CivilianUnitType, currentCell);
+                //selectedUnit.unitCanvaTransform.gameObject.SetActive(true);
             });
         }
 
@@ -303,7 +305,6 @@ public class SelectionManager : MonoBehaviour
             {
                 if (CityManager.instance.cities.TryGetValue(coord, out City city))
                 {
-                    Debug.Log("e");
                     CityManager.instance.OpenCity(city);
                 }
             });
