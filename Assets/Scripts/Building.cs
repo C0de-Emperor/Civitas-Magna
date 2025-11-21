@@ -8,9 +8,12 @@ public class Building : ScriptableObject
     [Header("Basic Properties")]
     public BuildingNames buildingName;
     public GameObject buildingPrefab;
-    public string buildActionName;
+    public Sprite buildingSprite;
 
     [Header("Building Factors")]
     public float foodFactor;
     public float productionFactor;
+
+    [Header("Research")]
+    public Research requiredResearch;
 }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   buildingName: 2
   buildingPrefab: {fileID: 919132149155446097, guid: 24ac31d3aafe0684287af2d209203b3d, type: 3}
-  buildActionName: Build Farm
+  buildingSprite: {fileID: 21300000, guid: 982194d2893221b458a3286c5a46998e, type: 3}
   foodFactor: 2
   productionFactor: 1
+  requiredResearch: {fileID: 0}

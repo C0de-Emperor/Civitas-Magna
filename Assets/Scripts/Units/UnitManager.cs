@@ -53,6 +53,10 @@ public class UnitManager : MonoBehaviour
         "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", 
         "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
 
+    [Header("UI")]
+    public Transform unitActionsPanel;
+    public Transform unitActionsContainer;
+    public Transform unitActionsButtonTemplate;
 
     public static UnitManager instance;
 
@@ -76,6 +80,8 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
     
         maxIterations = grid.height * grid.width;
+
+        HideActionPanel();
     }
 
     private void OnLoad()
@@ -101,7 +107,42 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public void CivilianUnitAction(int actionType)
+    public void ShowActionPanel(CivilianUnitType type, HexCell cell)
+    {
+        foreach (Transform child in unitActionsContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach(Building building in type.buildableBuildings)
+        {
+            BuildActionButton actionButton = Instantiate(unitActionsButtonTemplate, unitActionsContainer).GetComponent<BuildActionButton>();
+            actionButton.building = building;
+
+            actionButton.icon.sprite = building.buildingSprite;
+            actionButton.button.onClick.AddListener(delegate { CivilianUnitAction(building); UpdateActionPanel(cell); });
+        }
+
+        UpdateActionPanel(cell);
+
+        unitActionsPanel.gameObject.SetActive(true);
+    }
+
+    public void UpdateActionPanel(HexCell cell)
+    {
+        foreach(Transform child in unitActionsContainer.transform)
+        {
+            BuildActionButton button = child.GetComponent<BuildActionButton>();
+            button.UpdateButton(cell);
+        }
+    }
+
+    public void HideActionPanel()
+    {
+        unitActionsPanel.gameObject.SetActive(false);
+    }
+
+    public void CivilianUnitAction(Building building)
     {
         if(SelectionManager.instance.selectedUnit == null)
         {
@@ -109,7 +150,7 @@ public class UnitManager : MonoBehaviour
             return;
         }
 
-        if (SelectionManager.instance.selectedCell.CreateBuilding(SelectionManager.instance.selectedUnit.GetUnitCivilianData().buildableBuildings[actionType], SelectionManager.instance.selectedUnit))
+        if (SelectionManager.instance.selectedCell.CreateBuilding(building, SelectionManager.instance.selectedUnit))
         {
             if (SelectionManager.instance.selectedUnit.ConsumeCharge())
             {
@@ -701,7 +742,11 @@ public class Unit
     public readonly UnitType unitType; // le type d'unité (classe générale)
     public Player master; // le maître de l'unité (le joueur ou l'IA)
     public readonly UnitPin unitPin; // le pin de l'unité (pour le repérer sur la carte)
-    public Transform unitCanvaTransform;
+
+
+    //public Transform unitCanvaTransform;
+
+
     public string unitName; // le nom de l'unité (personnalisable)
 
     private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
@@ -737,6 +782,11 @@ public class Unit
         }
         else
         {
+
+
+
+
+            /*
             this.civilianUnitType = unitType as CivilianUnitType;
             unitCanvaTransform = unitTransform.GetChild(0);
             unitCanvaTransform.gameObject.SetActive(false);
@@ -748,6 +798,7 @@ public class Unit
                 unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponent<Button>().onClick.AddListener(delegate { UnitManager.instance.CivilianUnitAction(currentIndex); });
                 unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponentInChildren<Text>().text = this.civilianUnitType.buildableBuildings[i].buildActionName;
             }
+            */
         }
     }
 
