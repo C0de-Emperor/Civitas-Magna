@@ -202,7 +202,7 @@ public class UnitManager : MonoBehaviour
         List<int> finishedMovements = new List<int>();
         foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
         {
-            if (MoveQueuedUnit(unitId)) // déplace l'unité
+            if (MoveQueuedUnit(unitId).movementFinished) // déplace l'unité
             {
                 finishedMovements.Add(unitId); // s'il faut arrêter le mouvement, ajoute l'id de l'unité dans la liste des unités à arrêter de déplacer
             }
@@ -380,22 +380,27 @@ public class UnitManager : MonoBehaviour
     }
 
     // déplacement d'une unité, renvoie [si il faut arrêter le déplacement] (booléen)
-    public bool MoveQueuedUnit(int unitId)
+    public FirstMovementData MoveQueuedUnit(int unitId)
     {
         queuedMovementData movementData = queuedUnitMovements[unitId];
         List<HexCell> path = movementData.path;
         Unit unit = units[unitId];
+
+        FirstMovementData dataToReturn = new FirstMovementData();
+        dataToReturn.unitCell = path[0];
 
         Queue<HexCell> nextMoves = new Queue<HexCell>();
         nextMoves.Enqueue(path[0]);
 
         if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
         {
-            return true;
+            dataToReturn.movementFinished = true;
+            return dataToReturn;
         }
         if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
         {
-            return true;
+            dataToReturn.movementFinished = true;
+            return dataToReturn;
         }
 
         float pathCost = 0f;
@@ -415,16 +420,19 @@ public class UnitManager : MonoBehaviour
             StartCoroutine(MoveUnit(nextMoves, unit, null)); // faire le déplacement
         }
         unit.movesDone += pathCost;
+        dataToReturn.unitCell = path[0];
 
         if (path.Count <= 1)
         {
-            return true; // si on est arrivés à destination, on arrête le déplacement
+            dataToReturn.movementFinished = true;
+            return dataToReturn; // si on est arrivés à destination, on arrête le déplacement
         }
-        return false;
+        dataToReturn.movementFinished = false;
+        return dataToReturn;
     }
 
     // ajouter à la liste d'attente un déplacement d'unité
-    public bool QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
+    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
     {
         queuedMovementData movementData = new queuedMovementData();
         movementData.attacksACity = false;
@@ -455,7 +463,7 @@ public class UnitManager : MonoBehaviour
             {
                 queuedUnitMovements.Remove(unit.id);
             }
-            return false;
+            return destCell;
         }
         movementData.path = path; // obtenir le chemin jusqu'à la destination
 
@@ -469,16 +477,16 @@ public class UnitManager : MonoBehaviour
         }
 
         float beforeMoving = unit.movesDone;
-        if (MoveQueuedUnit(unit.id))
+        FirstMovementData newUnitCell = MoveQueuedUnit(unit.id);
+        if (newUnitCell.movementFinished)
         {
             queuedUnitMovements.Remove(unit.id); // si le mouvement était instantané, on retire de la liste d'attente ce qu'on vient d'y rajouter
-            return true;
         }
         if(beforeMoving != unit.movesDone) // si il y a eu mouvement, on l'indique au selectionManager
         {
-            return true;
+            return newUnitCell.unitCell;
         }
-        return false;
+        return newUnitCell.unitCell;
     }
 
     // combat entre les unités de deux cases
@@ -915,8 +923,6 @@ public class Unit
     {
         this.unitTransform.position += newOffset - this.unitOffset;
         this.unitOffset = newOffset;
-
-        Debug.Log(id + " " + unitOffset);
     }
 }
 
@@ -927,4 +933,10 @@ public struct queuedMovementData
     public int unitToAttackId;
     public bool attacksACity;
     public List<HexCell> path;
+}
+
+public struct FirstMovementData
+{
+    public bool movementFinished;
+    public HexCell unitCell;
 }
