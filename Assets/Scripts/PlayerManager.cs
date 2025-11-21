@@ -59,10 +59,22 @@ public class PlayerManager : MonoBehaviour
     {
         if(SaveManager.instance.lastSave == null)
         {
-            HexCell spawnCell = grid.GetRandomCell(false, null);
+            UnitType settler = UnitManager.instance.GetUnitType("Settler");
+            UnitType warrior = UnitManager.instance.GetUnitType("Warrior");
 
-            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Settler"), spawnCell, player);
-            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Warrior"), spawnCell, player);
+            List<TerrainType> forbiddenTerrainTypes = new List<TerrainType>();
+            foreach(var terrainType in grid.terrainTypes)
+            {
+                if (!UnitManager.instance.IsCellTraversable(terrainType, settler) || !UnitManager.instance.IsCellTraversable(terrainType, warrior))
+                {
+                    forbiddenTerrainTypes.Add(terrainType);
+                }
+            }
+
+            HexCell spawnCell = grid.GetRandomCell(false, forbiddenTerrainTypes);
+
+            UnitManager.instance.AddUnit(settler, spawnCell, player);
+            UnitManager.instance.AddUnit(warrior, spawnCell, player);
         }
     }
 }

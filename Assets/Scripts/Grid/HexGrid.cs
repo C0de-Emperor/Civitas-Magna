@@ -12,6 +12,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int height { get; private set; }
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
+    public TerrainType[] terrainTypes;
 
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
@@ -52,6 +53,8 @@ public class HexGrid : MonoBehaviour
     private void Start()
     {
         TurnManager.instance.OnTurnChange += UpdateActiveTiles;
+
+        terrainTypes = Resources.LoadAll<TerrainType>("TerrainType");
     }
 
     public void InitGrid(SaveData data)
@@ -387,7 +390,7 @@ public class HexGrid : MonoBehaviour
         Destroy(cell.ressource.gameObject);
     }
 
-    public HexCell GetRandomCell(bool waterTileAllowed, TerrainType[] forbiddenTerrainTypes)
+    public HexCell GetRandomCell(bool waterTileAllowed, List<TerrainType> forbiddenTerrainTypes)
     {
         HexCell randomCell = null;
         while(randomCell == null || randomCell.terrainType.isWater!=waterTileAllowed || (forbiddenTerrainTypes != null && forbiddenTerrainTypes.Contains(randomCell.terrainType)))

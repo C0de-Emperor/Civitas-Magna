@@ -200,6 +200,7 @@ public class UnitManager : MonoBehaviour
             if (SelectionManager.instance.selectedUnit.ConsumeCharge())
             {
                 RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
+                CheckCellUnitsConflict(SelectionManager.instance.selectedCell);
                 SelectionManager.instance.selectedUnit = null;
             }
         }
@@ -565,6 +566,8 @@ public class UnitManager : MonoBehaviour
         {
             unit = unitCell.civilianUnit;
             unitCell.civilianUnit = null; // retirer l'unité de la case
+
+            unitActionsPanel.gameObject.SetActive(false);
         }
 
         units.Remove(unit.id);
@@ -809,7 +812,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // renvoie si la case est traversable par l'unité ou non
-    private bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
+    public bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
     {
         if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
         {
