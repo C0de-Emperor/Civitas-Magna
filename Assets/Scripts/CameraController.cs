@@ -31,8 +31,8 @@ public class CameraController : MonoBehaviour
     [Header("Parameters")]
     [SerializeField] private float cameraSpeed = 10f;
     [SerializeField] private float cameraZoomSpeed = 1f;
-    [SerializeField] private float cameraZoomMin = 15f;
-    [SerializeField] private float cameraZoomMax = 150f;
+    [SerializeField] public float cameraZoomMin = 15f;
+    [SerializeField] public float cameraZoomMax = 150f;
     [SerializeField] private float cameraZoomDefault = 50f;
 
     private float mapMinX;
@@ -233,6 +233,8 @@ public class CameraController : MonoBehaviour
 
                 // Modifie la vitesse de déplacement
                 cameraSpeed = newDistance * 0.8f;
+
+                UnitManager.instance.UpdatePinsScale(newDistance);
             }
 
             yield return null;

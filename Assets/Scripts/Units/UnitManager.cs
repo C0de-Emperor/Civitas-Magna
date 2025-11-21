@@ -11,9 +11,8 @@ public class UnitManager : MonoBehaviour
     [SerializeField] Transform unitPinCanvas;
     [SerializeField] Transform unitContainer;
 
-    [Header("Units")]
-    [HideInInspector] public MilitaryUnitType[] militaryUnits;
-    [HideInInspector] public CivilianUnitType[] civilianUnits;
+    public MilitaryUnitType[] militaryUnits;
+    public CivilianUnitType[] civilianUnits;
 
     [HideInInspector] public int nextAvailableId = 1;
     public Dictionary<int, Unit> units { get; private set; }
@@ -22,36 +21,38 @@ public class UnitManager : MonoBehaviour
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
     private int maxIterations = 10000;
-    [SerializeField] private float unitSpeed = 0.35f;
-    [SerializeField] private float unitTurnSpeed =0.05f;
-    [HideInInspector] public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", 
-        "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa", 
-        "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "Arsène", "Arthur",
-        "Aubin", "Auguste", "Augustin", "Aurélien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "Barnabé", "Barnard", "Barthélémy", "Basile", "Bastien", 
-        "Baudouin", "Benjamin", "Benoît", "Bérenger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille", 
-        "Casimir", "Cédric", "Céleste", "Célestin", "César", "Charles", "Charlie", "Christian", "Christophe", "Claude", "Clément", "Clovis", "Colin", "Côme", "Constant", 
-        "Constantin", "Corentin", "Crépin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "Désiré", "Didier", "Dimitri", "Dominique", 
+    private float unitMoveSpeed = 4f;
+    private float unitRotationSpeed =540f;
+    private float coUnitsScaleFactor = 0.7f;
+    private Vector3 coUnitsOffset = new Vector3(0.4f, 0, 0);
+    [HideInInspector] public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "AimÃ©", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", 
+        "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "AloÃ¯s", "Alphonse", "Amaury", "Ambroise", "AmÃ©dÃ©e", "Amour", "Ananie", "Anastase", "Anatole", "AndrÃ©", "AndrÃ©a", 
+        "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "ArsÃ¨ne", "Arthur",
+        "Aubin", "Auguste", "Augustin", "AurÃ©lien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "BarnabÃ©", "Barnard", "BarthÃ©lÃ©my", "Basile", "Bastien", 
+        "Baudouin", "Benjamin", "BenoÃ®t", "BÃ©renger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille", 
+        "Casimir", "CÃ©dric", "CÃ©leste", "CÃ©lestin", "CÃ©sar", "Charles", "Charlie", "Christian", "Christophe", "Claude", "ClÃ©ment", "Clovis", "Colin", "CÃ´me", "Constant", 
+        "Constantin", "Corentin", "CrÃ©pin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "DÃ©sirÃ©", "Didier", "Dimitri", "Dominique", 
         "Donald", "Donatien", "Dorian", "Eden", "Edgar", "Edgard", "Edmond", "Edouard", "Elias", "Elie", "Eloi", "Emile", "Emilien", "Emmanuel", "Eric", "Ernest", "Erwan", 
-        "Erwann", "Etienne", "Eudes", "Eugène", "Evrard", "abien", "Fabrice", "Faustin", "Félicien", "Félix", "Ferdinand", "Fernand", "Fiacre", "Fidèle", "Firmin", "Flavien", 
-        "Florent", "Florentin", "Florian", "Floribert", "Fortuné", "Francis", "Franck", "François", "Frédéric", "Fulbert", "Gabin", "Gabriel", "Gaël", "Gaétan", "Gaëtan", 
-        "Gaspard", "Gaston", "Gatien", "Gauthier", "Gautier", "Geoffroy", "Georges", "Gérald", "Gérard", "Géraud", "Germain", "Gervais", "Ghislain", "Gilbert", "Gildas",
-        "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "Grégoire", "Gregory", "Guénolé", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain", 
-        "Gwenaël", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "Hervé", "Hippolythe", "Honoré", "Honorin", "Horace", "Hubert", 
-        "Hugo", "Hugues", "Hyacinthe", "Ignace", "Igor", "Isidore", "Ismaël", "Jacky", "Jacob", "Jacques", "Jean", "Jérémie", "Jérémy", "Jérôme", "Joachim", "Jocelyn",
-        "Joël", "Johan", "Jonas", "Jonathan", "Jordan", "José", "Joseph", "Joshua", "Josselin", "Josué", "Judicaël", "Jules", "Julian", "Julien", "Juste", "Justin",
-        "Kévin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "Léandre", "Léger", "Léo", "Léon", "Léonard", "Léonce", "Léopold", "Lilian", "Lionel", 
-        "Loan", "Loïc", "Loïck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "Maël", "Mahé", "Maixent", "Malo", "Manuel", 
-        "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "Matéo", "Mathéo", "Mathias", "Mathieu", 
-        "Mathis", "Mathurin", "Mathys", "Mattéo", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "Médard", "Melchior", "Merlin", 
-        "Michel", "Milo", "Modeste", "Morgan", "Naël", "Narcisse", "Nathan", "Nathanaël", "Nestor", "Nicolas", "Noa", "Noah", "Noé", "Noël", "Norbert", 
-        "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "Pacôme", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval", 
-        "Philémon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "Rafaël", "Raoul", "Raphaël", "Raymond", "Réginald", "Régis", 
-        "Rémi", "Rémy", "Renaud", "René", "Reynald", "Richard", "Robert", "Robin", "Rodolphe", "Rodrigue", "Roger", "Roland", "Romain", "Romaric", "Roméo",
-        "Romuald", "Ronan", "Sacha", "Salomon", "Sam", "Sami", "Samson", "Samuel", "Samy", "Sasha", "Saturnin", "Sébastien", "Séraphin", "Serge", "Séverin",
-        "Sidoine", "Siméon", "Simon", "Sixte", "Stanislas", "Stéphane", "Sylvain", "Sylvère", "Sylvestre", "Tancrède", "Tanguy", "Théo", "Théodore", "Théophane", 
-        "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse", 
-        "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", 
-        "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
+        "Erwann", "Etienne", "Eudes", "EugÃ¨ne", "Evrard", "abien", "Fabrice", "Faustin", "FÃ©licien", "FÃ©lix", "Ferdinand", "Fernand", "Fiacre", "FidÃ¨le", "Firmin", "Flavien", 
+        "Florent", "Florentin", "Florian", "Floribert", "FortunÃ©", "Francis", "Franck", "FranÃ§ois", "FrÃ©dÃ©ric", "Fulbert", "Gabin", "Gabriel", "GaÃ«l", "GaÃ©tan", "GaÃ«tan", 
+        "Gaspard", "Gaston", "Gatien", "Gauthier", "Gautier", "Geoffroy", "Georges", "GÃ©rald", "GÃ©rard", "GÃ©raud", "Germain", "Gervais", "Ghislain", "Gilbert", "Gildas",
+        "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "GrÃ©goire", "Gregory", "GuÃ©nolÃ©", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain", 
+        "GwenaÃ«l", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "HervÃ©", "Hippolythe", "HonorÃ©", "Honorin", "Horace", "Hubert", 
+        "Hugo", "Hugues", "Hyacinthe", "Ignace", "Igor", "Isidore", "IsmaÃ«l", "Jacky", "Jacob", "Jacques", "Jean", "JÃ©rÃ©mie", "JÃ©rÃ©my", "JÃ©rÃ´me", "Joachim", "Jocelyn",
+        "JoÃ«l", "Johan", "Jonas", "Jonathan", "Jordan", "JosÃ©", "Joseph", "Joshua", "Josselin", "JosuÃ©", "JudicaÃ«l", "Jules", "Julian", "Julien", "Juste", "Justin",
+        "KÃ©vin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "LÃ©andre", "LÃ©ger", "LÃ©o", "LÃ©on", "LÃ©onard", "LÃ©once", "LÃ©opold", "Lilian", "Lionel", 
+        "Loan", "LoÃ¯c", "LoÃ¯ck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "MaÃ«l", "MahÃ©", "Maixent", "Malo", "Manuel", 
+        "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "MatÃ©o", "MathÃ©o", "Mathias", "Mathieu", 
+        "Mathis", "Mathurin", "Mathys", "MattÃ©o", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "MÃ©dard", "Melchior", "Merlin", 
+        "Michel", "Milo", "Modeste", "Morgan", "NaÃ«l", "Narcisse", "Nathan", "NathanaÃ«l", "Nestor", "Nicolas", "Noa", "Noah", "NoÃ©", "NoÃ«l", "Norbert", 
+        "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "PacÃ´me", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval", 
+        "PhilÃ©mon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "RafaÃ«l", "Raoul", "RaphaÃ«l", "Raymond", "RÃ©ginald", "RÃ©gis", 
+        "RÃ©mi", "RÃ©my", "Renaud", "RenÃ©", "Reynald", "Richard", "Robert", "Robin", "Rodolphe", "Rodrigue", "Roger", "Roland", "Romain", "Romaric", "RomÃ©o",
+        "Romuald", "Ronan", "Sacha", "Salomon", "Sam", "Sami", "Samson", "Samuel", "Samy", "Sasha", "Saturnin", "SÃ©bastien", "SÃ©raphin", "Serge", "SÃ©verin",
+        "Sidoine", "SimÃ©on", "Simon", "Sixte", "Stanislas", "StÃ©phane", "Sylvain", "SylvÃ¨re", "Sylvestre", "TancrÃ¨de", "Tanguy", "ThÃ©o", "ThÃ©odore", "ThÃ©ophane", 
+        "ThÃ©ophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "TibÃ¨re", "TimÃ©o", "TimothÃ©", "TimothÃ©e", "Titouan", "Tristan", "TymÃ©o", "Ulrich", "Ulysse", 
+        "Urbain", "Uriel", "Valentin", "ValÃ¨re", "ValÃ©rien", "ValÃ©ry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", 
+        "William", "Xavier", "YaÃ«l", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "ZÃ©phirin" };
 
     [Header("UI")]
     public Transform unitActionsPanel;
@@ -62,7 +63,7 @@ public class UnitManager : MonoBehaviour
 
     private void Awake()
     {
-        grid.OnCellInstancesGenerated += OnLoad;
+        grid.OnCellInstancesGenerated += OnCellLoaded;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de UnitManager dans la scene");
@@ -77,14 +78,58 @@ public class UnitManager : MonoBehaviour
 
     public void Start()
     {
-        TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
-    
+        TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits Ã  la liste des fonctions appelÃ©es Ã  chaquez dÃ©but de tour
+
+        unitMoveSpeed *= grid.hexSize;
+        unitRotationSpeed *= grid.hexSize;
+
         maxIterations = grid.height * grid.width;
 
         HideActionPanel();
     }
 
-    private void OnLoad()
+
+    public void UpdatePinsScale(float newDistance)
+    {
+        foreach(var unit in units.Values)
+        {
+            unit.unitPin.UpdateScale(newDistance);
+        }
+    }
+
+    private void CheckCellUnitsConflict(HexCell cell)
+    {
+        if(cell.militaryUnit != null && cell.civilianUnit != null)
+        {
+            cell.militaryUnit.unitTransform.localScale = Vector3.one * coUnitsScaleFactor;
+            cell.civilianUnit.unitTransform.localScale = Vector3.one * coUnitsScaleFactor;
+
+            cell.militaryUnit.ApplyNewOffset(coUnitsOffset * grid.hexSize);
+            cell.civilianUnit.ApplyNewOffset(coUnitsOffset * grid.hexSize * -1);
+        }
+    }
+
+    public UnitType GetUnitType(string unitTypeName)
+    {
+        foreach(var unit in militaryUnits)
+        {
+            if (unit.name == unitTypeName)
+            {
+                return unit;
+            }
+        }
+        foreach(var unit in civilianUnits)
+        {
+            if (unit.name == unitTypeName)
+            {
+                return unit;
+            }
+        }
+
+        return null;
+    }
+
+    private void OnCellLoaded()
     {
         SaveData data = SaveManager.instance.lastSave;
 
@@ -160,7 +205,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // combat entre une unité et une cité
+    // combat entre une unitÃ© et une citÃ©
     public void CityFight(HexCell unitCell, HexCell cityCell)
     {
         float cellDistance = GetDistance(unitCell, cityCell);
@@ -168,170 +213,239 @@ public class UnitManager : MonoBehaviour
 
         if (cityCell.militaryUnit != null && cellDistance <= cityCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
-            unitCell.militaryUnit.TakeDamage(cityCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité offensive prend des dégats si à portée de l'unité défensive
+            unitCell.militaryUnit.TakeDamage(cityCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unitÃ© offensive prend des dÃ©gats si Ã  portÃ©e de l'unitÃ© dÃ©fensive
         }
 
-        city.TakeDamage(unitCell.militaryUnit); // la cité prend des dégats (mitigés par son degré de protection)
+        city.TakeDamage(unitCell.militaryUnit); // la citÃ© prend des dÃ©gats (mitigÃ©s par son degrÃ© de protection)
 
         if (!unitCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, unitCell); // supprimer l'unitÃ© offensive si morte
         }
     }
 
-    // met à jour toutes les unités
+    // met Ã  jour toutes les unitÃ©s
     public void UpdateUnits()
     {
         foreach (var unit in units.Values)
         {
-            unit.movesDone = 0; // réinitialise les mouvements réalisés
+            unit.movesDone = 0; // rÃ©initialise les mouvements rÃ©alisÃ©s
 
             if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
             {
                 if (unit.lastDamagingTurn < TurnManager.instance.currentTurn - 1)
                 {
-                    unit.Heal(unit.GetUnitMilitaryData().HealthRegeneration); // soigne l'unité si elle n'a pas pris de dégats au tour précédent
+                    unit.Heal(unit.GetUnitMilitaryData().HealthRegeneration); // soigne l'unitÃ© si elle n'a pas pris de dÃ©gats au tour prÃ©cÃ©dent
                 }
             }
         }
 
         List<int> finishedMovements = new List<int>();
-        foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
+        foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de dÃ©placement d'unitÃ©s
         {
-            if (MoveQueuedUnit(unitId)) // déplace l'unité
+            if (MoveQueuedUnit(unitId).movementFinished) // dÃ©place l'unitÃ©
             {
-                finishedMovements.Add(unitId); // s'il faut arrêter le mouvement, ajoute l'id de l'unité dans la liste des unités à arrêter de déplacer
+                finishedMovements.Add(unitId); // s'il faut arrÃªter le mouvement, ajoute l'id de l'unitÃ© dans la liste des unitÃ©s Ã  arrÃªter de dÃ©placer
             }
         }
 
         foreach (var unitId in finishedMovements)
         {
-            queuedUnitMovements.Remove(unitId); // enlever l'unité de la liste d'attente de déplacements
+            queuedUnitMovements.Remove(unitId); // enlever l'unitÃ© de la liste d'attente de dÃ©placements
         }
     }
 
-    // déplacement d'unité
     public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack)
     {
         HexCell lastCell = nextMoves.Dequeue();
+        HexCell nextCell = lastCell;
+
         if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
         {
-            HexCell currentCell = lastCell;
-            while(nextMoves.Count > 0)
+            while (nextMoves.Count > 0)
             {
-                currentCell = nextMoves.Dequeue();
+                nextCell = nextMoves.Dequeue();
 
-                if(currentCell.militaryUnit == null) // vérifie qu'il ne se déplace pas sur une case déjà occupée
+                if (nextCell.militaryUnit == null || queuedUnitMovements.ContainsKey(nextCell.militaryUnit.id))
                 {
-                    currentCell.militaryUnit = unit;
-                    lastCell.militaryUnit = null; // enlever l'unité de sa case actuelle
+                    nextCell.militaryUnit = unit;
+                    lastCell.militaryUnit = null;
 
-                    Vector3 currentCellDir = currentCell.tile.position-unit.unitTransform.position;
-                    currentCellDir.y = 0;
-                    Quaternion rot = Quaternion.LookRotation(currentCellDir);
-                    if (rot != Quaternion.identity)
-                    {
-                        for (float t = 0; t < 1; t += Time.deltaTime / unitTurnSpeed)
-                        {
-                            unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t); // rotation progressive de l'unité dans le sens du déplacement
-                            yield return null;
-                        }
-                    }
-                    unit.unitTransform.rotation = rot;
+                    Vector3 nextCellPos = new Vector3(nextCell.tile.position.x, nextCell.terrainHigh, nextCell.tile.position.z);
 
-                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
+                    Vector3 nextCellDir = nextCellPos - unit.unitTransform.position;
+                    Quaternion rot = Quaternion.LookRotation(nextCellDir);
+                    while (unit.unitTransform.rotation != rot)
                     {
-                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
+                        unit.unitTransform.rotation = Quaternion.RotateTowards(unit.unitTransform.rotation, rot, Time.deltaTime * unitRotationSpeed);
                         yield return null;
                     }
-                    unit.unitTransform.transform.position = currentCellPos;
 
-                    grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
-                    grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
+                    Vector3 nextCellScale = Vector3.one;
+                    Vector3 nextCellOffset = Vector3.zero;
+                    if (nextCell.civilianUnit != null)
+                    {
+                        nextCellScale *= coUnitsScaleFactor;
+                        nextCellOffset = coUnitsOffset * grid.hexSize;
+                        nextCellPos += nextCellOffset;
+                    }
+
+                    Unit nextCellCivilianUnit = null;
+                    if (nextCell.civilianUnit != null && !queuedUnitMovements.ContainsKey(nextCell.civilianUnit.id))
+                    {
+                        nextCellCivilianUnit = nextCell.civilianUnit;
+                    }
+
+                    Unit lastCellCivilianUnit = null;
+                    if (lastCell.civilianUnit != null && !queuedUnitMovements.ContainsKey(lastCell.civilianUnit.id))
+                    {
+                        lastCellCivilianUnit = lastCell.civilianUnit;
+                    }
+
+                    while (unit.unitTransform.position != nextCellPos)
+                    {
+                        unit.unitTransform.position = Vector3.MoveTowards(unit.unitTransform.position, nextCellPos, Time.deltaTime * unitMoveSpeed);
+                        unit.unitTransform.localScale = Vector3.MoveTowards(unit.unitTransform.localScale, nextCellScale * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+
+                        if (nextCellCivilianUnit != null)
+                        {
+                            nextCellCivilianUnit.ApplyNewOffset(Vector3.MoveTowards(nextCellCivilianUnit.unitOffset, coUnitsOffset * grid.hexSize * -1, Time.deltaTime * unitMoveSpeed * coUnitsOffset.magnitude));
+                            nextCellCivilianUnit.unitTransform.localScale = Vector3.MoveTowards(nextCellCivilianUnit.unitTransform.localScale, nextCellScale * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+                        }
+                        if (lastCellCivilianUnit != null)
+                        {
+                            lastCellCivilianUnit.ApplyNewOffset(Vector3.MoveTowards(lastCellCivilianUnit.unitOffset, Vector3.zero, Time.deltaTime * unitMoveSpeed * coUnitsOffset.magnitude));
+                            lastCellCivilianUnit.unitTransform.localScale = Vector3.MoveTowards(lastCellCivilianUnit.unitTransform.localScale, Vector3.one * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+                        }
+
+                        yield return null;
+                    }
+                    unit.unitOffset = nextCellOffset;
+
+                    grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // rÃ©vÃ©ler les cases "dÃ©couvertes" par l'unitÃ©
+                    grid.UpdateActiveTiles(); // mettre Ã  jour les cases dÃ©couvertes par l'unitÃ©
                 }
                 else
                 {
-                    yield break; // arrête le déplacement pour ce tour
+                    yield break; // arrÃªte le dÃ©placement pour ce tour
                 }
 
-                lastCell = currentCell;
+                lastCell = nextCell;
             }
 
             if (cellToAttack != null)
             {
                 if (cellToAttack.building.buildingName == Building.BuildingNames.City)
                 {
-                    CityFight(currentCell, cellToAttack);
+                    CityFight(nextCell, cellToAttack);
                 }
                 else
                 {
-                    UnitFight(currentCell, cellToAttack);
+                    UnitFight(nextCell, cellToAttack);
                 }
             }
         }
-        else // pareil que ci-dessus, pour les unités civiles
+        else
         {
-            HexCell currentCell = null;
             while (nextMoves.Count > 0)
             {
-                currentCell = nextMoves.Dequeue();
+                nextCell = nextMoves.Dequeue();
 
-                if (currentCell.civilianUnit == null)
+                if (nextCell.civilianUnit == null || queuedUnitMovements.ContainsKey(nextCell.civilianUnit.id))
                 {
-                    currentCell.civilianUnit = unit;
+                    nextCell.civilianUnit = unit;
                     lastCell.civilianUnit = null;
 
-                    Vector3 currentCellDir = currentCell.tile.position;
-                    currentCellDir.y = unit.unitTransform.position.y;
-                    Quaternion rot = Quaternion.LookRotation(currentCellDir);
-                    for (float t=0; t<1; t+=Time.deltaTime / unitTurnSpeed)
+                    Vector3 nextCellPos = new Vector3(nextCell.tile.position.x, nextCell.terrainHigh, nextCell.tile.position.z);
+
+                    Vector3 nextCellDir = nextCellPos - unit.unitTransform.position;
+                    Quaternion rot = Quaternion.LookRotation(nextCellDir);
+                    while (unit.unitTransform.rotation != rot)
                     {
-                        unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t);
+                        unit.unitTransform.rotation = Quaternion.RotateTowards(unit.unitTransform.rotation, rot, Time.deltaTime * unitRotationSpeed);
                         yield return null;
                     }
 
-                    Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
-                    for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
+                    Vector3 nextCellScale = Vector3.one;
+                    Vector3 nextCellOffset = Vector3.zero;
+                    if (nextCell.militaryUnit != null)
                     {
-                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t);
-                        yield return null;
+                        nextCellScale *= coUnitsScaleFactor;
+                        nextCellOffset = coUnitsOffset * grid.hexSize * -1;
+                        nextCellPos += nextCellOffset;
                     }
 
-                    unit.unitTransform.position = currentCellPos;
+                    Unit nextCellMilitaryUnit = null;
+                    if (nextCell.militaryUnit != null && !queuedUnitMovements.ContainsKey(nextCell.militaryUnit.id))
+                    {
+                        nextCellMilitaryUnit = nextCell.militaryUnit;
+                    }
+
+                    Unit lastCellMilitaryUnit = null;
+                    if (lastCell.militaryUnit != null && !queuedUnitMovements.ContainsKey(lastCell.militaryUnit.id))
+                    {
+                        lastCellMilitaryUnit = lastCell.militaryUnit;
+                    }
+
+                    while (unit.unitTransform.position != nextCellPos)
+                    {
+                        unit.unitTransform.position = Vector3.MoveTowards(unit.unitTransform.position, nextCellPos, Time.deltaTime * unitMoveSpeed);
+                        unit.unitTransform.localScale = Vector3.MoveTowards(unit.unitTransform.localScale, nextCellScale * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+
+                        if (nextCellMilitaryUnit != null)
+                        {
+                            nextCellMilitaryUnit.ApplyNewOffset(Vector3.MoveTowards(nextCellMilitaryUnit.unitOffset, coUnitsOffset * grid.hexSize, Time.deltaTime * unitMoveSpeed * coUnitsOffset.magnitude));
+                            nextCellMilitaryUnit.unitTransform.localScale = Vector3.MoveTowards(nextCellMilitaryUnit.unitTransform.localScale, nextCellScale * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+                        }
+                        if (lastCellMilitaryUnit != null)
+                        {
+                            lastCellMilitaryUnit.ApplyNewOffset(Vector3.MoveTowards(lastCellMilitaryUnit.unitOffset, Vector3.zero, Time.deltaTime * unitMoveSpeed * coUnitsOffset.magnitude));
+                            lastCellMilitaryUnit.unitTransform.localScale = Vector3.MoveTowards(lastCellMilitaryUnit.unitTransform.localScale, Vector3.one * grid.hexSize, Time.deltaTime * unitMoveSpeed * 0.3f);
+                        }
+
+                        yield return null;
+                    }
+                    unit.unitOffset = nextCellOffset;
+
+                    grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // rÃ©vÃ©ler les cases "dÃ©couvertes" par l'unitÃ©
+                    grid.UpdateActiveTiles(); // mettre Ã  jour les cases dÃ©couvertes par l'unitÃ©
                 }
                 else
                 {
-                    yield break;
+                    yield break; // arrÃªte le dÃ©placement pour ce tour
                 }
 
-                lastCell = currentCell;
-                grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true);
+                lastCell = nextCell;
             }
         }
     }
 
-    // déplacement d'une unité, renvoie [si il faut arrêter le déplacement] (booléen)
-    public bool MoveQueuedUnit(int unitId)
+    // dÃ©placement d'une unitÃ©, renvoie [si il faut arrÃªter le dÃ©placement] (boolÃ©en)
+    public FirstMovementData MoveQueuedUnit(int unitId)
     {
         queuedMovementData movementData = queuedUnitMovements[unitId];
         List<HexCell> path = movementData.path;
         Unit unit = units[unitId];
 
+        FirstMovementData dataToReturn = new FirstMovementData();
+        dataToReturn.unitCell = path[0];
+
         Queue<HexCell> nextMoves = new Queue<HexCell>();
         nextMoves.Enqueue(path[0]);
 
-        if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
+        if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unitÃ© Ã  attaquer a bougÃ©, on annule le dÃ©placement
         {
-            return true;
+            dataToReturn.movementFinished = true;
+            return dataToReturn;
         }
         if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
         {
-            return true;
+            dataToReturn.movementFinished = true;
+            return dataToReturn;
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unitÃ© peut se dÃ©placer et qu'on n'est pas Ã  portÃ©e de l'unitÃ© Ã  attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -340,23 +454,26 @@ public class UnitManager : MonoBehaviour
 
         if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1])); // faire le déplacement et attaquer l'unité ennemie
+            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1])); // faire le dÃ©placement et attaquer l'unitÃ© ennemie
         }
         else
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, null)); // faire le déplacement
+            StartCoroutine(MoveUnit(nextMoves, unit, null)); // faire le dÃ©placement
         }
         unit.movesDone += pathCost;
+        dataToReturn.unitCell = path[0];
 
         if (path.Count <= 1)
         {
-            return true; // si on est arrivés à destination, on arrête le déplacement
+            dataToReturn.movementFinished = true;
+            return dataToReturn; // si on est arrivÃ©s Ã  destination, on arrÃªte le dÃ©placement
         }
-        return false;
+        dataToReturn.movementFinished = false;
+        return dataToReturn;
     }
 
-    // ajouter à la liste d'attente un déplacement d'unité
-    public bool QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
+    // ajouter Ã  la liste d'attente un dÃ©placement d'unitÃ©
+    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
     {
         queuedMovementData movementData = new queuedMovementData();
         movementData.attacksACity = false;
@@ -372,7 +489,7 @@ public class UnitManager : MonoBehaviour
             }
             else if (destCell.militaryUnit != null && destCell.militaryUnit.master != unitCell.militaryUnit.master)
             {
-                movementData.unitToAttackId = destCell.militaryUnit.id; // si le déplacement finit sur une case occupé, il faut désigner l'unité de cette case comme ennemi à attaquer
+                movementData.unitToAttackId = destCell.militaryUnit.id; // si le dÃ©placement finit sur une case occupÃ©, il faut dÃ©signer l'unitÃ© de cette case comme ennemi Ã  attaquer
             }
         }
         else
@@ -383,91 +500,91 @@ public class UnitManager : MonoBehaviour
         List<HexCell> path = GetShortestPath(unitCell, destCell, unit.unitType);
         if (path.Count <= 1)
         {
-            if (queuedUnitMovements.ContainsKey(unit.id)) // utilisé si le joueur veut retirer l'unité de la liste d'attente
+            if (queuedUnitMovements.ContainsKey(unit.id)) // utilisÃ© si le joueur veut retirer l'unitÃ© de la liste d'attente
             {
                 queuedUnitMovements.Remove(unit.id);
             }
-            return false;
+            return destCell;
         }
-        movementData.path = path; // obtenir le chemin jusqu'à la destination
+        movementData.path = path; // obtenir le chemin jusqu'Ã  la destination
 
         if (queuedUnitMovements.ContainsKey(unit.id))
         {
-            queuedUnitMovements[unit.id] = movementData; // si l'unité est déjà dans la liste d'attente, on met à jour sa destination
+            queuedUnitMovements[unit.id] = movementData; // si l'unitÃ© est dÃ©jÃ  dans la liste d'attente, on met Ã  jour sa destination
         }
         else
         {
-            queuedUnitMovements.Add(unit.id, movementData); // on ajoute à la liste d'attente l'unité et son déplacement
+            queuedUnitMovements.Add(unit.id, movementData); // on ajoute Ã  la liste d'attente l'unitÃ© et son dÃ©placement
         }
 
         float beforeMoving = unit.movesDone;
-        if (MoveQueuedUnit(unit.id))
+        FirstMovementData newUnitCell = MoveQueuedUnit(unit.id);
+        if (newUnitCell.movementFinished)
         {
-            queuedUnitMovements.Remove(unit.id); // si le mouvement était instantané, on retire de la liste d'attente ce qu'on vient d'y rajouter
-            return true;
+            queuedUnitMovements.Remove(unit.id); // si le mouvement Ã©tait instantanÃ©, on retire de la liste d'attente ce qu'on vient d'y rajouter
         }
         if(beforeMoving != unit.movesDone) // si il y a eu mouvement, on l'indique au selectionManager
         {
-            return true;
+            return newUnitCell.unitCell;
         }
-        return false;
+        return newUnitCell.unitCell;
     }
 
-    // combat entre les unités de deux cases
+    // combat entre les unitÃ©s de deux cases
     private void UnitFight(HexCell attackerCell, HexCell defenderCell)
     {
         float cellDistance = GetDistance(attackerCell, defenderCell);
 
-        defenderCell.militaryUnit.TakeDamage(attackerCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité défensive prend des dégats
+        defenderCell.militaryUnit.TakeDamage(attackerCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unitÃ© dÃ©fensive prend des dÃ©gats
 
         if(cellDistance <= defenderCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
-            attackerCell.militaryUnit.TakeDamage(defenderCell.militaryUnit.GetUnitMilitaryData().DefensePower); // l'unité offensive prend des dégats si à portée de l'unité défensive
+            attackerCell.militaryUnit.TakeDamage(defenderCell.militaryUnit.GetUnitMilitaryData().DefensePower); // l'unitÃ© offensive prend des dÃ©gats si Ã  portÃ©e de l'unitÃ© dÃ©fensive
         }
 
         if (!attackerCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, attackerCell); // supprimer l'unité offensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, attackerCell); // supprimer l'unitÃ© offensive si morte
         }
         if (!defenderCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, defenderCell); // supprimer l'unité défensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, defenderCell); // supprimer l'unitÃ© dÃ©fensive si morte
         }
     }
 
-    // enlever une unité de la case
+    // enlever une unitÃ© de la case
     public void RemoveUnit(UnitType.UnitCategory unitCategory, HexCell unitCell)
     {
         Unit unit;
         if (unitCategory == UnitType.UnitCategory.military)
         {
             unit = unitCell.militaryUnit;
-            unitCell.militaryUnit = null; // retirer l'unité de la case
+            unitCell.militaryUnit = null; // retirer l'unitÃ© de la case
         }
         else
         {
             unit = unitCell.civilianUnit;
-            unitCell.civilianUnit = null; // retirer l'unité de la case
+            unitCell.civilianUnit = null; // retirer l'unitÃ© de la case
         }
 
         units.Remove(unit.id);
         Destroy(unit.unitPin.gameObject);
-        Destroy(unit.unitTransform.gameObject); // supprimer l'instance de l'unité
+        Destroy(unit.unitTransform.gameObject); // supprimer l'instance de l'unitÃ©
     }
 
-    // ajouter un type d'unité à une case
+    // ajouter un type d'unitÃ© Ã  une case
     public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
             if(cell.militaryUnit == null && IsCellTraversable(cell.terrainType, unitType))
             {
-                Transform unitTransform = Instantiate( // instancier l'unité sur la case
+                Transform unitTransform = Instantiate( // instancier l'unitÃ© sur la case
                     unitType.unitPrefab.transform,
                     new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
                     new Quaternion(0, 0, 0, 1), 
                     unitContainer);
-                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
+                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unitÃ© sur l'unitÃ©
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
@@ -482,10 +599,12 @@ public class UnitManager : MonoBehaviour
                     unitPin.gameObject.SetActive(false);
                 }
 
-                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
+                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // crÃ©er l'instance de la classe unit associÃ©e Ã  l'unitÃ©
 
                 cell.militaryUnit = unit;
                 units.Add(unit.id, unit);
+
+                CheckCellUnitsConflict(cell);
 
                 return unit;
             }
@@ -498,12 +617,12 @@ public class UnitManager : MonoBehaviour
         {
             if (cell.civilianUnit == null && IsCellTraversable(cell.terrainType, unitType))
             {
-                Transform unitTransform = Instantiate( // instancier l'unité sur la case
+                Transform unitTransform = Instantiate( // instancier l'unitÃ© sur la case
                     unitType.unitPrefab.transform,
                     new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
                     new Quaternion(0, 0, 0, 1),
                     unitContainer);
-                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
+                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unitÃ© sur l'unitÃ©
 
                 UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
 
@@ -518,10 +637,12 @@ public class UnitManager : MonoBehaviour
                     unitPin.GetComponentInChildren<Renderer>().enabled = false;
                 }
 
-                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
+                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // crÃ©er l'instance de la classe unit associÃ©e Ã  l'unitÃ©
 
                 cell.civilianUnit = unit;
                 units.Add(unit.id, unit);
+
+                CheckCellUnitsConflict(cell);
 
                 return unit;
             }
@@ -530,7 +651,6 @@ public class UnitManager : MonoBehaviour
                 Debug.LogError("trying to add a support unit on an already occupied tile");
             }
         }
-
         return null;
     }
 
@@ -551,10 +671,10 @@ public class UnitManager : MonoBehaviour
         //System.DateTime startTime = System.DateTime.Now;
 
         int iterations = 0;
-        while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
+        while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases Ã  visiter et qu'on a pas trouvÃ© la case de fin
         {
             currentCellData = cellsToVisit[0];
-            AddNewCellData(currentCellData, visitedCells); // choisit la case avec le coût le plus faible
+            AddNewCellData(currentCellData, visitedCells); // choisit la case avec le coÃ»t le plus faible
             cellsToVisit.RemoveAt(0);
 
             for (int i = 0; i < 6; i++) // cycle dans les voisins de la case actuelle
@@ -568,28 +688,28 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non révélée
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non rÃ©vÃ©lÃ©e
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
-                    int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
+                    int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitÃ©es
                     if (isCellDataVisited == -1)
                     {
-                        int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases à visiter
+                        int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases Ã  visiter
                         if (isCellDataInToVisit == -1)
                         {
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases Ã  visiter
                         }
                         else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
                         {
                             cellsToVisit.RemoveAt(isCellDataInToVisit);
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre à jour le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre Ã  jour le voisin dans les cases Ã  visiter
                         }
                     }
                     else if (currentCellNeighboursData.FCost < visitedCells[isCellDataVisited].FCost)
                     {
                         visitedCells.RemoveAt(isCellDataVisited);
-                        AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
+                        AddNewCellData(currentCellNeighboursData, visitedCells); // mettre Ã  jour le voisin dans les cases visitÃ©es
                     }
                     
                 }
@@ -602,7 +722,7 @@ public class UnitManager : MonoBehaviour
         if (endCellFound)
         {
             currentCellData = CreateCellData(currentCellData, finishCell, finishCell);
-            while (currentCellData.cell.offsetCoordinates != startCell.offsetCoordinates) // refaire le chemin en sens inverse avec les cases précédentes
+            while (currentCellData.cell.offsetCoordinates != startCell.offsetCoordinates) // refaire le chemin en sens inverse avec les cases prÃ©cÃ©dentes
             {
                 pathCoordinates.Insert(0, currentCellData.cell);
                 currentCellData = currentCellData.parentCellData;
@@ -622,7 +742,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // rajoute un élément à une liste triée
+    // rajoute un Ã©lÃ©ment Ã  une liste triÃ©e
     private void AddNewCellData(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
     {
         int i = 0;
@@ -653,7 +773,7 @@ public class UnitManager : MonoBehaviour
         return;
     }
 
-    // recherche séquentielle d'un élément dans une liste triée
+    // recherche sÃ©quentielle d'un Ã©lÃ©ment dans une liste triÃ©e
     private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
     {
         for (int i = 0; i < cellDataList.Count; i++)
@@ -688,7 +808,7 @@ public class UnitManager : MonoBehaviour
         return new CellData(GCost, HCost, FCost, cell, parentCellData);
     }
 
-    // renvoie si la case est traversable par l'unité ou non
+    // renvoie si la case est traversable par l'unitÃ© ou non
     private bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
     {
         if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
@@ -708,14 +828,14 @@ public class UnitManager : MonoBehaviour
         return true;
     }
 
-    // classe utile pour stocker les données de chaque case dans le cadre de l'algorithme A*
+    // classe utile pour stocker les donnÃ©es de chaque case dans le cadre de l'algorithme A*
     private class CellData
     {
-        private readonly float GCost; // cout de déplacement brut
-        public readonly float HCost; // cout de déplacement heuristique
-        public readonly float FCost; // cout de déplacement total
+        private readonly float GCost; // cout de dÃ©placement brut
+        public readonly float HCost; // cout de dÃ©placement heuristique
+        public readonly float FCost; // cout de dÃ©placement total
         public readonly HexCell cell; // case
-        public readonly CellData parentCellData; // précédent
+        public readonly CellData parentCellData; // prÃ©cÃ©dent
 
         // constructeur de la classe
         public CellData(float GCost, float HCost, float FCost, HexCell cell, CellData parentCellData)
@@ -734,27 +854,28 @@ public class UnitManager : MonoBehaviour
     }
 }
 
-// classe qui stocke les données d'une unité
+// classe qui stocke les donnÃ©es d'une unitÃ©
 public class Unit
 {
     public readonly int id; // id
-    public Transform unitTransform; // le transform de l'unité
-    public readonly UnitType unitType; // le type d'unité (classe générale)
-    public Player master; // le maître de l'unité (le joueur ou l'IA)
-    public readonly UnitPin unitPin; // le pin de l'unité (pour le repérer sur la carte)
+    public Transform unitTransform; // le transform de l'unitÃ©
+    public Vector3 unitOffset = Vector3.zero;
+    public readonly UnitType unitType; // le type d'unitÃ© (classe gÃ©nÃ©rale)
+    public Player master; // le maÃ®tre de l'unitÃ© (le joueur ou l'IA)
+    public readonly UnitPin unitPin; // le pin de l'unitÃ© (pour le repÃ©rer sur la carte)
 
 
     //public Transform unitCanvaTransform;
 
 
-    public string unitName; // le nom de l'unité (personnalisable)
+    public string unitName; // le nom de l'unitÃ© (personnalisable)
 
-    private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
-    private CivilianUnitType civilianUnitType; // type de l'unité spécial civil
-    public float currentHealth = 0; // vie actuelle de l'unité
+    private MilitaryUnitType militaryUnitType; // type de l'unitÃ© spÃ©cial militaire
+    private CivilianUnitType civilianUnitType; // type de l'unitÃ© spÃ©cial civil
+    public float currentHealth = 0; // vie actuelle de l'unitÃ©
 
-    public float movesDone = 0; // le nombre de déplacements effectués ce tour
-    public int lastDamagingTurn = -1; // le dernier où l'unité a subi des dégats
+    public float movesDone = 0; // le nombre de dÃ©placements effectuÃ©s ce tour
+    public int lastDamagingTurn = -1; // le dernier oÃ¹ l'unitÃ© a subi des dÃ©gats
     public int chargesLeft = 0;
 
     // constructeur de la classe
@@ -793,6 +914,8 @@ public class Unit
             unitCanvaTransform.gameObject.SetActive(false);
             this.chargesLeft = this.civilianUnitType.actionCharges;
 
+            this.unitPin.healthBar.transform.parent.gameObject.SetActive(false);
+
             for (int i = 0; i<this.civilianUnitType.buildableBuildings.Count; i++)
             {
                 int currentIndex = i;
@@ -803,7 +926,7 @@ public class Unit
         }
     }
 
-    // prendre des dégats
+    // prendre des dÃ©gats
     public void TakeDamage(float damage)
     {
         this.currentHealth -= damage;
@@ -824,13 +947,13 @@ public class Unit
         this.unitPin.UpdateHealth(this.currentHealth, this.militaryUnitType.MaxHealth);
     }
 
-    // l'unité est-elle en vie
+    // l'unitÃ© est-elle en vie
     public bool IsAlive()
     {
         return this.currentHealth >= 0;
     }
 
-    // obtenir les données militaires de l'unité
+    // obtenir les donnÃ©es militaires de l'unitÃ©
     public MilitaryUnitType GetUnitMilitaryData()
     {
         return this.militaryUnitType;
@@ -848,13 +971,25 @@ public class Unit
         this.movesDone = this.unitType.MoveReach;
         return this.chargesLeft <= 0;
     }
+
+    public void ApplyNewOffset(Vector3 newOffset)
+    {
+        this.unitTransform.position += newOffset - this.unitOffset;
+        this.unitOffset = newOffset;
+    }
 }
 
-// struct pour enregistrer les éléments du mouvement d'une unité
+// struct pour enregistrer les Ã©lÃ©ments du mouvement d'une unitÃ©
 [Serializable]
 public struct queuedMovementData
 {
     public int unitToAttackId;
     public bool attacksACity;
     public List<HexCell> path;
+}
+
+public struct FirstMovementData
+{
+    public bool movementFinished;
+    public HexCell unitCell;
 }

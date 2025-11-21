@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
@@ -12,13 +13,13 @@ public class UnitPin : MonoBehaviour
     public Gradient gradient;
 
     [HideInInspector] public Transform worldTarget;
-    [HideInInspector] public Vector3 offset;
+    public Vector3 offset;
 
     [Header("Scale Settings")]
-    public float minScale = 0.6f;    // à grande distance
-    public float maxScale = 1.2f;    // proche caméra
-    public float minDistance = 15f;  // distance de la caméra où le scale est max
-    public float maxDistance = 80f;  // distance où le scale est min
+    public float minScale = 0.7f;
+    public float maxScale = 0.1f;
+    public float minDistance = 15f;
+    public float maxDistance = 80f;
     public bool hideWhenTooFar = false;
 
     private Camera mainCamera;
@@ -29,7 +30,10 @@ public class UnitPin : MonoBehaviour
         mainCamera = Camera.main;
         rect = GetComponent<RectTransform>();
 
-        offset = new Vector3(0, 2f, 0);
+        offset = new Vector3(0, 1.5f, 0);
+
+        minDistance = CameraController.instance.cameraZoomMin;
+        maxDistance = CameraController.instance.cameraZoomMax;
     }
 
     private void LateUpdate()
@@ -41,15 +45,23 @@ public class UnitPin : MonoBehaviour
 
         transform.position = screenPos;
 
+        float distance = Vector3.Distance(mainCamera.transform.position, worldPos);
+
+        /*
         // Calcul de la distance pour adapter le scale
         float distance = Vector3.Distance(mainCamera.transform.position, worldPos);
         float t = Mathf.InverseLerp(minDistance, maxDistance, distance);
         float scale = Mathf.Lerp(maxScale, minScale, t);
 
-        rect.localScale = Vector3.one * scale;
+        rect.localScale = Vector3.one * scale;*/
 
         if (hideWhenTooFar)
             gameObject.SetActive(distance < maxDistance * 1.2f);
+    }
+
+    public void UpdateScale(float newDistance)
+    {
+        rect.localScale = Vector3.one * math.remap(minDistance, maxDistance, minScale, maxScale, newDistance);
     }
 
     public void UpdateHealth(float health, float maxHealth)

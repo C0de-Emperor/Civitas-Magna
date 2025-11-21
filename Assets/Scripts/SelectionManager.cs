@@ -58,6 +58,16 @@ public class SelectionManager : MonoBehaviour
             : Quaternion.Euler(-90f, 0f, 0f);
     }
 
+    private void Start()
+    {
+        TurnManager.instance.OnTurnChange += delegate
+        {
+            selectedCell = null;
+            selectedUnit = null;
+            innerSelectionOutline.SetActive(false);
+        };
+    }
+
     private void Update()
     {
 
@@ -167,16 +177,16 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        if(UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory))
+                        HexCell unitCell = UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory);
+                        if (unitCell != null)
                         {
-                            if (selectedUnit.unitType.unitCategory == UnitType.UnitCategory.civilian)
-                            {
-                                UnitManager.instance.HideActionPanel();
-                                //selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
-                            }
-
-                            selectedCell = null;
-                            selectedUnit = null;
+                            selectedCell = unitCell;
+                            innerSelectionOutline.SetActive(true);
+                            innerSelectionOutline.transform.position = new Vector3(
+                                currentCell.tile.position.x,
+                                (currentCell.isRevealed ? currentCell.terrainHigh : grid.undiscoveredTileHigh) + 0.001f,
+                                currentCell.tile.position.z
+                            );
                             pathPreviewCoordinates = new List<Vector3>();
                         }
                     }
@@ -226,7 +236,7 @@ public class SelectionManager : MonoBehaviour
         }
 		if (Input.GetKeyUp(KeyCode.J) && selectedCell != null)
 		{
-			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Color[] { new Color(0, 0, 0), new Color(255, 0, 255) }));
+			UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Galley"), selectedCell, PlayerManager.instance.player);
 		}
 		if (Input.GetKeyUp(KeyCode.K) && selectedCell != null)
 		{

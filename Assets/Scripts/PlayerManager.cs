@@ -7,6 +7,7 @@ public class PlayerManager : MonoBehaviour
 {
     public int nextAvailableId = 0;
     public Player player;
+    public HexGrid grid;
 
     public List<Player> playerEntities = new List<Player>();
 
@@ -26,6 +27,7 @@ public class PlayerManager : MonoBehaviour
         instance = this;
 
         SaveManager.instance.OnSaveLoaded += OnLoad;
+        grid.OnCellInstancesGenerated += OnCellLoaded;
         UpdateMainUI();
     }
 
@@ -50,6 +52,17 @@ public class PlayerManager : MonoBehaviour
         {
             player = new Player("bruh", new Color[] { new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) });
             goldStock = 0f;
+        }
+    }
+
+    public void OnCellLoaded()
+    {
+        if(SaveManager.instance.lastSave == null)
+        {
+            HexCell spawnCell = grid.GetRandomCell(false, null);
+
+            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Settler"), spawnCell, player);
+            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Warrior"), spawnCell, player);
         }
     }
 }

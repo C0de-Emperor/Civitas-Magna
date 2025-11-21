@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -227,7 +228,6 @@ public class HexGrid : MonoBehaviour
         {
             if (cell.isRevealed)
             {
-                
                 cell.SetActiveRevealedTile(false);
             }
 
@@ -385,6 +385,17 @@ public class HexGrid : MonoBehaviour
     public void DestroyRessource(HexCell cell)
     {
         Destroy(cell.ressource.gameObject);
+    }
+
+    public HexCell GetRandomCell(bool waterTileAllowed, TerrainType[] forbiddenTerrainTypes)
+    {
+        HexCell randomCell = null;
+        while(randomCell == null || randomCell.terrainType.isWater!=waterTileAllowed || (forbiddenTerrainTypes != null && forbiddenTerrainTypes.Contains(randomCell.terrainType)))
+        {
+            randomCell = cells.ElementAt(UnityEngine.Random.Range(0, cells.Count-1)).Value;
+        }
+
+        return randomCell;
     }
 }
 
