@@ -782,7 +782,8 @@ public class Unit
         }
         else
         {
-
+            this.civilianUnitType = unitType as CivilianUnitType;
+            this.chargesLeft = this.civilianUnitType.actionCharges;
 
 
 
@@ -842,6 +843,7 @@ public class Unit
 
     public bool ConsumeCharge()
     {
+        Debug.Log(this.chargesLeft);
         this.chargesLeft -= 1;
         this.movesDone = this.unitType.MoveReach;
         return this.chargesLeft <= 0;
