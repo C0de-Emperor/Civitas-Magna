@@ -390,9 +390,9 @@ public class HexGrid : MonoBehaviour
     public HexCell GetRandomCell(bool waterTileAllowed, TerrainType[] forbiddenTerrainTypes)
     {
         HexCell randomCell = null;
-        while(randomCell == null || randomCell.terrainType.isWater!=waterTileAllowed || forbiddenTerrainTypes.Contains(randomCell.terrainType))
+        while(randomCell == null || randomCell.terrainType.isWater!=waterTileAllowed || (forbiddenTerrainTypes != null && forbiddenTerrainTypes.Contains(randomCell.terrainType)))
         {
-            randomCell = cells.ElementAt(UnityEngine.Random.Range(0, cells.Count-1));
+            randomCell = cells.ElementAt(UnityEngine.Random.Range(0, cells.Count-1)).Value;
         }
 
         return randomCell;

@@ -7215,6 +7215,7 @@ MonoBehaviour:
     livery:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 0.20581576, g: 0.7132075, b: 0.090160176, a: 1}
+  grid: {fileID: 664016684}
   playerEntities: []
   goldStockText: {fileID: 216989702}
   goldStock: 0

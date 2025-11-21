@@ -11,9 +11,8 @@ public class UnitManager : MonoBehaviour
     [SerializeField] Transform unitPinCanvas;
     [SerializeField] Transform unitContainer;
 
-    [Header("Units")]
-    [HideInInspector] public MilitaryUnitType[] militaryUnits;
-    [HideInInspector] public CivilianUnitType[] civilianUnits;
+    public MilitaryUnitType[] militaryUnits;
+    public CivilianUnitType[] civilianUnits;
 
     [HideInInspector] public int nextAvailableId = 1;
     public Dictionary<int, Unit> units { get; private set; }
@@ -76,6 +75,42 @@ public class UnitManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateUnits; // ajoute UpdateUnits à la liste des fonctions appelées à chaquez début de tour
     
         maxIterations = grid.height * grid.width;
+    }
+
+
+    private void CheckCellUnitsConflict(HexCell cell)
+    {
+        if(cell.militaryUnit != null && cell.civilianUnit != null)
+        {
+            cell.militaryUnit.unitTransform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+            cell.civilianUnit.unitTransform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
+            if(cell.militaryUnit.unitTransform.position == cell.civilianUnit.unitTransform.position)
+            {
+                cell.militaryUnit.unitTransform.position += new Vector3(0.4f * grid.hexSize, 0, 0);
+                cell.civilianUnit.unitTransform.position -= new Vector3(0.4f * grid.hexSize, 0, 0);
+            }
+        }
+    }
+
+    public UnitType GetUnitType(string unitTypeName)
+    {
+        foreach(var unit in militaryUnits)
+        {
+            if (unit.name == unitTypeName)
+            {
+                return unit;
+            }
+        }
+        foreach(var unit in civilianUnits)
+        {
+            if (unit.name == unitTypeName)
+            {
+                return unit;
+            }
+        }
+
+        return null;
     }
 
     private void OnCellLoaded()
@@ -198,10 +233,38 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitTransform.rotation = rot;
 
+                    Vector3 civilianUnitPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    Vector3 civilianUnitScale = Vector3.one;
                     Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    Vector3 currentCellScale = Vector3.one;
+                    if (currentCell.civilianUnit != null)
+                    {
+                        currentCellPos += new Vector3(0.4f*grid.hexSize, 0, 0);
+                        currentCellScale *= 0.7f;
+
+                        civilianUnitPos = currentCellPos - new Vector3(0.8f, 0, 0);
+                        civilianUnitScale *= 0.7f;
+                    }
+                    if(lastCell.civilianUnit != null)
+                    {
+                        civilianUnitPos = new Vector3(lastCell.tile.position.x, lastCell.terrainHigh, lastCell.tile.position.z);
+                    }
+
                     for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
                     {
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
+                        unit.unitTransform.localScale = Vector3.Lerp(unit.unitTransform.localScale, currentCellScale, t);
+
+                        if (currentCell.civilianUnit != null)
+                        {
+                            currentCell.civilianUnit.unitTransform.position = Vector3.Lerp(currentCell.civilianUnit.unitTransform.position, civilianUnitPos, t);
+                            currentCell.civilianUnit.unitTransform.localScale = Vector3.Lerp(currentCell.civilianUnit.unitTransform.localScale, civilianUnitScale, t);
+                        }
+                        if (lastCell.civilianUnit != null)
+                        {
+                            lastCell.civilianUnit.unitTransform.position = Vector3.Lerp(lastCell.civilianUnit.unitTransform.position, civilianUnitPos, t);
+                            lastCell.civilianUnit.unitTransform.localScale = Vector3.Lerp(lastCell.civilianUnit.unitTransform.localScale, civilianUnitScale, t);
+                        }
                         yield return null;
                     }
                     //unit.unitTransform.transform.position = currentCellPos;
@@ -254,10 +317,34 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitTransform.rotation = rot;
 
+                    
+                    Vector3 militaryUnitPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    Vector3 militaryUnitScale = Vector3.one;
                     Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
+                    Vector3 currentCellScale = Vector3.one;
+                    if (currentCell.militaryUnit != null)
+                    {
+                        currentCellPos += new Vector3(0.4f, 0, 0);
+                        currentCellScale *= 0.7f;
+
+                        militaryUnitPos = currentCellPos - new Vector3(0.8f*grid.hexSize, 0, 0);
+                        militaryUnitScale *= 0.7f;
+                    }
+                    if (lastCell.militaryUnit != null)
+                    {
+                        militaryUnitPos = new Vector3(lastCell.tile.position.x, lastCell.terrainHigh, lastCell.tile.position.z);
+                    }
+
                     for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
                     {
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
+                        unit.unitTransform.localScale = Vector3.Lerp(unit.unitTransform.localScale, currentCellScale, t);
+
+                        if (currentCell.militaryUnit != null)
+                        {
+                            currentCell.militaryUnit.unitTransform.position = Vector3.Lerp(currentCell.militaryUnit.unitTransform.position, militaryUnitPos, t);
+                            currentCell.militaryUnit.unitTransform.localScale = Vector3.Lerp(currentCell.militaryUnit.unitTransform.localScale, militaryUnitScale, t);
+                        }
                         yield return null;
                     }
                     //unit.unitTransform.transform.position = currentCellPos;
@@ -273,6 +360,8 @@ public class UnitManager : MonoBehaviour
                 lastCell = currentCell;
             }
         }
+
+        CheckCellUnitsConflict(lastCell);
     }
 
     // déplacement d'une unité, renvoie [si il faut arrêter le déplacement] (booléen)
@@ -451,6 +540,8 @@ public class UnitManager : MonoBehaviour
                 cell.militaryUnit = unit;
                 units.Add(unit.id, unit);
 
+                CheckCellUnitsConflict(cell);
+
                 return unit;
             }
             else
@@ -487,6 +578,8 @@ public class UnitManager : MonoBehaviour
                 cell.civilianUnit = unit;
                 units.Add(unit.id, unit);
 
+                CheckCellUnitsConflict(cell);
+
                 return unit;
             }
             else
@@ -494,7 +587,6 @@ public class UnitManager : MonoBehaviour
                 Debug.LogError("trying to add a support unit on an already occupied tile");
             }
         }
-
         return null;
     }
 
@@ -743,7 +835,7 @@ public class Unit
         else
         {
             this.civilianUnitType = unitType as CivilianUnitType;
-            unitCanvaTransform = unitTransform.GetChild(0);
+            unitCanvaTransform = unitTransform.gameObject.GetComponentInChildren<Canvas>().transform;
             unitCanvaTransform.gameObject.SetActive(false);
             this.chargesLeft = this.civilianUnitType.actionCharges;
 

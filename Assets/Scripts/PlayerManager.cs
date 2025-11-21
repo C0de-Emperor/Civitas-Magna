@@ -57,7 +57,13 @@ public class PlayerManager : MonoBehaviour
 
     public void OnCellLoaded()
     {
-        randomCell = 
+        if(SaveManager.instance.lastSave == null)
+        {
+            HexCell spawnCell = grid.GetRandomCell(false, null);
+
+            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Settler"), spawnCell, player);
+            UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Warrior"), spawnCell, player);
+        }
     }
 }
 
