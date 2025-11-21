@@ -58,7 +58,7 @@ public class UnitManager : MonoBehaviour
 
     private void Awake()
     {
-        grid.OnCellInstancesGenerated += OnLoad;
+        grid.OnCellInstancesGenerated += OnCellLoaded;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de UnitManager dans la scene");
@@ -78,7 +78,7 @@ public class UnitManager : MonoBehaviour
         maxIterations = grid.height * grid.width;
     }
 
-    private void OnLoad()
+    private void OnCellLoaded()
     {
         SaveData data = SaveManager.instance.lastSave;
 
@@ -204,7 +204,7 @@ public class UnitManager : MonoBehaviour
                         unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
                         yield return null;
                     }
-                    unit.unitTransform.transform.position = currentCellPos;
+                    //unit.unitTransform.transform.position = currentCellPos;
 
                     grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
                     grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
@@ -231,41 +231,46 @@ public class UnitManager : MonoBehaviour
         }
         else // pareil que ci-dessus, pour les unités civiles
         {
-            HexCell currentCell = null;
+            HexCell currentCell = lastCell;
             while (nextMoves.Count > 0)
             {
                 currentCell = nextMoves.Dequeue();
 
-                if (currentCell.civilianUnit == null)
+                if (currentCell.civilianUnit == null) // vérifie qu'il ne se déplace pas sur une case déjà occupée
                 {
                     currentCell.civilianUnit = unit;
-                    lastCell.civilianUnit = null;
+                    lastCell.civilianUnit = null; // enlever l'unité de sa case actuelle
 
-                    Vector3 currentCellDir = currentCell.tile.position;
-                    currentCellDir.y = unit.unitTransform.position.y;
+                    Vector3 currentCellDir = currentCell.tile.position - unit.unitTransform.position;
+                    currentCellDir.y = 0;
                     Quaternion rot = Quaternion.LookRotation(currentCellDir);
-                    for (float t=0; t<1; t+=Time.deltaTime / unitTurnSpeed)
+                    if (rot != Quaternion.identity)
                     {
-                        unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t);
-                        yield return null;
+                        for (float t = 0; t < 1; t += Time.deltaTime / unitTurnSpeed)
+                        {
+                            unit.unitTransform.rotation = Quaternion.Slerp(unit.unitTransform.rotation, rot, t); // rotation progressive de l'unité dans le sens du déplacement
+                            yield return null;
+                        }
                     }
+                    unit.unitTransform.rotation = rot;
 
                     Vector3 currentCellPos = new Vector3(currentCell.tile.position.x, currentCell.terrainHigh, currentCell.tile.position.z);
                     for (float t = 0; t < 1; t += Time.deltaTime / unitSpeed)
                     {
-                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t);
+                        unit.unitTransform.position = Vector3.Lerp(unit.unitTransform.position, currentCellPos, t); // translation progressive de l'unité vers sa destination
                         yield return null;
                     }
+                    //unit.unitTransform.transform.position = currentCellPos;
 
-                    unit.unitTransform.position = currentCellPos;
+                    grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
+                    grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
                 }
                 else
                 {
-                    yield break;
+                    yield break; // arrête le déplacement pour ce tour
                 }
 
                 lastCell = currentCell;
-                grid.RevealTilesInRadius(currentCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true);
             }
         }
     }
