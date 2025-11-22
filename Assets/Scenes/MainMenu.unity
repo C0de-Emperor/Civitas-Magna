@@ -1151,15 +1151,16 @@ MonoBehaviour:
   backgroundImage: {fileID: 1425807532}
   backgroundSprites: []
   backgroundIndex: 0
-  PinBackground: {fileID: 0}
-  UnitSprite: {fileID: 0}
+  unitBackground: {fileID: 1591941027}
+  unitSprite: {fileID: 396517929}
   liveries:
-  - backgroundColor: {r: 1, g: 1, b: 1, a: 0}
-    spriteColor: {r: 0.20392157, g: 0.7137255, b: 0.09019608, a: 0}
-  - backgroundColor: {r: 0.7924528, g: 0.675273, b: 0.22054112, a: 0}
-    spriteColor: {r: 0.7137255, g: 0.28075355, b: 0.09019605, a: 0}
-  - backgroundColor: {r: 0.25792095, g: 0.62175107, b: 0.8679245, a: 0}
-    spriteColor: {r: 0.6981132, g: 0.69583505, b: 0.6948202, a: 0}
+  - backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    spriteColor: {r: 0.20392157, g: 0.7137255, b: 0.09019608, a: 1}
+  - backgroundColor: {r: 0.7924528, g: 0.675273, b: 0.22054112, a: 1}
+    spriteColor: {r: 0.7137255, g: 0.28075355, b: 0.09019605, a: 1}
+  - backgroundColor: {r: 0.25792095, g: 0.62175107, b: 0.8679245, a: 1}
+    spriteColor: {r: 0.6981132, g: 0.69583505, b: 0.6948202, a: 1}
+  liveriesIndex: -1
 --- !u!114 &498375549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2464,7 +2465,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: b8acddb2927512945bfc5fbcc0ad484e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

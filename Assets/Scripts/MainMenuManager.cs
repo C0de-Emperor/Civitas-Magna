@@ -42,6 +42,8 @@ public class MainMenuManager : MonoBehaviour
 
         backgroundSprites = Resources.LoadAll<Sprite>("Backgrounds");
         NextBackground();
+
+        NextLivery();
     }
 
     public void NextLivery()
@@ -55,7 +57,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void PreviousLivery()
     {
-        liveriesIndex++;
+        liveriesIndex--;
         liveriesIndex %= liveries.Count;
 
         unitBackground.color = liveries[liveriesIndex].backgroundColor;
