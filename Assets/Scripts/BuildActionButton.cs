@@ -12,13 +12,6 @@ public class BuildActionButton : MonoBehaviour
 
     internal void UpdateButton(HexCell cell)
     {
-        if (cell.building.buildingName == building.buildingName || !cell.terrainType.build.Contains(building.buildingName))
-        {
-            button.interactable = false;
-        }
-        else
-        {
-            button.interactable = true;
-        }
+        button.interactable = building.CanBeBuildOn(cell);
     }
 }

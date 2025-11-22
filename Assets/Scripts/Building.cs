@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/Building")]
 public class Building : ScriptableObject
@@ -16,4 +17,19 @@ public class Building : ScriptableObject
 
     [Header("Research")]
     public Research requiredResearch;
+
+    public bool CanBeBuildOn(HexCell cell)
+    {
+        if (cell.building.buildingName != BuildingNames.None)
+            return false;
+
+        if (!cell.terrainType.build.Contains(buildingName))
+            return false;
+
+        if (requiredResearch != null &&
+            !ResearchManager.instance.researched.Contains(requiredResearch))
+            return false;
+
+        return true;
+    }
 }

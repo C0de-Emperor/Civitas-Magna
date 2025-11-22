@@ -19,3 +19,6 @@ MonoBehaviour:
   index: 1
   depth: 0
   dependencies: []
+  unlocks:
+  - icon: {fileID: 21300000, guid: 417ac3648e6df884886c523e6b2bd029, type: 3}
+    type: 2
