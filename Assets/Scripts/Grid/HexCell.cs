@@ -383,22 +383,25 @@ public class HexCell
 
     public bool CreateBuilding(Building _building, Unit builder)
     {
-        if(_building.buildingName == building.buildingName || !terrainType.build.Contains(_building.buildingName) || building.buildingName == Building.BuildingNames.City)
+        if (_building.CanBeBuildOn(this))
+        {
+            if (_building.buildingName == Building.BuildingNames.City)
+            {
+                CityManager.instance.CreateCity(this, builder.master);
+            }
+            else if (_building.buildingPrefab != null)
+            {
+                InstantiateRessource(_building.buildingPrefab.transform);
+            }
+            building = _building;
+            UnitManager.instance.UpdateActionPanel(this);
+
+            return true;
+        }
+        else
         {
             return false;
         }
-
-        if(_building.buildingName == Building.BuildingNames.City)
-        {
-            CityManager.instance.CreateCity(this, builder.master);
-        }
-        else if(_building.buildingPrefab != null)
-        {
-            InstantiateRessource(_building.buildingPrefab.transform);
-        }
-        building = _building;
-
-        return true;
     }
 }
  

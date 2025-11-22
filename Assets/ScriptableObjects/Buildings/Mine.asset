@@ -17,4 +17,4 @@ MonoBehaviour:
   buildingSprite: {fileID: 21300000, guid: 417ac3648e6df884886c523e6b2bd029, type: 3}
   foodFactor: 1
   productionFactor: 2
-  requiredResearch: {fileID: 0}
+  requiredResearch: {fileID: 11400000, guid: 43438f5871a914746806eccfef8dee23, type: 2}

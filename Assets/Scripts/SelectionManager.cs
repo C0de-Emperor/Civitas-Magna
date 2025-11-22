@@ -62,6 +62,7 @@ public class SelectionManager : MonoBehaviour
     {
         TurnManager.instance.OnTurnChange += delegate
         {
+            UnitManager.instance.HideActionPanel();
             selectedCell = null;
             selectedUnit = null;
             innerSelectionOutline.SetActive(false);
@@ -188,6 +189,7 @@ public class SelectionManager : MonoBehaviour
                                 currentCell.tile.position.z
                             );
                             pathPreviewCoordinates = new List<Vector3>();
+                            UnitManager.instance.UpdateActionPanel(unitCell);
                         }
                     }
                 }
@@ -293,7 +295,6 @@ public class SelectionManager : MonoBehaviour
 			{
 				selectedUnit = currentCell.civilianUnit;
                 UnitManager.instance.ShowActionPanel(selectedUnit.unitType as CivilianUnitType, currentCell);
-                //selectedUnit.unitCanvaTransform.gameObject.SetActive(true);
             });
         }
 

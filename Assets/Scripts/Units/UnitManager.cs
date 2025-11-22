@@ -914,24 +914,6 @@ public class Unit
         {
             this.civilianUnitType = unitType as CivilianUnitType;
             this.chargesLeft = this.civilianUnitType.actionCharges;
-
-
-
-            /*
-            this.civilianUnitType = unitType as CivilianUnitType;
-            unitCanvaTransform = unitTransform.GetChild(0);
-            unitCanvaTransform.gameObject.SetActive(false);
-            this.chargesLeft = this.civilianUnitType.actionCharges;
-
-            this.unitPin.healthBar.transform.parent.gameObject.SetActive(false);
-
-            for (int i = 0; i<this.civilianUnitType.buildableBuildings.Count; i++)
-            {
-                int currentIndex = i;
-                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponent<Button>().onClick.AddListener(delegate { UnitManager.instance.CivilianUnitAction(currentIndex); });
-                unitCanvaTransform.GetChild(1).GetChild(i).gameObject.GetComponentInChildren<Text>().text = this.civilianUnitType.buildableBuildings[i].buildActionName;
-            }
-            */
         }
     }
 

@@ -21,3 +21,6 @@ MonoBehaviour:
   dependencies:
   - research: {fileID: 11400000, guid: c18a51cf0e6dc8444a9e7a73d037386d, type: 2}
     dependencyLineDepth: 0.5
+  unlocks:
+  - icon: {fileID: 21300000, guid: 982194d2893221b458a3286c5a46998e, type: 3}
+    type: 2
