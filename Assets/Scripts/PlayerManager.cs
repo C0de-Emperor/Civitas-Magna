@@ -46,17 +46,17 @@ public class PlayerManager : MonoBehaviour
     {
         if(data != null)
         {
-            player = new Player(data.player.playerName, new Color[2] { data.player.livery.backgroundColor, data.player.livery.spriteColor });
+            player = new Player(data.player.playerName, new Livery(data.player.livery.backgroundColor, data.player.livery.spriteColor ));
             goldStock = data.goldStock;
 
             playerEntities = data.playerEntities.ToList();
         }
         else
         {
-            player = new Player("bruh", new Color[2] { new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) });
+            player = new Player("bruh", new Livery( new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) ));
             goldStock = 0f;
 
-            playerEntities.Add(new Player("Barbarian", new Color[2] { new Color(1, 0, 0), new Color(0, 0, 0) }));
+            playerEntities.Add(new Player("Barbarian", new Livery ( new Color(1, 0, 0), new Color(0, 0, 0) )));
         }
     }
 
@@ -91,19 +91,25 @@ public class Player
     public string playerName = "player";
     public Livery livery;
 
-    public Player(string playerName, Color[] livery, bool isMainCharacter=false)
+    public Player(string playerName, Livery livery, bool isMainCharacter=false)
     {
         this.id = PlayerManager.instance.nextAvailableId;
         PlayerManager.instance.nextAvailableId++;
 
         this.playerName = playerName;
-        this.livery.backgroundColor = livery[0];
-        this.livery.spriteColor = livery[1];
+        this.livery = livery;
     }
 }
 
-public struct Livery
+[Serializable]
+public class Livery
 {
     public Color backgroundColor;
     public Color spriteColor;
+
+    public Livery(Color backgroundColor, Color spriteColor)
+    {
+        this.backgroundColor = backgroundColor;
+        this.spriteColor = spriteColor;
+    }
 }

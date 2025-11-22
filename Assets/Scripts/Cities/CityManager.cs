@@ -163,8 +163,8 @@ public class CityManager : MonoBehaviour
         CityBannerUI banner = bannerObj.GetComponent<CityBannerUI>();
 
         banner.worldTarget = obj.transform;
-        banner.transform.GetChild(0).GetComponent<Image>().color = master.livery[0];
-        banner.transform.GetChild(1).GetComponent<Text>().color = master.livery[1];
+        banner.transform.GetChild(0).GetComponent<Image>().color = master.livery.backgroundColor;
+        banner.transform.GetChild(1).GetComponent<Text>().color = master.livery.spriteColor;
         component.bannerUI = banner;
 
         component.UpdateBanner();
@@ -218,8 +218,8 @@ public class CityManager : MonoBehaviour
         CityBannerUI banner = bannerObj.GetComponent<CityBannerUI>();
 
         banner.worldTarget = obj.transform;
-        banner.transform.GetChild(0).GetComponent<Image>().color = data.master.livery[0];
-        banner.transform.GetChild(1).GetComponent<Text>().color = data.master.livery[1];
+        banner.transform.GetChild(0).GetComponent<Image>().color = data.master.livery.backgroundColor;
+        banner.transform.GetChild(1).GetComponent<Text>().color = data.master.livery.spriteColor;
         component.bannerUI = banner;
 
         component.UpdateBanner();

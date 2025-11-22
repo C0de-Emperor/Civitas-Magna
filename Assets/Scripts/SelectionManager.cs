@@ -228,11 +228,11 @@ public class SelectionManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
         {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player2", new Color[] { new Color(0, 255, 0), new Color(255, 255, 255) }));
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player2", new Livery( new Color(0, 255, 0), new Color(255, 255, 255) )));
         }
         if (Input.GetKeyUp(KeyCode.O) && selectedCell != null)
         {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[1], selectedCell, new Player("player3", new Color[] { new Color(0, 0, 0), new Color(255, 0, 255) }));
+            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[1], selectedCell, new Player("player3", new Livery( new Color(0, 0, 0), new Color(255, 0, 255) )));
         }
 		if (Input.GetKeyUp(KeyCode.J) && selectedCell != null)
 		{
@@ -240,7 +240,7 @@ public class SelectionManager : MonoBehaviour
 		}
 		if (Input.GetKeyUp(KeyCode.K) && selectedCell != null)
 		{
-			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Color[] { new Color(0, 123, 67), new Color(4, 89, 176) }));
+			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Livery( new Color(0, 123, 67), new Color(4, 89, 176) )));
 		}
 		if (Input.GetKeyUp(KeyCode.X) && selectedCell != null)
 		{

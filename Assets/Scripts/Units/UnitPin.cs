@@ -72,12 +72,12 @@ public class UnitPin : MonoBehaviour
         healthBar.color = gradient.Evaluate(healthPercentage);
     }
 
-    public void InitializePin(Sprite unitSprite, Color[] livery)
+    public void InitializePin(Sprite unitSprite, Livery livery)
     {
-        this.PinBackground.color = livery[0];
+        this.PinBackground.color = livery.backgroundColor;
 
         this.UnitSprite.sprite = unitSprite;
-        this.UnitSprite.color = livery[1];
+        this.UnitSprite.color = livery.spriteColor;
 
         UpdateHealth(1, 1);
     }

@@ -20,9 +20,10 @@ public class MainMenuManager : MonoBehaviour
     [HideInInspector] public Sprite[] backgroundSprites;
     [HideInInspector] public int backgroundIndex = 0;
 
-    public Image PinBackground;
-    public Image UnitSprite;
-    public List<Color[]> liveries = new List<Color[]>();
+    public Image unitBackground;
+    public Image unitSprite;
+    public List<Livery> liveries = new List<Livery>();
+    [HideInInspector] public int liveriesIndex = -1;
 
     private SettingsController controller;
 
@@ -45,7 +46,20 @@ public class MainMenuManager : MonoBehaviour
 
     public void NextLivery()
     {
+        liveriesIndex++;
+        liveriesIndex %= liveries.Count;
 
+        unitBackground.color = liveries[liveriesIndex].backgroundColor;
+        unitSprite.color = liveries[liveriesIndex].spriteColor;
+    }
+
+    public void PreviousLivery()
+    {
+        liveriesIndex++;
+        liveriesIndex %= liveries.Count;
+
+        unitBackground.color = liveries[liveriesIndex].backgroundColor;
+        unitSprite.color = liveries[liveriesIndex].spriteColor;
     }
 
     public void NextBackground()
