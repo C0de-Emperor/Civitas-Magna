@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
@@ -69,6 +70,12 @@ public class SoundManager : MonoBehaviour
             audioSource.clip = GET_PHONKY_playlist[musicIndex];
         }
         audioSource.Play();
+
+        MainMenuManager mainMenuManager = UnityEngine.Object.FindAnyObjectByType<MainMenuManager>();
+        if(mainMenuManager != null)
+        {
+            mainMenuManager.NextBackground();
+        }
 
         yield return new WaitForSeconds(2f);
     }

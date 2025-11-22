@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -15,6 +16,14 @@ public class MainMenuManager : MonoBehaviour
     public Transform mainMenuPanel;
     public Transform settingsPanel;
 
+    public Image backgroundImage;
+    [HideInInspector] public Sprite[] backgroundSprites;
+    [HideInInspector] public int backgroundIndex = 0;
+
+    public Image PinBackground;
+    public Image UnitSprite;
+    public List<Color[]> liveries = new List<Color[]>();
+
     private SettingsController controller;
 
     private void Awake()
@@ -29,6 +38,20 @@ public class MainMenuManager : MonoBehaviour
 
         mainMenuPanel.gameObject.SetActive(true);
         settingsPanel.gameObject.SetActive(false);
+
+        backgroundSprites = Resources.LoadAll<Sprite>("Backgrounds");
+        NextBackground();
+    }
+
+    public void NextLivery()
+    {
+
+    }
+
+    public void NextBackground()
+    {
+        backgroundImage.sprite = backgroundSprites[backgroundIndex % backgroundSprites.Length];
+        backgroundIndex++;
     }
 
     private void OpenSettingsMenu()

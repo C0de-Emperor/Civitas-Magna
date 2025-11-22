@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -88,7 +89,6 @@ public class UnitManager : MonoBehaviour
         HideActionPanel();
     }
 
-
     public void UpdatePinsScale(float newDistance)
     {
         foreach(var unit in units.Values)
@@ -145,8 +145,14 @@ public class UnitManager : MonoBehaviour
                 unit.chargesLeft = unitData.chargesLeft;
 
                 if (unitData.queuedMovementData.path.Count > 1) 
-                { 
-                    queuedUnitMovements.Add(unit.id, unitData.queuedMovementData); 
+                {
+                    queuedMovementData movementData = unitData.queuedMovementData;
+                    for(int i = 0; i < movementData.path.Count; i++)
+                    {
+                        movementData.path[i] = grid.GetTile(movementData.path[i].offsetCoordinates);
+                    }
+
+                    queuedUnitMovements.Add(unit.id, movementData); 
                 }
             }
         }
