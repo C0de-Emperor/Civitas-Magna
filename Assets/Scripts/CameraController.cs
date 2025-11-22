@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
-using Unity.Cinemachine;
 
 
 public class CameraController : MonoBehaviour
@@ -65,6 +66,8 @@ public class CameraController : MonoBehaviour
         mapMaxX = grid.width * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop)? 1.5f : 1.75f);
         mapMinZ = 0f;
         mapMaxZ = grid.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
+
+        ApplyZoom(0f, defaultCamera.GetComponent<CinemachineFollow>());
     }
 
     public void SetTargetPosition(Vector2 pos)
@@ -218,27 +221,31 @@ public class CameraController : MonoBehaviour
             float zoomInput = context.ReadValue<float>();
             if (zoomInput != 0)
             {
-                
-                Vector3 offset = composer.FollowOffset;
-
-                // Calcule la direction de l'offset (vers la caméra depuis la cible)
-                Vector3 direction = offset.normalized;
-
-                // Modifie la distance le long de cette direction
-                float currentDistance = offset.magnitude;
-                float newDistance = Mathf.Clamp(currentDistance + zoomInput * cameraZoomSpeed * Time.deltaTime, cameraZoomMin, cameraZoomMax);
-
-                // Applique le nouvel offset
-                composer.FollowOffset = direction * newDistance;
-
-                // Modifie la vitesse de déplacement
-                cameraSpeed = newDistance * 0.8f;
-
-                UnitManager.instance.UpdatePinsScale(newDistance);
+                ApplyZoom(zoomInput, composer);
             }
 
             yield return null;
         }
+    }
+
+    private void ApplyZoom(float zoomInput, CinemachineFollow composer)
+    {
+        Vector3 offset = composer.FollowOffset;
+
+        // Calcule la direction de l'offset (vers la caméra depuis la cible)
+        Vector3 direction = offset.normalized;
+
+        // Modifie la distance le long de cette direction
+        float currentDistance = offset.magnitude;
+        float newDistance = Mathf.Clamp(currentDistance + zoomInput * cameraZoomSpeed * Time.deltaTime, cameraZoomMin, cameraZoomMax);
+
+        // Applique le nouvel offset
+        composer.FollowOffset = direction * newDistance;
+
+        // Modifie la vitesse de déplacement
+        cameraSpeed = newDistance * 0.8f;
+
+        UnitManager.instance.UpdatePinsScale(newDistance);
     }
 
     private void OnDrawGizmos()

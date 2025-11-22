@@ -46,14 +46,18 @@ public class PlayerManager : MonoBehaviour
     {
         if(data != null)
         {
-            player = new Player(data.player.playerName, new Livery(data.player.livery.backgroundColor, data.player.livery.spriteColor ));
             goldStock = data.goldStock;
 
-            playerEntities = data.playerEntities.ToList();
+            foreach(var playerEntity in data.playerEntities)
+            {
+                playerEntities.Add(new Player(playerEntity.playerName, playerEntity.livery));
+            }
+            player = playerEntities[0];
         }
         else
         {
             player = new Player("bruh", new Livery( new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) ));
+            playerEntities.Add(player);
             goldStock = 0f;
 
             playerEntities.Add(new Player("Barbarian", new Livery ( new Color(1, 0, 0), new Color(0, 0, 0) )));
@@ -70,7 +74,7 @@ public class PlayerManager : MonoBehaviour
             List<TerrainType> forbiddenTerrainTypes = new List<TerrainType>();
             foreach(var terrainType in grid.terrainTypes)
             {
-                if (!UnitManager.instance.IsCellTraversable(terrainType, settler) || !UnitManager.instance.IsCellTraversable(terrainType, warrior))
+                if (!UnitManager.instance.IsTerrainTypeTraversable(terrainType, settler) || !UnitManager.instance.IsTerrainTypeTraversable(terrainType, warrior))
                 {
                     forbiddenTerrainTypes.Add(terrainType);
                 }
@@ -91,7 +95,7 @@ public class Player
     public string playerName = "player";
     public Livery livery;
 
-    public Player(string playerName, Livery livery, bool isMainCharacter=false)
+    public Player(string playerName, Livery livery)
     {
         this.id = PlayerManager.instance.nextAvailableId;
         PlayerManager.instance.nextAvailableId++;

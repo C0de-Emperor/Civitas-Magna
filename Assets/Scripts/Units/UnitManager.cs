@@ -18,6 +18,7 @@ public class UnitManager : MonoBehaviour
     [HideInInspector] public int nextAvailableId = 1;
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
+    public float lastDistance = 1;
 
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
@@ -91,6 +92,7 @@ public class UnitManager : MonoBehaviour
 
     public void UpdatePinsScale(float newDistance)
     {
+        lastDistance = newDistance;
         foreach(var unit in units.Values)
         {
             unit.unitPin.UpdateScale(newDistance);
@@ -586,7 +588,7 @@ public class UnitManager : MonoBehaviour
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
-            if(cell.militaryUnit == null && IsCellTraversable(cell.terrainType, unitType))
+            if(cell.militaryUnit == null && IsCellTraversable(cell, unitType))
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
@@ -624,7 +626,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
-            if (cell.civilianUnit == null && IsCellTraversable(cell.terrainType, unitType))
+            if (cell.civilianUnit == null && IsCellTraversable(cell, unitType))
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
@@ -675,7 +677,7 @@ public class UnitManager : MonoBehaviour
 
         CellData currentCellData = null;
 
-        if (!IsCellTraversable(finishCell.terrainType, unitType)) { return null; }
+        if (!IsCellTraversable(finishCell, unitType)) { return null; }
 
         //System.DateTime startTime = System.DateTime.Now;
 
@@ -697,7 +699,7 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i].terrainType, unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non révélée
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non révélée
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
@@ -818,22 +820,42 @@ public class UnitManager : MonoBehaviour
     }
 
     // renvoie si la case est traversable par l'unité ou non
-    public bool IsCellTraversable(TerrainType terrainType, UnitType unitType)
+    public bool IsCellTraversable(HexCell cell, UnitType unitType)
+    {
+        if(unitType.unitCategory == UnitType.UnitCategory.military)
+        {
+            if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (cell.civilianUnit != null && !queuedUnitMovements.ContainsKey(cell.civilianUnit.id))
+            {
+                return false;
+            }
+        }
+
+        return IsTerrainTypeTraversable(cell.terrainType, unitType);
+    }
+
+    // renvoie si le type de terrain est traversable par l'unité ou non
+    public bool IsTerrainTypeTraversable(TerrainType terrainType, UnitType unitType)
     {
         if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
         {
             return true;
         }
 
-        if(terrainType.terrainCost > unitType.MoveReach)
+        if (terrainType.terrainCost > unitType.MoveReach)
         {
             return false;
         }
-        if((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat))
+        if ((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat))
         {
             return false;
         }
-
         return true;
     }
 
@@ -902,7 +924,7 @@ public class Unit
         this.lastDamagingTurn = -1;
         this.unitName = UnitManager.instance.NAMES_LIST[UnityEngine.Random.Range(0, UnitManager.instance.NAMES_LIST.Length - 1)];
 
-        unitPin.InitializePin(this.unitType.unitIcon, this.master.livery);
+        unitPin.InitializePin(this.unitType.unitIcon, this.master.livery, UnitManager.instance.lastDistance);
         unitPin.worldTarget = this.unitTransform;
 
         if (unitType.unitCategory == UnitType.UnitCategory.military)

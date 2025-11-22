@@ -25,7 +25,7 @@ public class UnitPin : MonoBehaviour
     private Camera mainCamera;
     private RectTransform rect;
 
-    private void Start()
+    private void Awake()
     {
         mainCamera = Camera.main;
         rect = GetComponent<RectTransform>();
@@ -72,7 +72,7 @@ public class UnitPin : MonoBehaviour
         healthBar.color = gradient.Evaluate(healthPercentage);
     }
 
-    public void InitializePin(Sprite unitSprite, Livery livery)
+    public void InitializePin(Sprite unitSprite, Livery livery, float lastDistance)
     {
         this.PinBackground.color = livery.backgroundColor;
 
@@ -80,5 +80,6 @@ public class UnitPin : MonoBehaviour
         this.UnitSprite.color = livery.spriteColor;
 
         UpdateHealth(1, 1);
+        UpdateScale(lastDistance);
     }
 }

@@ -64,7 +64,6 @@ public class SaveManager : MonoBehaviour
             {
                 creationTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 
-                player = playerM.player,
                 goldStock = playerM.goldStock,
                 playerEntities = playerM.playerEntities.ToArray(),
 
@@ -122,7 +121,6 @@ public class SaveData
     public string creationTime;
 
     [Header("Player")]
-    public Player player;
     public float goldStock;
     public Player[] playerEntities;
 
