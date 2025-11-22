@@ -66,6 +66,7 @@ public class SaveManager : MonoBehaviour
 
                 player = playerM.player,
                 goldStock = playerM.goldStock,
+                playerEntities = playerM.playerEntities.ToArray(),
 
                 currentTurn = TurnManager.instance.currentTurn,
 
@@ -123,6 +124,7 @@ public class SaveData
     [Header("Player")]
     public Player player;
     public float goldStock;
+    public Player[] playerEntities;
 
     [Header("Turn")]
     public int currentTurn;

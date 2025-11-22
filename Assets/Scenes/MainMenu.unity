@@ -1073,6 +1073,11 @@ MonoBehaviour:
   quitButton: {fileID: 935032803}
   mainMenuPanel: {fileID: 1852667977}
   settingsPanel: {fileID: 1443968645349277838}
+  backgroundImage: {fileID: 1425807532}
+  backgroundSprites: []
+  backgroundIndex: 0
+  PinBackground: {fileID: 0}
+  UnitSprite: {fileID: 0}
 --- !u!114 &498375549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4220,6 +4225,26 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 164.28136, y: -255.4721}
   m_SizeDelta: {x: 328.5627, y: 70.9442}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!224 &6722251318535736569
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750259426729403564}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 213358773446400341}
+  m_Father: {fileID: 7635419523821726205}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6752090237413489435
 GameObject:
