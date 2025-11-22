@@ -18,7 +18,7 @@ public class MainMenuManager : MonoBehaviour
 
     public Image backgroundImage;
     [HideInInspector] public Sprite[] backgroundSprites;
-    [HideInInspector] public int backgroundIndex = 0;
+    [HideInInspector] public int backgroundIndex;
 
     public Image unitBackground;
     public Image unitSprite;
@@ -43,6 +43,7 @@ public class MainMenuManager : MonoBehaviour
         backgroundSprites = Resources.LoadAll<Sprite>("Backgrounds");
         NextBackground();
 
+        backgroundIndex = UnityEngine.Random.Range(0, backgroundSprites.Length-1);
         NextLivery();
     }
 

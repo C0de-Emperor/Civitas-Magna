@@ -139,7 +139,6 @@ public class UnitManager : MonoBehaviour
         {
             foreach(var unitData in data.units)
             {
-                Debug.Log(unitData.masterId + " " + PlayerManager.instance.player.id);
                 Unit unit = AddUnit(unitData.unitType, grid.GetTile(unitData.cellCoordinates), PlayerManager.instance.playerEntities[unitData.masterId]);
                 unit.currentHealth = unitData.currentHealth;
                 unit.movesDone = unitData.movesDone;
