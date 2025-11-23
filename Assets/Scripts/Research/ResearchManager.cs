@@ -62,12 +62,12 @@ public class ResearchManager : MonoBehaviour
 
     private void OnLoad(SaveData data)
     {
-        if(data != null)
-        {
-            currentResearch = data.currentResearch;
-            currentResearchProgress = data.currentResearchProgress;
-            researched = data.researched.ToList();
-        }
+        if(data == null)
+            throw new Exception("SaveData is null");
+
+        currentResearch = data.currentResearch;
+        currentResearchProgress = data.currentResearchProgress;
+        researched = data.researched.ToList();
     }
 
     public void GenerateTree(Research[] allResearches)

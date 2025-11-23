@@ -93,7 +93,11 @@ public class MainMenuManager : MonoBehaviour
         callback = (scene, mode) =>
         {
             SceneManager.sceneLoaded -= callback;
-            SaveManager.instance.TriggerSaveLoaded(null);
+            SaveManager.instance.TriggerNewGameStarted(
+                new NewGameData {
+                    player = new Player ("eeee", liveries[liveriesIndex] )
+                }
+            );
         };
 
         SceneManager.sceneLoaded += callback;

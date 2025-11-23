@@ -17,6 +17,8 @@ public class SaveManager : MonoBehaviour
 
     public event Action<SaveData> OnSaveLoaded;
 
+    public event Action<NewGameData> OnNewGameStarted;
+
     private void Awake()
     {
         canSave = false;
@@ -39,6 +41,14 @@ public class SaveManager : MonoBehaviour
         lastSave = data;
         hasLoaded = true;
         OnSaveLoaded?.Invoke(data);
+    }
+
+    public void TriggerNewGameStarted(NewGameData data)
+    {
+        canSave = true;
+        lastSave = null;
+        hasLoaded = false;
+        OnNewGameStarted?.Invoke(data);
     }
 
     public void ClearAllSaveLoadedSubscribers()
@@ -112,6 +122,12 @@ public class SaveManager : MonoBehaviour
         string json = File.ReadAllText(savePath);
         return JsonUtility.FromJson<SaveData>(json);
     }
+}
+
+[Serializable]
+public class NewGameData
+{
+    public Player player;
 }
 
 [Serializable]
@@ -212,12 +228,3 @@ public class UnitData
     public queuedMovementData queuedMovementData;
 
 }
-
-/*
- * player
- * turn - Done !
- * tiles - Done !
- * city - Done !
- * units - Done !
- * research - Done !
-*/

@@ -51,7 +51,7 @@ public class CityManager : MonoBehaviour
     public static CityManager instance;
     private void Awake()
     {
-        grid.OnCellInstancesGenerated += OnLoad;
+        grid.OnCellInstancesGenerated += OnLoadSave;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de BuildingManager dans la scène");
@@ -67,13 +67,26 @@ public class CityManager : MonoBehaviour
         TurnManager.instance.OnTurnChange += ProcessQueuedExpansions;
     }
 
-    private void OnLoad()
+    private void OnLoadSave()
     {
         SaveData data = SaveManager.instance.lastSave;
 
         if (data == null)
+            return;
+
+
+        availableNames = data.availableNames.ToList();
+        maxCityRadius = data.maxCityRadius;
+
+        foreach (CityData cityData in data.cities)
         {
-            availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley",
+            CreateCityFromSave(cityData);
+        }
+    }
+
+    private void OnStartNewGame(NewGameData data)
+    {
+        availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley",
                 "St. John's", "Buenos Aires", "Yerevan", "Oranjestad", "Canberra", "Vienna", "Baku", "Nassau", "Manama", "Dhaka",
                 "Bridgetown", "Minsk", "Bruxelles-Brussel", "Belmopan", "Cotonou", "Hamilton", "Thimphu", "La Paz", "Sarajevo",
                 "Gaborone", "Brasília", "Road Town", "Bandar Seri Begawan", "Sofia", "Ouagadougou", "Bujumbura", "Praia",
@@ -98,18 +111,7 @@ public class CityManager : MonoBehaviour
                 "Port of Spain", "Tunis", "Ankara", "Ashgabat", "Cockburn Town", "Funafuti", "Kampala", "Kiev", "Abu Dhabi", "London", "Dodoma",
                 "'Washington", "Charlotte Amalie", "Montevideo", "Tashkent", "Port Vila", "Caracas", "Hà Noi", "Matu-Utu", "El Aaiún", "Sana'a'",
                 "Lusaka", "Harare" };
-            maxCityRadius = 4;
-        }
-        else
-        {
-            availableNames = data.availableNames.ToList();
-            maxCityRadius = data.maxCityRadius;
-
-            foreach(CityData cityData in data.cities)
-            {
-                CreateCityFromSave(cityData);
-            }
-        }
+        maxCityRadius = 4;
     }
 
     public bool CreateCity(HexCell cell, Player master)

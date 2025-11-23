@@ -37,7 +37,8 @@ public class MapGenerator : MonoBehaviour
     public static MapGenerator instance;
     private void Awake()
     {
-        SaveManager.instance.OnSaveLoaded += OnLoad;
+        SaveManager.instance.OnSaveLoaded += OnLoadSave;
+        SaveManager.instance.OnNewGameStarted += OnStartNewGame;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de MapGenerator dans la scène");
@@ -53,14 +54,17 @@ public class MapGenerator : MonoBehaviour
         biomes.Sort((a, b) => a.height.CompareTo(b.height));
     }
 
-    public void OnLoad(SaveData data)
+    private void OnLoadSave(SaveData data)
     {
-        //SaveManager.instance.OnSaveLoaded -= OnLoad;
-
         if (data == null)
-            GenerateMap();
-        else
-            GenerateMapFromSave(data);
+            throw new Exception("SaveData is null");
+
+        GenerateMapFromSave(data);
+    }
+
+    private void OnStartNewGame(NewGameData data)
+    {
+        GenerateMap();
     }
 
     public void GenerateMap()

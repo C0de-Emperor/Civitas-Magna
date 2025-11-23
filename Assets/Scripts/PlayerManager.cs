@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +26,8 @@ public class PlayerManager : MonoBehaviour
         }
         instance = this;
 
-        SaveManager.instance.OnSaveLoaded += OnLoad;
+        SaveManager.instance.OnSaveLoaded += OnLoadSave;
+        SaveManager.instance.OnNewGameStarted += OnStartNewGame;
         grid.OnCellInstancesGenerated += OnCellLoaded;
         UpdateMainUI();
     }
@@ -42,26 +42,28 @@ public class PlayerManager : MonoBehaviour
         goldStockText.text = Mathf.RoundToInt(goldStock).ToString();
     }
 
-    public void OnLoad(SaveData data)
+    private void OnLoadSave(SaveData data)
     {
-        if(data != null)
-        {
-            goldStock = data.goldStock;
+        if (data == null)
+            throw new Exception("SaveData is null");
 
-            foreach(var playerEntity in data.playerEntities)
-            {
-                playerEntities.Add(new Player(playerEntity.playerName, playerEntity.livery));
-            }
-            player = playerEntities[0];
-        }
-        else
-        {
-            player = new Player("bruh", new Livery( new Color(1, 1, 1), new Color(52f/255, 182f/255, 23f/255) ));
-            playerEntities.Add(player);
-            goldStock = 0f;
 
-            playerEntities.Add(new Player("Barbarian", new Livery ( new Color(1, 0, 0), new Color(0, 0, 0) )));
+        goldStock = data.goldStock;
+
+        foreach(var playerEntity in data.playerEntities)
+        {
+            playerEntities.Add(new Player(playerEntity.playerName, playerEntity.livery));
         }
+        player = playerEntities[0];
+    }
+
+    private void OnStartNewGame(NewGameData data)
+    {
+        player = data.player;
+        playerEntities.Add(player);
+        goldStock = 0f;
+
+        playerEntities.Add(new Player("Barbarian", new Livery(new Color(1, 0, 0), new Color(0, 0, 0))));
     }
 
     public void OnCellLoaded()

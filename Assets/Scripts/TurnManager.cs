@@ -16,6 +16,7 @@ public class TurnManager : MonoBehaviour
         canChangeTurn = false;
 
         SaveManager.instance.OnSaveLoaded += OnLoad;
+        SaveManager.instance.OnNewGameStarted += OnStartNewGame;
         if (instance != null)
         {
             Debug.LogWarning("Il y a plus d'une instance de TurnManager dans la scène");
@@ -30,10 +31,15 @@ public class TurnManager : MonoBehaviour
 
     private void OnLoad(SaveData data)
     {
-        if(data != null)
-            currentTurn = data.currentTurn;
-        else
-            currentTurn = 0;
+        if(data == null)
+            throw new Exception("SaveData is null");
+
+        currentTurn = data.currentTurn;     
+    }
+
+    private void OnStartNewGame(NewGameData data)
+    {
+        currentTurn = 0;
     }
 
     public void ChangeTurn()
