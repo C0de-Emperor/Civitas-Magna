@@ -80,11 +80,7 @@ public class SaveManager : MonoBehaviour
                 currentTurn = TurnManager.instance.currentTurn,
 
                 seed = MapGenerator.instance.seed,
-                orientation = grid.orientation,
-                width = grid.width,
-                height = grid.height,
-                hexSize = grid.hexSize,
-                batchSize = grid.batchSize,
+                gridSize = new GridSize { width = grid.width, height= grid.height},
                 cells = allCellData.cellData,
 
                 maxCityRadius = cityM.maxCityRadius,
@@ -128,6 +124,7 @@ public class SaveManager : MonoBehaviour
 public class NewGameData
 {
     public Player player;
+    public GridSize gridSize;
 }
 
 [Serializable]
@@ -145,11 +142,7 @@ public class SaveData
 
     [Header("Grid")]
     public int seed;
-    public HexOrientation orientation;
-    public int width;
-    public int height;
-    public float hexSize;
-    public int batchSize;
+    public GridSize gridSize;
     public HexCellData[] cells;
 
     [Header("City")]

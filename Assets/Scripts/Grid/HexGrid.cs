@@ -40,10 +40,6 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
-        raycastTarget.gameObject.SetActive(true);
-        raycastTarget.position = new Vector3(-1, 1.3f, -1);
-        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
-
         gridOrigin = transform.position;
 
         OnCellInstancesGenerated += () => StartCoroutine(AssignNeighbours());
@@ -57,13 +53,14 @@ public class HexGrid : MonoBehaviour
         terrainTypes = Resources.LoadAll<TerrainType>("TerrainType");
     }
 
-    public void InitGrid(SaveData data)
+    public void InitGrid(GridSize gridSize)
     {
-        orientation = data.orientation;
-        width = data.width;
-        height = data.height;
-        hexSize = data.hexSize;
-        batchSize = data.batchSize;
+        width = gridSize.width;
+        height = gridSize.height;
+
+        raycastTarget.gameObject.SetActive(true);
+        raycastTarget.position = new Vector3(-1, 1.3f, -1);
+        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
     }
 
     public IEnumerator SetHexCells(List<HexCell> newCells)

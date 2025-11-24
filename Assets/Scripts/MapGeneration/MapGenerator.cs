@@ -59,11 +59,13 @@ public class MapGenerator : MonoBehaviour
         if (data == null)
             throw new Exception("SaveData is null");
 
+        hexGrid.InitGrid(data.gridSize);
         GenerateMapFromSave(data);
     }
 
     private void OnStartNewGame(NewGameData data)
     {
+        hexGrid.InitGrid(data.gridSize);
         GenerateMap();
     }
 
@@ -209,18 +211,16 @@ public class MapGenerator : MonoBehaviour
     {
         seed = data.seed;
 
-        hexGrid.InitGrid(data);
-
         List<HexCell> cells = new List<HexCell>();
 
         foreach(HexCellData cellData in data.cells)
         {
             HexCell cell = new HexCell();
             cell.grid = hexGrid;
-            cell.SetCoordinates(cellData.offsetCoordinates, data.orientation);
+            cell.SetCoordinates(cellData.offsetCoordinates, hexGrid.orientation);
 
             cell.terrainHigh = cellData.terrainHigh;
-            cell.hexSize = data.hexSize;
+            cell.hexSize = hexGrid.hexSize;
             cell.SetTerrainType(GetTerrainTypeByID(cellData.terrainTypeID));
 
             cell.building = cellData.building;
