@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -858,6 +859,48 @@ public class UnitManager : MonoBehaviour
         return true;
     }
 
+    public List<BenchMarkResult> AStarBenchmark(HexCell startCell, HexCell endCell, float[] heuristicFactorProperties, float[] heuristicScalingProperties, bool printResults)
+    {
+        List<BenchMarkResult> results = new List<BenchMarkResult>();
+
+        for(float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i+= (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
+        {
+            for (float j = heuristicScalingProperties[0]; j <= heuristicScalingProperties[1]; j += (heuristicScalingProperties[1] - heuristicScalingProperties[0]) / heuristicScalingProperties[2])
+            {
+                heuristicFactor = i;
+                heuristicScaling = j;
+
+                BenchMarkResult result = new BenchMarkResult();
+                result.heuristicFactor = i;
+                result.heuristicScaling = j;
+
+                System.DateTime startTime = System.DateTime.Now;
+
+                List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"));
+
+                System.DateTime endTime = System.DateTime.Now;
+                string timeElapsed = endTime.Subtract(startTime).ToString();
+                result.timeElapsed = timeElapsed;
+
+                float pathCost = 0;
+                foreach(var cell in path)
+                {
+                    pathCost += cell.terrainType.terrainCost;
+                }
+                result.pathCost = pathCost;
+
+                results.Add(result);
+
+                if (printResults)
+                {
+                    Debug.Log(i + " " + j + " time : " + timeElapsed + " cost : " + pathCost);
+                }
+            }
+        }
+
+        return results;
+    }
+
     // classe utile pour stocker les données de chaque case dans le cadre de l'algorithme A*
     private class CellData
     {
@@ -1004,4 +1047,13 @@ public struct FirstMovementData
 {
     public bool movementFinished;
     public HexCell unitCell;
+}
+
+public struct BenchMarkResult
+{
+    public float heuristicFactor;
+    public float heuristicScaling;
+
+    public string timeElapsed;
+    public float pathCost;
 }

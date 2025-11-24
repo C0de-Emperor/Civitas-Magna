@@ -3746,7 +3746,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid
   <orientation>k__BackingField: 1
   <width>k__BackingField: 20
-  <height>k__BackingField: 20
+  <height>k__BackingField: 200
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   terrainTypes: []
@@ -4197,6 +4197,7 @@ MonoBehaviour:
   militaryUnits: []
   civilianUnits: []
   nextAvailableId: 0
+  lastDistance: 1
   NAMES_LIST:
   - Abel
   - Achille
@@ -7357,8 +7358,8 @@ MonoBehaviour:
     id: 0
     playerName: DefaultPlayer
     livery:
-    - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.20581576, g: 0.7132075, b: 0.090160176, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0}
+      spriteColor: {r: 0, g: 0, b: 0, a: 0}
   grid: {fileID: 664016684}
   playerEntities: []
   goldStockText: {fileID: 216989702}

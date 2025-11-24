@@ -193,6 +193,10 @@ public class SelectionManager : MonoBehaviour
                         }
                     }
                 }
+                if (Input.GetKeyUp(KeyCode.G))
+                {
+                    UnitManager.instance.AStarBenchmark(selectedCell, currentCell, new float[3] { 0, 5, 10 }, new float[3] { 0, 5, 10 }, true);
+                }
             }
             else
             {
