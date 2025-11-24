@@ -862,8 +862,9 @@ public class UnitManager : MonoBehaviour
     public List<BenchMarkResult> AStarBenchmark(HexCell startCell, HexCell endCell, float[] heuristicFactorProperties, float[] heuristicScalingProperties, bool printResults)
     {
         List<BenchMarkResult> results = new List<BenchMarkResult>();
+        string resultString = "[" + GetDistance(startCell, endCell);
 
-        for(float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i+= (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
+        for (float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i+= (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
         {
             for (float j = heuristicScalingProperties[0]; j <= heuristicScalingProperties[1]; j += (heuristicScalingProperties[1] - heuristicScalingProperties[0]) / heuristicScalingProperties[2])
             {
@@ -879,7 +880,7 @@ public class UnitManager : MonoBehaviour
                 List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"));
 
                 System.DateTime endTime = System.DateTime.Now;
-                string timeElapsed = endTime.Subtract(startTime).ToString();
+                string timeElapsed = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
                 result.timeElapsed = timeElapsed;
 
                 float pathCost = 0;
@@ -893,10 +894,13 @@ public class UnitManager : MonoBehaviour
 
                 if (printResults)
                 {
-                    Debug.Log(i + " " + j + " time : " + timeElapsed + " cost : " + pathCost);
+                    resultString += ", [" + i + ", " + j + ", " + timeElapsed + ", " + pathCost + "]";
                 }
             }
         }
+
+        resultString += "]";
+        Debug.Log(resultString);
 
         return results;
     }

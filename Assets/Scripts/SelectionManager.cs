@@ -164,7 +164,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 10, showOverlay, false); // DEVELOPPEMENT, A ENLEVER
+                    grid.RevealTilesInRadius(coord, 100, showOverlay, false); // DEVELOPPEMENT, A ENLEVER
 
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
@@ -195,7 +195,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 if (Input.GetKeyUp(KeyCode.G))
                 {
-                    UnitManager.instance.AStarBenchmark(selectedCell, currentCell, new float[3] { 0, 5, 10 }, new float[3] { 0, 5, 10 }, true);
+                    UnitManager.instance.AStarBenchmark(selectedCell, currentCell, new float[3] { 0, 10, 10 }, new float[3] { 0, 10, 10 }, true);
                 }
             }
             else
