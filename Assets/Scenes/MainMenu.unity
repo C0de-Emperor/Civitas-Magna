@@ -1793,9 +1793,12 @@ MonoBehaviour:
   - description: Large
     width: 96
     height: 60
-  - description: Hudge
+  - description: Huge
     width: 106
     height: 66
+  - description: Titan
+    width: 500
+    height: 500
 --- !u!114 &498375549
 MonoBehaviour:
   m_ObjectHideFlags: 0

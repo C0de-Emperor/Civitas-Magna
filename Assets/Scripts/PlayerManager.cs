@@ -86,6 +86,8 @@ public class PlayerManager : MonoBehaviour
 
             UnitManager.instance.AddUnit(settler, spawnCell, player);
             UnitManager.instance.AddUnit(warrior, spawnCell, player);
+
+            CameraController.instance.SetTargetPosition(spawnCell.tile.position);
         }
     }
 }

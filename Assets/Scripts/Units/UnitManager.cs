@@ -862,7 +862,7 @@ public class UnitManager : MonoBehaviour
     public List<BenchMarkResult> AStarBenchmark(HexCell startCell, HexCell endCell, float[] heuristicFactorProperties, float[] heuristicScalingProperties, bool printResults)
     {
         List<BenchMarkResult> results = new List<BenchMarkResult>();
-        string resultString = "[" + GetDistance(startCell, endCell);
+        string resultString = "[" + GetDistance(startCell, endCell).ToString().Replace(",", ".");
 
         for (float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i+= (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
         {
