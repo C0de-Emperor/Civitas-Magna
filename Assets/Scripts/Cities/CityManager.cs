@@ -86,7 +86,7 @@ public class CityManager : MonoBehaviour
 
     private void OnStartNewGame(NewGameData data)
     {
-        availableNames = new List<string>() { "Kabul", "Tirana", "Algiers", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley",
+        availableNames = new List<string>() { "Kabul", "Tirana", "Alger", "Pago Pago", "Andorra la Vella", "Luanda", "The Valley",
                 "St. John's", "Buenos Aires", "Yerevan", "Oranjestad", "Canberra", "Vienna", "Baku", "Nassau", "Manama", "Dhaka",
                 "Bridgetown", "Minsk", "Bruxelles-Brussel", "Belmopan", "Cotonou", "Hamilton", "Thimphu", "La Paz", "Sarajevo",
                 "Gaborone", "Brasília", "Road Town", "Bandar Seri Begawan", "Sofia", "Ouagadougou", "Bujumbura", "Praia",
@@ -106,7 +106,7 @@ public class CityManager : MonoBehaviour
                 "Panama City", "Port Moresby", "Asunción", "Lima", "Manila", "Warsaw", "Lisbon", "San Juan", "Doha", "Seoul", "Chişinău",
                 "Saint-Denis", "Bucharest", "Moscow", "Kigali", "Jamestown", "Basseterre", "Castries", "Saint-Pierre", "Kingstown", "Apia",
                 "San Marino", "São Tomé", "Riyadh", "Dakar", "Belgrade", "Victoria", "Freetown", "Singapore", "Philipsburg", "Bratislava",
-                "Ljubljana", "Honiara", "Mogadishu", "Cape Town", "Juba", "Madrid", "Colombo", "Al-Quds[East Jerusalem]", "Khartoum",
+                "Ljubljana", "Honiara", "Mogadishu", "Cape Town", "Juba", "Madrid", "Colombo", "Al-Quds", "Khartoum",
                 "Paramaribo", "Mbabane", "Stockholm", "Bern", "Damascus", "Dushanbe", "Skopje", "Bangkok", "Dili", "Lomé", "Tokelau", "Nuku'alofa",
                 "Port of Spain", "Tunis", "Ankara", "Ashgabat", "Cockburn Town", "Funafuti", "Kampala", "Kiev", "Abu Dhabi", "London", "Dodoma",
                 "'Washington", "Charlotte Amalie", "Montevideo", "Tashkent", "Port Vila", "Caracas", "Hà Noi", "Matu-Utu", "El Aaiún", "Sana'a'",
