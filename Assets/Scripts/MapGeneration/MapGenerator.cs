@@ -190,7 +190,7 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
                 if (hexGrid != null)
-                    StartCoroutine(GetComponent<HexGrid>().SetHexCells(cells));
+                    StartCoroutine(hexGrid.SetHexCells(cells));
                 else
                     Debug.Log("null grid : ");
             });

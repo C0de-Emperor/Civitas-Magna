@@ -54,6 +54,7 @@ public class SaveManager : MonoBehaviour
     public void ClearAllSaveLoadedSubscribers()
     {
         OnSaveLoaded = null;
+        OnNewGameStarted = null;
     }
 
     public void SaveData()

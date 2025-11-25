@@ -19,7 +19,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public Transform tileContainer { get; private set; }
     [SerializeField] public Building NoneBuilding;
 
-    [field: SerializeField] private Transform raycastTarget;
+    [SerializeField] private Transform raycastTarget;
 
     [field: SerializeField] private Transform overlayParent;
 
@@ -36,10 +36,14 @@ public class HexGrid : MonoBehaviour
     public Slider progressBar;
     public Text loading;
 
+    public Animator animator;
+
     private int generationProgress;
 
     private void Awake()
     {
+        animator.gameObject.SetActive(true);
+
         gridOrigin = transform.position;
 
         OnCellInstancesGenerated += () => StartCoroutine(AssignNeighbours());
@@ -57,10 +61,6 @@ public class HexGrid : MonoBehaviour
     {
         width = gridSize.width;
         height = gridSize.height;
-
-        raycastTarget.gameObject.SetActive(true);
-        raycastTarget.position = new Vector3(-1, 1.3f, -1);
-        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
     }
 
     public IEnumerator SetHexCells(List<HexCell> newCells)
@@ -70,6 +70,10 @@ public class HexGrid : MonoBehaviour
         progressBar.maxValue = width * height * 4;
         loading.gameObject.SetActive(true);
         cells.Clear();
+
+        raycastTarget.gameObject.SetActive(true);
+        raycastTarget.position = new Vector3(-1, 1.3f, -1);
+        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
 
         foreach (var cell in newCells)
         {
@@ -155,6 +159,12 @@ public class HexGrid : MonoBehaviour
         loading.gameObject.SetActive(false);
 
         Debug.Log($"Neighbours assigned for {cells.Count} cells.");
+
+        animator.SetTrigger("FadeOut");
+
+        yield return new WaitForSeconds(2.5f);
+
+        animator.gameObject.SetActive(false);
 
         MapGenerator.instance.isMapReady = true;
     }
