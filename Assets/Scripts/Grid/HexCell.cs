@@ -135,12 +135,12 @@ public class HexCell
         if (militaryUnit != null)
         {
             militaryUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = true;
-            militaryUnit.unitPin.GetComponentInChildren<Renderer>().enabled = true;
+            militaryUnit.unitPin.gameObject.SetActive(true);
         }
         if (civilianUnit != null)
         {
             civilianUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = true;
-            civilianUnit.unitPin.GetComponentInChildren<Renderer>().enabled = true;
+            civilianUnit.unitPin.gameObject.SetActive(true);
         }
 
         if (showOverlay)
@@ -392,6 +392,14 @@ public class HexCell
             else if (_building.buildingPrefab != null)
             {
                 InstantiateRessource(_building.buildingPrefab.transform);
+                if (SelectionManager.instance.showOverlay)
+                {
+                    ShowOverlay();
+                }
+                else
+                {
+                    HideOverlay();
+                }
             }
             building = _building;
             UnitManager.instance.UpdateActionPanel(this);

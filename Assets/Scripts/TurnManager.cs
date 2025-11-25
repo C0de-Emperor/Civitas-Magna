@@ -44,7 +44,7 @@ public class TurnManager : MonoBehaviour
 
     public void ChangeTurn()
     {
-        if (!canChangeTurn)
+        if (!canChangeTurn || UnitManager.instance.movingUnitsCount > 0)
             return;
 
         canChangeTurn = false;
@@ -57,7 +57,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator ResetChangeTurn()
     {
-        yield return new WaitForSeconds(1f);
+        yield return null;
 
         canChangeTurn = true;
     }

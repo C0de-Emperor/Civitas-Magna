@@ -20,6 +20,7 @@ public class UnitManager : MonoBehaviour
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
     public float lastDistance = 1;
+    public int movingUnitsCount = 0;
 
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
@@ -269,6 +270,8 @@ public class UnitManager : MonoBehaviour
         HexCell lastCell = nextMoves.Dequeue();
         HexCell nextCell = lastCell;
 
+        movingUnitsCount++;
+
         if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
         {
             while (nextMoves.Count > 0)
@@ -426,7 +429,11 @@ public class UnitManager : MonoBehaviour
 
                 lastCell = nextCell;
             }
+
+            UpdateActionPanel(lastCell);
         }
+
+        movingUnitsCount--;
     }
 
     // déplacement d'une unité, renvoie [si il faut arrêter le déplacement] (booléen)
@@ -621,6 +628,7 @@ public class UnitManager : MonoBehaviour
             }
             else
             {
+                Debug.Log(cell.militaryUnit);
                 Debug.LogError("trying to add a military unit on an already occupied tile");
             }
         }
@@ -811,7 +819,7 @@ public class UnitManager : MonoBehaviour
         float GCost = cell.terrainType.terrainCost;
         if (!cell.isRevealed)
         {
-            GCost = 100;
+            GCost = 1000;
         }
         float HCost = GetDistance(cell, destCell) * heuristicScaling;
         float FCost = GCost + HCost * heuristicFactor;

@@ -19,9 +19,12 @@ MonoBehaviour:
   sightRadius: 2
   IsABoat: 0
   baseProductionCost: 0
+  baseGoldCost: 0
+  speciallyAccessibleTerrains: []
   unitCategory: 0
   AttackPower: 20
   DefensePower: 15
   MaxHealth: 100
   AttackRange: 1
   HealthRegeneration: 5
+  militaryPower: 5

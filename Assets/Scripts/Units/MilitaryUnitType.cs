@@ -10,6 +10,9 @@ public class MilitaryUnitType : UnitType
     public int AttackRange;
     public float HealthRegeneration;
 
+    [Header("IA properties")]
+    public float militaryPower;
+
     private void Awake()
     {
         unitCategory = UnitCategory.military;

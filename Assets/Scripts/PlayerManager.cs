@@ -88,6 +88,8 @@ public class PlayerManager : MonoBehaviour
             UnitManager.instance.AddUnit(warrior, spawnCell, player);
 
             CameraController.instance.SetTargetPosition(new Vector2(spawnCell.tile.position.x, spawnCell.tile.position.z));
+
+            grid.UpdateActiveTiles();
         }
     }
 }

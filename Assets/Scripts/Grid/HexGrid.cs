@@ -268,6 +268,7 @@ public class HexGrid : MonoBehaviour
 
         foreach(var sightData in sightDatas)
         {
+            RevealTilesInRadius(sightData.cellCoordinates, sightData.sightRadius, SelectionManager.instance.showOverlay, false);
             SetActiveInRadius(sightData.cellCoordinates, sightData.sightRadius, true);
         }
     }
