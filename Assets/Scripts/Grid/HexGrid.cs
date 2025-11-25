@@ -8,8 +8,7 @@ using UnityEngine.UI;
 public class HexGrid : MonoBehaviour
 {
     [field: SerializeField] public HexOrientation orientation { get; private set; }
-    [field: SerializeField] public int width { get; private set; }
-    [field: SerializeField] public int height { get; private set; }
+    [field: SerializeField] public GridSize gridSize { get; private set; }
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
     public TerrainType[] terrainTypes;
@@ -57,23 +56,22 @@ public class HexGrid : MonoBehaviour
         terrainTypes = Resources.LoadAll<TerrainType>("TerrainType");
     }
 
-    public void InitGrid(GridSize gridSize)
+    public void InitGrid(GridSize _gridSize)
     {
-        width = gridSize.width;
-        height = gridSize.height;
+        gridSize = _gridSize;
     }
 
     public IEnumerator SetHexCells(List<HexCell> newCells)
     {
         generationProgress = 0;
         progressBar.gameObject.SetActive(true);
-        progressBar.maxValue = width * height * 4;
+        progressBar.maxValue = gridSize.width * gridSize.height * 4;
         loading.gameObject.SetActive(true);
         cells.Clear();
 
         raycastTarget.gameObject.SetActive(true);
         raycastTarget.position = new Vector3(-1, 1.3f, -1);
-        raycastTarget.localScale = new Vector3(width / 4, 1, height / 4);
+        raycastTarget.localScale = new Vector3(gridSize.width / 4, 1, gridSize.height / 4);
 
         foreach (var cell in newCells)
         {

@@ -164,8 +164,6 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleCellClick(currentCell, coord);
 
-                    grid.RevealTilesInRadius(coord, 100, showOverlay, false); // DEVELOPPEMENT, A ENLEVER
-
                     selectedCell = currentCell;
                     innerSelectionOutline.SetActive(true);
                     innerSelectionOutline.transform.position = new Vector3(

@@ -81,7 +81,7 @@ public class SaveManager : MonoBehaviour
                 currentTurn = TurnManager.instance.currentTurn,
 
                 seed = MapGenerator.instance.seed,
-                gridSize = new GridSize { width = grid.width, height= grid.height},
+                gridSize = grid.gridSize,
                 cells = allCellData.cellData,
 
                 maxCityRadius = cityM.maxCityRadius,

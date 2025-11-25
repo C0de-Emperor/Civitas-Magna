@@ -63,9 +63,9 @@ public class CameraController : MonoBehaviour
         ChangeCamera(defaultMode);
 
         mapMinX = 0f;
-        mapMaxX = grid.width * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop)? 1.5f : 1.75f);
+        mapMaxX = grid.gridSize.width * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop)? 1.5f : 1.75f);
         mapMinZ = 0f;
-        mapMaxZ = grid.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
+        mapMaxZ = grid.gridSize.height * grid.hexSize * ((grid.orientation == HexOrientation.FlatTop) ? 1.75f : 1.5f);
 
         ApplyZoom(0f, defaultCamera.GetComponent<CinemachineFollow>());
     }

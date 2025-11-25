@@ -86,7 +86,7 @@ public class UnitManager : MonoBehaviour
         unitMoveSpeed *= grid.hexSize;
         unitRotationSpeed *= grid.hexSize;
 
-        maxIterations = grid.height * grid.width;
+        maxIterations = grid.gridSize.height * grid.gridSize.width;
 
         HideActionPanel();
     }
@@ -1025,7 +1025,6 @@ public class Unit
 
     public bool ConsumeCharge()
     {
-        Debug.Log(this.chargesLeft);
         this.chargesLeft -= 1;
         this.movesDone = this.unitType.MoveReach;
         return this.chargesLeft <= 0;

@@ -8,20 +8,22 @@ public class CityBorders : MonoBehaviour
     public Transform edgesParent;
     public float lineHeight = 0.05f;
     public float lineWidth = 0.05f;
-    public Color borderColor = Color.yellow;
 
     private Material borderMaterial;
 
-    private void Awake()
+    private void SetMaterial()
     {
         borderMaterial = new Material(Shader.Find("Unlit/Color"));
-        borderMaterial.color = borderColor;
+        borderMaterial.color = city.master.livery.spriteColor;
     }
 
     public void UpdateBorders()
     {
         if (city == null || city.controlledTiles.Count == 0)
             return;
+
+        if (borderMaterial == null)
+            SetMaterial();
 
         // Supprimer les anciens segments
         foreach (Transform child in edgesParent)

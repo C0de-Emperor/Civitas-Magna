@@ -71,8 +71,8 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        int width = hexGrid.width;
-        int height = hexGrid.height;
+        int width = hexGrid.gridSize.width;
+        int height = hexGrid.gridSize.height;
 
         Action generateAction = () =>
         {
