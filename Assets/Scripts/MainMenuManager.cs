@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,23 +38,29 @@ public class MainMenuManager : MonoBehaviour
     private GridSize selectedGridSize;
     public List<GridSize> gridSizes = new List<GridSize>();
 
+    [Header("Fade")]
+    public Animator animator;
+    public Transform fadePanel;
 
     private SettingsController controller;
 
     private void Awake()
     {
+        StopAllCoroutines();
+
         controller = GetComponent<SettingsController>();
         
-        startNewGameButton.onClick.AddListener(() => StartNewGameButton());
+        startNewGameButton.onClick.AddListener(() => StartCoroutine(StartNewGameButton()));
         newGameMenuButton.onClick.AddListener(() => OpenNewGameMenuButton());
         settingsButton.onClick.AddListener(() => OpenSettingsMenu());
 
         backSettingsButton.onClick.AddListener(() => BackToMainMenu());
         backStartNewGameButton.onClick.AddListener(() => BackToMainMenu());
 
-        loadGameButton.onClick.AddListener(() => LoadGameButtonPressed());
+        loadGameButton.onClick.AddListener(() => StartCoroutine(LoadGameButtonPressed()));
         quitButton.onClick.AddListener(() => Application.Quit());
 
+        fadePanel.gameObject.SetActive(false);
         mainMenuPanel.gameObject.SetActive(true);
         settingsPanel.gameObject.SetActive(false);
         newGamePanel.gameObject.SetActive(false);
@@ -136,8 +143,13 @@ public class MainMenuManager : MonoBehaviour
         newGamePanel.gameObject.SetActive(false);
     }
 
-    private void StartNewGameButton()
+    private IEnumerator StartNewGameButton()
     {
+        fadePanel.gameObject.SetActive(true);
+        animator.SetTrigger("FadeIn");
+
+        yield return new WaitForSeconds(1f);
+
         UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
 
         SaveManager.instance.ClearAllSaveLoadedSubscribers();
@@ -157,8 +169,13 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    private void LoadGameButtonPressed()
+    private IEnumerator LoadGameButtonPressed()
     {
+        fadePanel.gameObject.SetActive(true);
+        animator.SetTrigger("FadeIn");
+
+        yield return new WaitForSeconds(1f);
+
         UnityEngine.Events.UnityAction<Scene, LoadSceneMode> callback = null;
 
         SaveManager.instance.ClearAllSaveLoadedSubscribers();
