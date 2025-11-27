@@ -461,7 +461,7 @@ public class UnitManager : MonoBehaviour
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && IsCellTraversable(path[1], unit.unitType) && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -479,7 +479,7 @@ public class UnitManager : MonoBehaviour
         unit.movesDone += pathCost;
         dataToReturn.unitCell = path[0];
 
-        if (path.Count <= 1)
+        if (path.Count <= 1 || !IsCellTraversable(path[1], unit.unitType))
         {
             dataToReturn.movementFinished = true;
             return dataToReturn; // si on est arrivés à destination, on arrête le déplacement
@@ -514,6 +514,10 @@ public class UnitManager : MonoBehaviour
         }
 
         List<HexCell> path = GetShortestPath(unitCell, destCell, unit.unitType);
+        if (path == null)
+        {
+            return null;
+        }
         if (path.Count <= 1)
         {
             if (queuedUnitMovements.ContainsKey(unit.id)) // utilisé si le joueur veut retirer l'unité de la liste d'attente
@@ -830,6 +834,10 @@ public class UnitManager : MonoBehaviour
     // renvoie si la case est traversable par l'unité ou non
     public bool IsCellTraversable(HexCell cell, UnitType unitType)
     {
+        if (!cell.isRevealed)
+        {
+            return true;
+        }
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
             if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id))
