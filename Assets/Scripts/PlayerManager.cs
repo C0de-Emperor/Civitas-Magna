@@ -101,10 +101,70 @@ public class Player
     public string playerName = "player";
     public Livery livery;
 
-    public float combatPower;
-    public float sciencePower;
-    public float expansionPower;
-    public float ressourcesPower;
+    public float combatPower
+    {
+        get
+        {
+            float value = 0;
+            foreach (var unit in UnitManager.instance.units.Values)
+            {
+                if (unit.unitType.unitCategory == UnitType.UnitCategory.military && unit.master == this)
+                {
+                    value += unit.GetUnitMilitaryData().militaryPower;
+                }
+            }
+            return value;
+        }
+        private set { }
+    }
+
+    public float sciencePower
+    {
+        get
+        {
+            float value = 0;
+            foreach (var research in ResearchManager.instance.researched)
+            {
+                value += research.researchValue;
+            }
+            return value;
+        }
+        private set { }
+    }
+
+    public float expansionPower
+    {
+        get
+        {
+            float value = 0;
+            foreach (var city in CityManager.instance.cities.Values)
+            {
+                if (city.master == this)
+                {
+                    value += city.controlledTiles.Count * 1 + city.population * 1;
+                }
+            }
+            return value;
+        }
+        private set { }
+    }
+
+    public float ressourcesPower
+    {
+        get
+        {
+            float value = 0;
+            foreach (var city in CityManager.instance.cities.Values)
+            {
+                if (city.master == this)
+                {
+                    value += city.GetCityFoodProduction() * 1 + city.GetCityGoldProduction() * 1 + city.GetCityProduction() * 1;
+                }
+            }
+            return value;
+        }
+        private set { }
+    }
 
     public Player(string playerName, Livery livery)
     {
@@ -113,41 +173,6 @@ public class Player
 
         this.playerName = playerName;
         this.livery = livery;
-    }
-
-    public void GetCombatPower()
-    {
-        this.combatPower = 0;
-        foreach (var unit in UnitManager.instance.units.Values)
-        {
-            if(unit.unitType.unitCategory == UnitType.UnitCategory.military && unit.master == this)
-            {
-                this.combatPower += unit.GetUnitMilitaryData().militaryPower;
-            }
-        }
-    }
-
-    public void GetExpansionPower()
-    {
-        this.expansionPower = 0;
-        this.ressourcesPower = 0;
-        foreach(var city in CityManager.instance.cities.Values)
-        {
-            if (city.master == this)
-            {
-                this.expansionPower += city.controlledTiles.Count * 1 + city.population * 1;
-                this.ressourcesPower += city.GetCityFoodProduction() * 1 + city.GetCityGoldProduction() * 1 + city.GetCityProduction() * 1;
-            }
-        }
-    }
-
-    public void GetSciencePower()
-    {
-        this.sciencePower = 0;
-        foreach(var research in ResearchManager.instance.researched)
-        {
-            this.sciencePower += research.researchValue;
-        }
     }
 }
 
