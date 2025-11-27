@@ -57,7 +57,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator ResetChangeTurn()
     {
-        yield return null;
+        yield return new WaitForEndOfFrame();
 
         canChangeTurn = true;
     }
