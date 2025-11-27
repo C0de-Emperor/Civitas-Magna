@@ -15,7 +15,17 @@ public class Research : ScriptableObject
     public int depth;
 
     public Dependency[] dependencies;  
-    public Unlock[] unlocks;  
+    public Unlock[] unlocks;
+
+    [Header("AI")]
+    public float researchValue
+    {
+        get
+        {
+            return depth + scienceCost/(10*(depth != 0 ? depth : 1)) + dependencies.Length + unlocks.Length;
+        }
+        private set { }
+    }
 }
 
 [Serializable]
