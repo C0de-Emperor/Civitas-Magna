@@ -10,8 +10,16 @@ public class MilitaryUnitType : UnitType
     public int AttackRange;
     public float HealthRegeneration;
 
-    [Header("IA properties")]
-    public float militaryPower;
+    [HideInInspector] public float militaryPower
+    {
+        get
+        {
+            float militaryPower = AttackPower * 1 + DefensePower * 1 + MaxHealth * 0.5f + AttackRange * 0.5f;
+            if (IsABoat) { militaryPower += 3; }
+            return militaryPower;
+        }
+        private set { }
+    }
 
     private void Awake()
     {

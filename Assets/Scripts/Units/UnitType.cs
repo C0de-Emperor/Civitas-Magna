@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class UnitType : ScriptableObject
+public class UnitType : ScriptableObject
 {
     public enum UnitCategory { military, civilian };
 
