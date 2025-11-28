@@ -12,4 +12,4 @@
 
 * Se rendre sur ce dépot github : [Civitas-Magna-Builds](https://github.com/ggglllkkk/Civitas-Magna-Builds) 
      * Cloner le dépot
-* Executer le fichier "Civitas Magna.exe"
+* Executer le fichier `Civitas Magna.exe`
