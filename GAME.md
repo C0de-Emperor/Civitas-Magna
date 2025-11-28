@@ -1,6 +1,7 @@
 # *Civitas Magna* – Description du Projet
 
 ### _Jeu de stratégie sur grille hexagonale – Exploration, expansion, exploitation, extermination._
+### Inspiré de la célèbre license `Sid Meier's Civilization`
 
 ---
 
@@ -50,3 +51,15 @@ Le joueur contrôle une civilisation, explore la carte, construit des bâtiments
 - Construction des batiments.
 - Aménagement des tiles.
 - Interface pour gérer les villes et leur production.
+
+## 3. Description du jeu
+
+Vous commencez la partie sur une carte hexagonale avec seulement deux unités : un colon, qui vous servira plus tard à créer votre première ville et un guerrier, utile pour défendre votre précieux colon.
+L'objectif est de conquérir toute ville que va construire l'IA adverse. Une fois votre première cité établie, le jeu commence pleinement. Grâce à la production de votre cité, vous allez pouvoir rechercher vos premières technologies et ainsi développer votre cité. Pour gagner, avancez dans les recherches pour prendre l'ascendant technologique sur votre adversaire puis écrasez le avec votre puissance militaire.
+
+
+
+
+
+
+
