@@ -88,6 +88,8 @@ for (int i = 0; i < 6; i++) // cycle dans les voisins de la case actuelle
             }
 ```
 Les fonctions utilisées ici sont les suivantes :
+
+`AddNewCellData` permet d'ajouter une nouvelle `CellData` dans la liste triée donnée en paramètre à la bonne place.
 ```csharp
 // rajoute un élément à une liste triée
 private void AddNewCellData(CellData cellData,List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
@@ -117,18 +119,10 @@ private void AddNewCellData(CellData cellData,List<CellData> cellDataList) // A 
     cellDataList.Insert(i, cellData);
     return;
 }
-// recherche séquentielle d'un élément dans une liste triée
-private int GetCellDataIndex(CellData cellData,List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
-{
-    for (int i = 0; i < cellDataList.Count; i++)
-    {
-        if (cellDataList[i].cell.offsetCoordinates ==cellData.cell.offsetCoordinates)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
+```
+
+`GetDistance` renvoie la distance entre deux cases dans la grille (1 -> cases adjacentes, 2 -> une case de distance).
+```csharp
 // renvoie la distance entre deux cases (en nombre decases, pas distance brute)
 public float GetDistance(HexCell cell1, HexCell cell2)
 {
@@ -136,18 +130,10 @@ public float GetDistance(HexCell cell1, HexCell cell2)
     float realDistance = euclideanDistance/Mathf.Sqrt(2);
     return Mathf.Round(realDistance * 100) / 100;
 }
-// renvoie un CellData complet
-private CellData CreateCellData(CellData parentCellData,HexCell cell, HexCell destCell)
-{
-    float GCost = cell.terrainType.terrainCost;
-    if (!cell.isRevealed)
-    {
-        GCost = 1000;
-    }
-    float HCost = GetDistance(cell, destCell) *heuristicScaling;
-    float FCost = GCost + HCost * heuristicFactor;
-    return new CellData(GCost, HCost, FCost, cell,parentCellData);
-}
+```
+
+`IsCellData` renvoie un booléen indiquant si la case est traversable (=accessible) par l'unité (idem pour `IsTerrainTypeTraversable`, mais cette dernière est moins générique).
+```csharp
 // renvoie si la case est traversable par l'unité ou non
 public bool IsCellTraversable(HexCell cell, UnitTypeunitType)
 {
@@ -190,7 +176,7 @@ public bool IsTerrainTypeTraversable(TerrainTypeterrainType, UnitType unitType)
 }
 ```
 
-Une fois la boucle terminée, on rembobine pour trouver le chemin le plus rapide :
+Une fois la boucle terminée, on rembobine les prédécesseurs pour trouver le chemin le plus rapide :
 ```csharp
 currentCellData = CreateCellData(currentCellData, finishCell, finishCell);
 while (currentCellData.cell.offsetCoordinates startCell.offsetCoordinates) // refaire le chemen sens inverse avec les cases précédentes
@@ -206,4 +192,4 @@ return pathCoordinates;
 ```
 
 ### Performances
-Des tests de vitesse nous donne qu'en moyenne l'algorithme
+Des tests de vitesse nous donnent qu'en moyenne l'algorithme découvre 60 à 70 cases du chemin optimal par milliseconde, ce qui demande donc généralement moins d'une milliseconde pour calculer tout chemin de moins de 50 cases (compatible avec le fait que le jeu s'actualise tous les 60ièmes de seconde).

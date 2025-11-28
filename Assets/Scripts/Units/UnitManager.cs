@@ -765,7 +765,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // rajoute un élément à une liste triée
+    // rajoute un élément à une liste triée     A ADAPTER AVEC BINARYSEARCH
     private void AddNewCellData(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
     {
         int i = 0;
@@ -796,7 +796,7 @@ public class UnitManager : MonoBehaviour
         return;
     }
 
-    // recherche séquentielle d'un élément dans une liste triée
+    // recherche séquentielle d'un élément dans une liste triée   A DEGAGER ET UTILISER BINARYSEARCH
     private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
     {
         for (int i = 0; i < cellDataList.Count; i++)
@@ -817,7 +817,7 @@ public class UnitManager : MonoBehaviour
         return Mathf.Round(realDistance * 100) / 100;
     }
 
-    // renvoie un CellData complet
+    // renvoie un CellData complet    A REMPLACER PAR LE CONSTRUCTEUR DE CELLDATA
     private CellData CreateCellData(CellData parentCellData, HexCell cell, HexCell destCell)
     {
         float GCost = cell.terrainType.terrainCost;
