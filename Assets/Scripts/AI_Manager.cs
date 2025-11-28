@@ -10,6 +10,7 @@ public class AI_Manager : MonoBehaviour
 
     private void DoActions()
     {
+
         /*
         Get All Informations
         -------------
