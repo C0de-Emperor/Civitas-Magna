@@ -711,7 +711,7 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType) || !currentCellData.cell.neighbours[i].isRevealed) // si la case est traversable non révélée
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType)) // si la case est traversable non révélée
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
@@ -928,7 +928,7 @@ public class UnitManager : MonoBehaviour
         public readonly float HCost; // cout de déplacement heuristique
         public readonly float FCost; // cout de déplacement total
         public readonly HexCell cell; // case
-        public readonly CellData parentCellData; // précédent
+        public readonly CellData parentCellData; // case prédécésseure
 
         // constructeur de la classe
         public CellData(float GCost, float HCost, float FCost, HexCell cell, CellData parentCellData)
