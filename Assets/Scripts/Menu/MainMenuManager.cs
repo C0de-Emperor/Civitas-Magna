@@ -107,8 +107,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void PreviousLivery()
     {
-        liveriesIndex--;
-        liveriesIndex %= liveries.Count;
+        liveriesIndex = (liveriesIndex - 1 + liveries.Count) % liveries.Count;
 
         unitBackground.color = liveries[liveriesIndex].backgroundColor;
         unitBorder.color = liveries[liveriesIndex].spriteColor;
@@ -159,8 +158,9 @@ public class MainMenuManager : MonoBehaviour
             SceneManager.sceneLoaded -= callback;
             SaveManager.instance.TriggerNewGameStarted(
                 new NewGameData {
-                    player = new Player ("eeee", liveries[liveriesIndex] ),
-                    gridSize = selectedGridSize
+                    player = new Player ("Player", liveries[liveriesIndex] ),
+                    gridSize = selectedGridSize,
+                    AI_Player = new Player("AI", liveries[(liveriesIndex + 1) % liveries.Count])
                 }
             );
         };

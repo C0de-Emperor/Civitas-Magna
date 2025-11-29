@@ -43,8 +43,6 @@ public class City : MonoBehaviour
 
     private void Awake()
     {
-        //buildingName = Building.BuildingNames.City;
-
         TurnManager.instance.OnTurnChange += UpdateFoodStock;
         damage = 0f;
         TurnManager.instance.OnTurnChange += AddTurnProduction;

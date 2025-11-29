@@ -73,11 +73,11 @@ public class UnitPin : MonoBehaviour
     }
 
     public void InitializePin(Sprite unitSprite, Livery livery, float lastDistance)
-    {
-        this.PinBackground.color = livery.backgroundColor;
+    {   
+        PinBackground.color = livery.backgroundColor;
 
-        this.UnitSprite.sprite = unitSprite;
-        this.UnitSprite.color = livery.spriteColor;
+        UnitSprite.sprite = unitSprite;
+        UnitSprite.color = livery.spriteColor;
 
         UpdateHealth(1, 1);
         UpdateScale(lastDistance);

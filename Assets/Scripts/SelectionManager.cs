@@ -213,9 +213,11 @@ public class SelectionManager : MonoBehaviour
         // Unselect
         if (Input.GetKeyDown(KeyCode.Q))
         {
-             selectedCell = null;
-             selectedUnit = null;
-             innerSelectionOutline.SetActive(false);
+            UnitManager.instance.HideActionPanel();
+            selectedCell = null;
+            selectedUnit = null;
+            outlinedCell = null;
+            innerSelectionOutline.SetActive(false);
         }
 
         if (selectedUnit != null && UnitManager.instance.queuedUnitMovements.ContainsKey(selectedUnit.id))
@@ -258,6 +260,10 @@ public class SelectionManager : MonoBehaviour
         {
             TurnManager.instance.ChangeTurn();
         }
+        if (Input.GetKeyUp(KeyCode.N) && selectedCell != null)
+        {
+            CityManager.instance.CreateCity(selectedCell, AI_Manager.instance.AI_Player);
+        }
     }
 
     void HandleCellClick(HexCell currentCell, Vector2 coord)
@@ -267,7 +273,6 @@ public class SelectionManager : MonoBehaviour
         if (selectedUnit != null && selectedUnit.unitType.unitCategory == UnitType.UnitCategory.civilian)
         {
             UnitManager.instance.HideActionPanel();
-			//selectedUnit.unitCanvaTransform.gameObject.SetActive(false);
 		}
         
         
@@ -284,33 +289,42 @@ public class SelectionManager : MonoBehaviour
         // Ajoute une action pour l’unité militaire
         if (currentCell.militaryUnit != null)
         {
-            actions.Add(() =>
+            if(currentCell.militaryUnit.master == PlayerManager.instance.player)
             {
-                selectedUnit = currentCell.militaryUnit;
-            });
+                actions.Add(() =>
+                {
+                    selectedUnit = currentCell.militaryUnit;
+                });
+            }
         }
 
         // Ajoute une action pour l’unité de support
         if (currentCell.civilianUnit != null)
         {
-            actions.Add(() =>
-			{
-				selectedUnit = currentCell.civilianUnit;
-                UnitManager.instance.ShowActionPanel(selectedUnit.unitType as CivilianUnitType, currentCell);
-            });
+            if(currentCell.civilianUnit.master == PlayerManager.instance.player)
+            {
+                actions.Add(() =>
+                {
+                    selectedUnit = currentCell.civilianUnit;
+                    UnitManager.instance.ShowActionPanel(selectedUnit.unitType as CivilianUnitType, currentCell);
+                });
+            }
         }
 
         // Ajoute une action pour la ville
         if (currentCell.building.buildingName == Building.BuildingNames.City)
         {
-            selectedUnit = null;
-            actions.Add(() =>
+            if (CityManager.instance.cities[currentCell.offsetCoordinates].master == PlayerManager.instance.player)
             {
-                if (CityManager.instance.cities.TryGetValue(coord, out City city))
+                selectedUnit = null;
+                actions.Add(() =>
                 {
-                    CityManager.instance.OpenCity(city);
-                }
-            });
+                    if (CityManager.instance.cities.TryGetValue(coord, out City city))
+                    {
+                        CityManager.instance.OpenCity(city);
+                    }
+                });
+            }
         }
 
         // Si aucun élément sur la cellule

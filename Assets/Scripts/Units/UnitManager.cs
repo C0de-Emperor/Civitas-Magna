@@ -334,8 +334,11 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitOffset = nextCellOffset;
 
-                    grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
-                    grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
+                    if(unit.master == PlayerManager.instance.player)
+                    {
+                        grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
+                        grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
+                    }
                 }
                 else
                 {
@@ -419,8 +422,11 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitOffset = nextCellOffset;
 
-                    grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
-                    grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
+                    if(PlayerManager.instance.player == unit.master)
+                    {
+                        grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
+                        grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
+                    }
                 }
                 else
                 {
@@ -615,13 +621,13 @@ public class UnitManager : MonoBehaviour
                     grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
                 }
 
+                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
+
                 if (!cell.isRevealed || !cell.isActive)
                 {
                     unitTransform.GetComponentInChildren<Renderer>().enabled = false;
                     unitPin.gameObject.SetActive(false);
                 }
-
-                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
 
                 cell.militaryUnit = unit;
                 units.Add(unit.id, unit);
@@ -657,7 +663,7 @@ public class UnitManager : MonoBehaviour
                 if (!cell.isRevealed)
                 {
                     unitTransform.GetComponentInChildren<Renderer>().enabled = false;
-                    unitPin.GetComponentInChildren<Renderer>().enabled = false;
+                    unitPin.gameObject.SetActive(false);
                 }
 
                 Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité

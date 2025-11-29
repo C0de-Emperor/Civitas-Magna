@@ -43,10 +43,10 @@ public class CityBorders : MonoBehaviour
 
                 Vector2Int neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2Int(-1, -1);
 
-                if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !CityManager.instance.IsToACity(neighbor))
+                if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !CityManager.instance.IsToAPlayer(neighbor, city.master) && neighbor.isRevealed)
                 {
                     float neighborHeight = neighbor != null ? neighbor.terrainHigh : 0f;
-                    float maxHeight = Mathf.Max(cell.terrainHigh, neighborHeight);
+                    float maxHeight = Mathf.Max(cell.terrainHigh, neighborHeight) + 0.05f;
 
                     int a = (i + 5) % 6; // i - 1
                     int b = i; // i
@@ -62,10 +62,23 @@ public class CityBorders : MonoBehaviour
                     lr.numCapVertices = 2;
                     lr.useWorldSpace = true;
 
-                    lr.SetPosition(0, corners[a] + Vector3.up * maxHeight);
-                    lr.SetPosition(1, corners[b] + Vector3.up * maxHeight);
+                    //lr.SetPosition(0, corners[a] + Vector3.up * maxHeight);
+                    //lr.SetPosition(1, corners[b] + Vector3.up * maxHeight);
 
-                    
+                    float inwardOffset = 0.05f; // à ajuster selon la taille de ton hex
+
+                    Vector3 center = cell.tile.transform.position;
+
+                    // Direction vers l’intérieur
+                    Vector3 inwardDirA = (center - corners[a]).normalized;
+                    Vector3 inwardDirB = (center - corners[b]).normalized;
+
+                    // Nouvelle position légèrement vers l’intérieur
+                    Vector3 posA = corners[a] + inwardDirA * inwardOffset + Vector3.up * maxHeight;
+                    Vector3 posB = corners[b] + inwardDirB * inwardOffset + Vector3.up * maxHeight;
+
+                    lr.SetPosition(0, posA);
+                    lr.SetPosition(1, posB);
                 }
             }
         }
@@ -85,7 +98,9 @@ public class CityBorders : MonoBehaviour
             }
 
             // Ajoute la tuile à la ville
-            newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 2, SelectionManager.instance.showOverlay, true);
+            if(city.master == PlayerManager.instance.player)
+                newTile.grid.RevealTilesInRadius(newTile.offsetCoordinates, 2, SelectionManager.instance.showOverlay, true);
+
             city.controlledTiles.Add(newTile.offsetCoordinates, newTile);
             CityManager.instance.tileToCity.Add(newTile.offsetCoordinates, city);
         }

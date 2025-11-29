@@ -126,6 +126,7 @@ public class NewGameData
 {
     public Player player;
     public GridSize gridSize;
+    public Player AI_Player;
 }
 
 [Serializable]

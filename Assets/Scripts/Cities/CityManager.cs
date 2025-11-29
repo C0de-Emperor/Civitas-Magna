@@ -138,7 +138,8 @@ public class CityManager : MonoBehaviour
         }
         component.occupiedCell = cell;
 
-        grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
+        if(master == PlayerManager.instance.player)
+            grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
 
         if(SelectionManager.instance.showOverlay)
         {
@@ -189,7 +190,8 @@ public class CityManager : MonoBehaviour
         }
         component.occupiedCell = occupiedCell;
 
-        grid.RevealTilesInRadius(occupiedCell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
+        if(data.master == PlayerManager.instance.player)
+            grid.RevealTilesInRadius(occupiedCell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
 
         if (SelectionManager.instance.showOverlay)
         {
@@ -230,6 +232,17 @@ public class CityManager : MonoBehaviour
     public bool IsToACity(HexCell cell)
     {
         return (cell == null)? false : tileToCity.ContainsKey(cell.offsetCoordinates);
+    }
+
+    public bool IsToAPlayer(HexCell cell, Player player)
+    {
+        if(cell == null || player == null) 
+            return false;
+
+        if (!tileToCity.ContainsKey(cell.offsetCoordinates))
+            return false;
+
+        return tileToCity[cell.offsetCoordinates].master == player;
     }
 
     internal void OpenCity(City city)
@@ -391,10 +404,7 @@ public class CityManager : MonoBehaviour
         }
 
         // Maj des frontières
-        foreach (var city in cities.Values)
-        {
-            city.borders.UpdateBorders();
-        }
+        UpdateAllBorders();
 
         pendingExpansions.Clear();
     }

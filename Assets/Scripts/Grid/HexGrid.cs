@@ -202,6 +202,8 @@ public class HexGrid : MonoBehaviour
                 }
             }
         }
+
+        CityManager.instance.UpdateAllBorders();
     }
 
     public void SetActiveInRadius(Vector2 centerCellOffsetCoordinates, int radius, bool activate)
@@ -257,12 +259,15 @@ public class HexGrid : MonoBehaviour
 
         foreach(var city in CityManager.instance.cities.Values)
         {
-            foreach(var cellCoordinates in city.controlledTiles.Keys)
+            if(city.master == PlayerManager.instance.player)
             {
-                SightData unitSightData;
-                unitSightData.sightRadius = 2;
-                unitSightData.cellCoordinates = cellCoordinates;
-                sightDatas.Add(unitSightData);
+                foreach (var cellCoordinates in city.controlledTiles.Keys)
+                {
+                    SightData unitSightData;
+                    unitSightData.sightRadius = 2;
+                    unitSightData.cellCoordinates = cellCoordinates;
+                    sightDatas.Add(unitSightData);
+                }
             }
         }
 
