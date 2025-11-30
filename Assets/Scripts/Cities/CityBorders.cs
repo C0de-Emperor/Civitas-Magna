@@ -43,7 +43,14 @@ public class CityBorders : MonoBehaviour
 
                 Vector2Int neighborCoord = neighbor != null ? neighbor.offsetCoordinates : new Vector2Int(-1, -1);
 
-                if ( (neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord)) && !CityManager.instance.IsToAPlayer(neighbor, city.master) && neighbor.isRevealed)
+
+                bool isOutsideCity = neighbor == null || !city.controlledTiles.ContainsKey(neighborCoord);
+
+                bool isNotSamePlayer = !CityManager.instance.IsToAPlayer(neighbor, city.master);
+
+                bool isRevealed = cell.isRevealed;
+
+                if (isOutsideCity && isNotSamePlayer && isRevealed)
                 {
                     float neighborHeight = neighbor != null ? neighbor.terrainHigh : 0f;
                     float maxHeight = Mathf.Max(cell.terrainHigh, neighborHeight) + 0.05f;

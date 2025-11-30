@@ -6,13 +6,14 @@ using UnityEngine.UI;
 
 public class CityManager : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private HexGrid grid;
-
     [SerializeField] private Transform cityPrefab;
     [SerializeField] private Transform cityPanel;
-    public City openedCity;
-    public int maxCityRadius;
+    [SerializeField] private Transform cityContainer;
 
+    [HideInInspector] public City openedCity;
+    [HideInInspector] public int maxCityRadius;
     [HideInInspector] public Dictionary<Vector2, City> cities = new Dictionary<Vector2, City>();
 
     [Header("UI")]
@@ -127,7 +128,7 @@ public class CityManager : MonoBehaviour
             return false;
         }
 
-        Transform obj = cell.InstantiateRessource(cityPrefab);
+        Transform obj = cell.InstantiateRessource(cityPrefab, cityContainer);
 
         City component = obj.GetComponent<City>();
         component.master = master;
@@ -179,7 +180,7 @@ public class CityManager : MonoBehaviour
     {
         HexCell occupiedCell = grid.GetTile(data.offsetCoordinates);
 
-        Transform obj =  occupiedCell.InstantiateRessource(cityPrefab);
+        Transform obj =  occupiedCell.InstantiateRessource(cityPrefab, cityContainer);
 
         City component = obj.GetComponent<City>();
         component.master = data.master;
@@ -397,13 +398,11 @@ public class CityManager : MonoBehaviour
 
     private void ProcessQueuedExpansions()
     {
-        // Étendre toutes les villes
         foreach (var city in pendingExpansions)
         {
             city.borders.ExpandCity();
         }
 
-        // Maj des frontières
         UpdateAllBorders();
 
         pendingExpansions.Clear();

@@ -53,7 +53,7 @@ public class CityBannerUI : MonoBehaviour
 
     }
 
-    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn)
+    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn, bool isActive)
     {
         cityNameText.text = name;
         levelText.text = level.ToString();
@@ -93,5 +93,7 @@ public class CityBannerUI : MonoBehaviour
             currentProdTurn.text = prodturn.ToString();
         else
             currentProdTurn.text = "";
+
+        gameObject.SetActive(isActive);
     }
 }

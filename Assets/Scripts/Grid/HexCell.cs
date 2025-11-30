@@ -228,15 +228,15 @@ public class HexCell
 
         if (building.buildingName != Building.BuildingNames.None && building.buildingName != Building.BuildingNames.City)
         {
-            InstantiateRessource(building.buildingPrefab.transform);
+            InstantiateRessource(building.buildingPrefab.transform, grid.tileContainer);
         }
         else if (ressourcePrefab != null)
         {
-            InstantiateRessource(ressourcePrefab);
+            InstantiateRessource(ressourcePrefab, grid.tileContainer);
         }
     }
 
-    public Transform InstantiateRessource(Transform ressourcePrefab)
+    public Transform InstantiateRessource(Transform ressourcePrefab, Transform parent)
     {
         if(ressource != null)
         {
@@ -254,7 +254,7 @@ public class HexCell
             ressourcePrefab,
             centerPosition + new Vector3(0, terrainHigh, 0),
             Quaternion.identity,
-            grid.tileContainer
+            parent
         );
 
         Renderer rend = tile.GetComponentInChildren<Renderer>();
@@ -391,7 +391,7 @@ public class HexCell
             }
             else if (_building.buildingPrefab != null)
             {
-                InstantiateRessource(_building.buildingPrefab.transform);
+                InstantiateRessource(_building.buildingPrefab.transform, grid.tileContainer);
                 if (SelectionManager.instance.showOverlay)
                 {
                     ShowOverlay();

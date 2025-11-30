@@ -276,6 +276,11 @@ public class HexGrid : MonoBehaviour
             RevealTilesInRadius(sightData.cellCoordinates, sightData.sightRadius, SelectionManager.instance.showOverlay, false);
             SetActiveInRadius(sightData.cellCoordinates, sightData.sightRadius, true);
         }
+
+        foreach(City city in CityManager.instance.cities.Values)
+        {
+            city.UpdateBanner();
+        }
     }
 
     public IEnumerator SetTileOverlays()

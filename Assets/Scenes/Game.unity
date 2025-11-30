@@ -5236,6 +5236,7 @@ Transform:
   m_Children:
   - {fileID: 1594433963}
   - {fileID: 425153383}
+  - {fileID: 2089648031}
   m_Father: {fileID: 309054250}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &968964937
@@ -5253,6 +5254,7 @@ MonoBehaviour:
   grid: {fileID: 664016684}
   cityPrefab: {fileID: 1758533404836330832, guid: c1e03cd848362124bbff6e44eebcda55, type: 3}
   cityPanel: {fileID: 1133835121}
+  cityContainer: {fileID: 2089648031}
   openedCity: {fileID: 0}
   maxCityRadius: 4
   cityName: {fileID: 540138602}
@@ -11687,6 +11689,37 @@ MonoBehaviour:
   xSpacing: 100
   ySpacing: 20
   allResearches: []
+--- !u!1 &2089648030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2089648031}
+  m_Layer: 0
+  m_Name: CityContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2089648031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2089648030}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 968964936}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2096952961
 GameObject:
   m_ObjectHideFlags: 0
