@@ -119,8 +119,6 @@ public class CityManager : MonoBehaviour
     {
         if (cell == null 
             || cell.ressource != null 
-            || cell.isActive == false 
-            || cell.isRevealed == false 
             || !cell.terrainType.build.Contains(Building.BuildingNames.City)
             || IsToACity(cell)
             )
@@ -128,23 +126,24 @@ public class CityManager : MonoBehaviour
             return false;
         }
 
-        Transform obj = cell.InstantiateRessource(cityPrefab, cityContainer);
-
-        City component = obj.GetComponent<City>();
-        component.master = master;
-        if(component == null)
+        if (PlayerManager.instance.player == master)
         {
-            Debug.LogError("City Prefab ne convient pas, il manque un City component");
-            return false;
-        }
-        component.occupiedCell = cell;
+            if (cell.isActive == false || cell.isRevealed == false)
+                return false;
 
-        if(master == PlayerManager.instance.player)
             grid.RevealTilesInRadius(cell.offsetCoordinates, 3, SelectionManager.instance.showOverlay, true);
+        }
 
-        if(SelectionManager.instance.showOverlay)
+        Transform obj = cell.InstantiateRessource(cityPrefab, cityContainer);
+        City component = obj.GetComponent<City>();
+
+        component.cityName = GetRandomCityName();
+        component.master = master;
+        component.occupiedCell = cell;
+            
+        if(SelectionManager.instance.showOverlay || !cell.isRevealed)
         {
-            component.HideForOverlay();
+            component.HideModel();
         }
 
         cities.Add(cell.offsetCoordinates, component);
@@ -157,7 +156,6 @@ public class CityManager : MonoBehaviour
                 component.controlledTiles.Add(n.offsetCoordinates, n);
             }
         }
-        component.cityName = GetRandomCityName();
         component.controlledTiles.Add(cell.offsetCoordinates, cell);
         tileToCity.Add(cell.offsetCoordinates, component);
 
@@ -196,7 +194,7 @@ public class CityManager : MonoBehaviour
 
         if (SelectionManager.instance.showOverlay)
         {
-            component.HideForOverlay();
+            component.HideModel();
         }
 
 

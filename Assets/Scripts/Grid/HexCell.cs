@@ -118,8 +118,6 @@ public class HexCell
             return;
         }
 
-
-
         if (isRevealed)
         {
             if(_isActive && !isActive)
@@ -141,6 +139,13 @@ public class HexCell
         {
             civilianUnit.unitTransform.GetComponentInChildren<Renderer>().enabled = true;
             civilianUnit.unitPin.gameObject.SetActive(true);
+        }
+
+
+        if(building.buildingName == Building.BuildingNames.City)
+        {
+            Debug.Log("e");
+            CityManager.instance.cities[offsetCoordinates].ShowModel();
         }
 
         if (showOverlay)
@@ -325,7 +330,7 @@ public class HexCell
             ressource.gameObject.SetActive(false);
 
         if (ressource != null && building.buildingName == Building.BuildingNames.City)
-            ressource.gameObject.GetComponent<City>().HideForOverlay();
+            ressource.gameObject.GetComponent<City>().HideModel();
 
         tileOverlay.Init(terrainType.food, terrainType.production);
         tileOverlay.gameObject.SetActive(true);
@@ -337,7 +342,7 @@ public class HexCell
             ressource.gameObject.SetActive(true);
 
         if (building.buildingName == Building.BuildingNames.City)
-            ressource.gameObject.GetComponent<City>().ShowForOverlay();
+            ressource.gameObject.GetComponent<City>().ShowModel();
 
         tileOverlay.gameObject.SetActive(false);
     }

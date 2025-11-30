@@ -152,17 +152,14 @@ public class City : MonoBehaviour
         }
         else if (net < 0)
         {
-            // Si on a trop perdu et qu'on tombe en dessous de zéro
             while (foodStock < 0 && population > 1)
             {
                 population--;
                 Debug.LogWarning($"{cityName} a perdu 1 population à cause de la famine !");
 
-                // On redonne un peu de stock (nouvelle capacité réduite)
                 foodStock += CityManager.instance.PopulationFunction(population);
             }
 
-            // Clamp pour éviter les valeurs négatives folles
             if (foodStock < 0)
                 foodStock = 0f;
         }
@@ -222,15 +219,15 @@ public class City : MonoBehaviour
     }
 
 
-
-    public void HideForOverlay()
+    public void HideModel()
     {
         model.gameObject.SetActive(false);
     }
 
-    public void ShowForOverlay()
+    public void ShowModel()
     {
-        model.gameObject.SetActive(true);
+        if(occupiedCell.isRevealed)
+            model.gameObject.SetActive(true);
     }
 
     private void AddTurnProduction()
