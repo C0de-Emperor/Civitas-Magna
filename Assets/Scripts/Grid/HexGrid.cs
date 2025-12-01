@@ -11,6 +11,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public GridSize gridSize { get; private set; }
     [field: SerializeField] public float hexSize { get; private set; }
     [field: SerializeField] public int batchSize { get; private set; }
+
     public TerrainType[] terrainTypes;
 
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }

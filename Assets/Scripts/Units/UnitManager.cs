@@ -601,6 +601,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // ajouter un type d'unité à une case
+    /*
     public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
     {
         if(unitType.unitCategory == UnitType.UnitCategory.military)
@@ -609,7 +610,7 @@ public class UnitManager : MonoBehaviour
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
-                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                    new Vector3(cell.tile.transform.position.x, cell.terrainHigh, cell.tile.position.z),
                     new Quaternion(0, 0, 0, 1), 
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
@@ -648,7 +649,7 @@ public class UnitManager : MonoBehaviour
             {
                 Transform unitTransform = Instantiate( // instancier l'unité sur la case
                     unitType.unitPrefab.transform,
-                    new Vector3(cell.tile.position.x, cell.terrainHigh, cell.tile.position.z),
+                    new Vector3(cell.tile.transform.position.x, cell.terrainHigh, cell.tile.position.z),
                     new Quaternion(0, 0, 0, 1),
                     unitContainer);
                 Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
@@ -660,7 +661,7 @@ public class UnitManager : MonoBehaviour
                     grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
                 }
 
-                if (!cell.isRevealed)
+                if (!cell.isRevealed || !cell.isActive)
                 {
                     unitTransform.GetComponentInChildren<Renderer>().enabled = false;
                     unitPin.gameObject.SetActive(false);
@@ -681,6 +682,62 @@ public class UnitManager : MonoBehaviour
             }
         }
         return null;
+    }
+    */
+    public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
+    {
+        bool isMilitary = unitType.unitCategory == UnitType.UnitCategory.military;
+
+        // Sélection
+        Unit existingUnit = isMilitary ? cell.militaryUnit : cell.civilianUnit;
+
+        if (existingUnit != null)
+        {
+            Debug.LogError($"Trying to add a {unitType.unitCategory} unit on an occupied tile: {cell.offsetCoordinates}");
+            return null;
+        }
+
+        if (!IsCellTraversable(cell, unitType))
+        {
+            Debug.LogError($"Trying to add unit {unitType.name} on non-traversable tile.");
+            return null;
+        }
+
+        // Instantiation
+        Transform unitTransform = Instantiate(
+            unitType.unitPrefab.transform,
+            new Vector3(cell.tile.transform.position.x, cell.terrainHigh, cell.tile.transform.position.z),
+            Quaternion.identity,
+            unitContainer);
+
+        Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas);
+        UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
+
+        // Vision
+        if (master == PlayerManager.instance.player)
+            grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
+
+        // Création de l’unité
+        Unit unit = new Unit(unitTransform, unitType, unitPin, master);
+
+        // Visibilité
+        if (!cell.isRevealed || !cell.isActive)
+        {
+            unitTransform.GetComponentInChildren<Renderer>().enabled = false;
+            unitPin.gameObject.SetActive(false);
+        }
+
+        // Assignation
+        if (isMilitary)
+            cell.militaryUnit = unit;
+        else
+            cell.civilianUnit = unit;
+
+        units.Add(unit.id, unit);
+
+        CheckCellUnitsConflict(cell);
+
+        return unit;
     }
 
     // renvoie une liste de cases qui correspond au chemin le plus court entre deux cases

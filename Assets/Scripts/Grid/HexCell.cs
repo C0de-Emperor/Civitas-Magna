@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 [Serializable]
 public class HexCell
@@ -33,12 +30,14 @@ public class HexCell
     [Header("Units")]
 
     [field: SerializeField] public Unit militaryUnit = null;
+
     [field: SerializeField] public Unit civilianUnit = null;
 
 
     [Header("Properties")]
     [field: SerializeField] public bool isRevealed { get; set; }
     [field: SerializeField] public bool isActive { get; set; }
+
     [field: SerializeField] public Building building;
 
     public void SetCoordinates(Vector2Int _offsetCoordinates, HexOrientation orientation)
@@ -74,7 +73,7 @@ public class HexCell
         }
     }
 
-    // Only for generation !!!!!
+    // Only for generation
     private void CreateRevealedTile()
     {
         if (terrainType == null || grid == null || hexSize == 0 || terrainType.prefab == null)
@@ -107,8 +106,6 @@ public class HexCell
             rend.renderingLayerMask = value ? grid.defaultLayer : grid.unactiveLayer;
         }
     }
-
-
 
     public void RevealExistingTile(bool showOverlay, bool _isActive)
     {

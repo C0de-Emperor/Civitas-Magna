@@ -15,5 +15,6 @@ public class TerrainType : ScriptableObject
 
     [Header("Base Ressources")]
     [field: SerializeField] public int food;
+
     [field: SerializeField] public int production;
 }

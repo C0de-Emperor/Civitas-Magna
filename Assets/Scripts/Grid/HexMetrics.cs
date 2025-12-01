@@ -251,7 +251,7 @@ public static class HexMetrics
     /// <param name="z"></param>
     /// <param name="orientation"></param>
     /// <returns></returns>
-    public static Vector2 CubeToOffset(int x, int y, int z, HexOrientation orientation)
+    public static Vector2Int CubeToOffset(int x, int y, int z, HexOrientation orientation)
     {
         if (orientation == HexOrientation.PointyTop)
         {
@@ -266,7 +266,7 @@ public static class HexMetrics
     /// <summary>
     /// Converts Cube coordinates to Offset coordinates.
     /// </summary>
-    public static Vector2 CubeToOffset(Vector3 offsetCoord, HexOrientation orientation)
+    public static Vector2Int CubeToOffset(Vector3 offsetCoord, HexOrientation orientation)
     {
         return CubeToOffset((int)offsetCoord.x, (int)offsetCoord.y, (int)offsetCoord.z, orientation);
     }
@@ -279,9 +279,9 @@ public static class HexMetrics
     /// <param name="y"></param>
     /// <param name="z"></param>
     /// <returns></returns>
-    private static Vector2 CubeToOffsetPointy(int x, int y, int z)
+    private static Vector2Int CubeToOffsetPointy(int x, int y, int z)
     {
-        Vector2 offsetCoordinates = new Vector2(x + (y - (y & 1)) / 2, y);
+        Vector2Int offsetCoordinates = new Vector2Int(x + (y - (y & 1)) / 2, y);
         return offsetCoordinates;
     }
     /// <summary>
@@ -292,9 +292,9 @@ public static class HexMetrics
     /// <param name="y"></param>
     /// <param name="z"></param>
     /// <returns></returns>
-    private static Vector2 CubeToOffsetFlat(int x, int y, int z)
+    private static Vector2Int CubeToOffsetFlat(int x, int y, int z)
     {
-        Vector2 offsetCoordinates = new Vector2(x, y + (x - (x & 1)) / 2);
+        Vector2Int offsetCoordinates = new Vector2Int(x, y + (x - (x & 1)) / 2);
         return offsetCoordinates;
     }
 
