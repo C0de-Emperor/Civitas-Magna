@@ -10,7 +10,7 @@ public class AI_Manager : MonoBehaviour
 
     [HideInInspector] public Player AI_Player;
 
-    [HideInInspector] public List<Unit> unactiveUnits;
+    [HideInInspector] public List<UnactiveUnit> unactiveUnits;
 
     [Header("AI Parameters")]
     private int cityEvaluationRadius = 2;
@@ -47,7 +47,7 @@ public class AI_Manager : MonoBehaviour
     {
         AI_Player = data.AI_Player;
 
-        unactiveUnits = new List<Unit>();
+        unactiveUnits = new List<UnactiveUnit>();
     }
 
     public void OnCellLoaded()
@@ -68,8 +68,18 @@ public class AI_Manager : MonoBehaviour
 
             HexCell spawnCell = grid.GetRandomCell(false, forbiddenTerrainTypes);
 
-            unactiveUnits.Add(UnitManager.instance.AddUnit(settler, spawnCell, AI_Player));
-            unactiveUnits.Add(UnitManager.instance.AddUnit(warrior, spawnCell, AI_Player));
+            unactiveUnits.Add(
+                new UnactiveUnit 
+                ( 
+                    spawnCell,
+                    UnitManager.instance.AddUnit(settler, spawnCell, AI_Player)
+                ));
+            unactiveUnits.Add(
+                new UnactiveUnit
+                (
+                    spawnCell,
+                    UnitManager.instance.AddUnit(warrior, spawnCell, AI_Player) 
+                ));
 
             grid.UpdateActiveTiles();
         }
@@ -103,25 +113,25 @@ public class AI_Manager : MonoBehaviour
 
     private void ProcessUnactiveUnits()
     {
-        foreach (Unit unit in unactiveUnits)
+        foreach (UnactiveUnit unactiveUnit in unactiveUnits)
         {
-            if (unit.unitType is CivilianUnitType civil)
+            if (unactiveUnit.unit.unitType is CivilianUnitType civil)
             {
                 switch (civil.job)
                 {
                     case CivilianUnitType.CivilianJob.Settler:
-                        GiveOrderToSettler(civil, unit.unitTransform);
+                        GiveOrderToSettler(civil, unactiveUnit.cell);
                         break;
                 }
             }
         }
     }
 
-    private void GiveOrderToSettler(CivilianUnitType settler, Transform tr)
+    private void GiveOrderToSettler(CivilianUnitType settler, HexCell position)
     {
         HexCell bestCellForCity = GetBestCellForSettler();
-
-        //UnitManager.instance.QueueUnitMovement(grid.GetTile(tr.position.x));
+        Debug.Log("need to go to : " + bestCellForCity.offsetCoordinates);
+        UnitManager.instance.QueueUnitMovement(position, bestCellForCity, UnitType.UnitCategory.civilian, null);
     }
 
     private HexCell GetBestCellForSettler()
@@ -188,12 +198,32 @@ public class AI_Manager : MonoBehaviour
                 if (cell == null) continue;
                 if (CityManager.instance.tileToCity.ContainsKey(o)) continue;
 
-                score += cell.terrainType.food * 1.2f;
-                score += cell.terrainType.production;
+                if(cell.building != null)
+                {
+                    score += cell.terrainType.food * 1.2f * cell.building.foodFactor;
+                    score += cell.terrainType.production * cell.building.productionFactor;
+                }
+                else
+                {
+                    score += cell.terrainType.food * 1.2f;
+                    score += cell.terrainType.production;
+                }
             }
         }
 
         return score;
     }
+}
 
+[Serializable]
+public class UnactiveUnit
+{
+    public HexCell cell;
+    public Unit unit;
+
+    public UnactiveUnit(HexCell cell, Unit unit)
+    {
+        this.cell = cell;
+        this.unit = unit;
+    }
 }
