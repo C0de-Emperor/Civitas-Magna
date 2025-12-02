@@ -261,6 +261,7 @@ public class UnitManager : MonoBehaviour
 
         foreach (var unitId in finishedMovements)
         {
+            queuedUnitMovements[unitId].unitAction.Invoke();
             queuedUnitMovements.Remove(unitId); // enlever l'unité de la liste d'attente de déplacements
         }
     }
@@ -495,7 +496,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // ajouter à la liste d'attente un déplacement d'unité
-    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory)
+    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory, Action unitAction)
     {
         queuedMovementData movementData = new queuedMovementData();
         movementData.attacksACity = false;
@@ -533,6 +534,7 @@ public class UnitManager : MonoBehaviour
             return destCell;
         }
         movementData.path = path; // obtenir le chemin jusqu'à la destination
+        movementData.unitAction = unitAction;
 
         if (queuedUnitMovements.ContainsKey(unit.id))
         {
@@ -1123,6 +1125,7 @@ public struct queuedMovementData
     public int unitToAttackId;
     public bool attacksACity;
     public List<HexCell> path;
+    public Action unitAction;
 }
 
 public struct FirstMovementData

@@ -176,7 +176,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        HexCell unitCell = UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory);
+                        HexCell unitCell = UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory, null);
                         if (unitCell != null)
                         {
                             selectedCell = unitCell;
