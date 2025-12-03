@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ResearchManager : MonoBehaviour
 {
-    [Header("Production")]
+    [Header("Research")]
     public Research currentResearch;
     public float currentResearchProgress = 0f;
     public List<Research> researched = new List<Research>();

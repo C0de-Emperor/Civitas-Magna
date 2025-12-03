@@ -127,8 +127,6 @@ public class City : MonoBehaviour
         return amount;
     }
 
-
-
     public void UpdateFoodStock()
     {
         float net = GetCityFoodProduction() - population * 2f;
@@ -246,19 +244,37 @@ public class City : MonoBehaviour
 
     private void AddTurnGoldProdution()
     {
-        PlayerManager.instance.goldStock += GetCityGoldProduction();
+        if(master == PlayerManager.instance.player)
+            PlayerManager.instance.goldStock += GetCityGoldProduction();
+        else if(master == AI_Manager.instance.AI_Player)
+            AI_Manager.instance.goldStock += GetCityGoldProduction();
     }
 
     private void AddTurnScienceProdution()
     {
-        ResearchManager manager = ResearchManager.instance;
-        if(manager.currentResearch == null)
-            return;
-
-        manager.currentResearchProgress += GetCityScienceProduction();
-        if (manager.currentResearchProgress >= manager.currentResearch.scienceCost)
+        if(master == PlayerManager.instance.player)
         {
-            manager.ResearchComplete();
+            ResearchManager manager = ResearchManager.instance;
+            if (manager.currentResearch == null)
+                return;
+
+            manager.currentResearchProgress += GetCityScienceProduction();
+            if (manager.currentResearchProgress >= manager.currentResearch.scienceCost)
+            {
+                manager.ResearchComplete();
+            }
+        }
+        else if (master == AI_Manager.instance.AI_Player)
+        {
+            AI_Manager manager = AI_Manager.instance;
+            if (manager.currentResearch == null)
+                return;
+
+            manager.currentResearchProgress += GetCityScienceProduction();
+            if (manager.currentResearchProgress >= manager.currentResearch.scienceCost)
+            {
+                manager.ResearchComplete();
+            }
         }
     }
 

@@ -137,6 +137,12 @@ public class CityManager : MonoBehaviour
         Transform obj = cell.InstantiateRessource(cityPrefab, cityContainer);
         City component = obj.GetComponent<City>();
 
+        if (PlayerManager.instance.player == AI_Manager.instance.AI_Player)
+        {
+            AI_Manager.instance.cities.Add(component);
+        }
+
+
         component.cityName = GetRandomCityName();
         component.master = master;
         component.occupiedCell = cell;

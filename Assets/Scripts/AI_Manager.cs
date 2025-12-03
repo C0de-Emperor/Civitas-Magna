@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,7 +11,20 @@ public class AI_Manager : MonoBehaviour
 
     [HideInInspector] public Player AI_Player;
 
-    [HideInInspector] public List<UnactiveUnit> unactiveUnits;
+    [Header("Units")]
+    [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
+    private List<Vector2Int> targetedPositions = new List<Vector2Int>();
+
+    [Header("Cities")]
+    [HideInInspector] public List<City> cities = new List<City>();
+
+    [Header("Research")]
+    public Research currentResearch;
+    public float currentResearchProgress = 0f;
+    public List<Research> researched = new List<Research>();
+
+    [Header("Gold")]
+    public float goldStock;
 
     [Header("AI Parameters")]
     private int cityEvaluationRadius = 2;
@@ -32,7 +46,7 @@ public class AI_Manager : MonoBehaviour
 
     private void Start()
     {
-        TurnManager.instance.OnTurnChange += DoActions;
+        TurnManager.instance.OnTurnChange += () => StartCoroutine(DoActions());
     }
 
     private void OnLoadSave(SaveData data)
@@ -46,8 +60,15 @@ public class AI_Manager : MonoBehaviour
     private void OnStartNewGame(NewGameData data)
     {
         AI_Player = data.AI_Player;
+        goldStock = 0f;
+    }
 
-        unactiveUnits = new List<UnactiveUnit>();
+    internal void ResearchComplete()
+    {
+        researched.Add(currentResearch);
+
+        currentResearch = null;
+        currentResearchProgress = 0f;
     }
 
     public void OnCellLoaded()
@@ -68,14 +89,14 @@ public class AI_Manager : MonoBehaviour
 
             HexCell spawnCell = grid.GetRandomCell(false, forbiddenTerrainTypes);
 
-            unactiveUnits.Add(
-                new UnactiveUnit 
+            units.Add(
+                new AIUnit 
                 ( 
                     spawnCell,
                     UnitManager.instance.AddUnit(settler, spawnCell, AI_Player)
                 ));
-            unactiveUnits.Add(
-                new UnactiveUnit
+            units.Add(
+                new AIUnit
                 (
                     spawnCell,
                     UnitManager.instance.AddUnit(warrior, spawnCell, AI_Player) 
@@ -85,11 +106,17 @@ public class AI_Manager : MonoBehaviour
         }
     }
 
-    private void DoActions()
+    private IEnumerator DoActions()
     {
         isWorking = true;
 
-        ProcessUnactiveUnits();
+        yield return new WaitForSeconds(1f);
+
+        ProcessUnits();
+
+        ProcessCities();
+
+        ProcessResearch();
 
         /*
         Get All Informations
@@ -111,16 +138,32 @@ public class AI_Manager : MonoBehaviour
         isWorking = false;
     }
 
-    private void ProcessUnactiveUnits()
+    private void ProcessResearch()
     {
-        foreach (UnactiveUnit unactiveUnit in unactiveUnits)
+        if(currentResearch == null)
         {
-            if (unactiveUnit.unit.unitType is CivilianUnitType civil)
+            // trouver la prochaine recherche à realiser
+        }
+    }
+
+    private void ProcessCities()
+    {
+        foreach(City city in cities)
+        {
+            // assigner la production
+        }
+    }
+
+    private void ProcessUnits() // differencier les actives des inactives ; inactives = nouvel ordre ; active = verification de l'objectif et control
+    {
+        foreach (AIUnit AIUnit in units)
+        {
+            if (AIUnit.unit.unitType is CivilianUnitType civil)
             {
                 switch (civil.job)
                 {
                     case CivilianUnitType.CivilianJob.Settler:
-                        GiveOrderToSettler(civil, unactiveUnit.cell);
+                        GiveOrderToSettler(civil, AIUnit.cell);
                         break;
                 }
             }
@@ -130,6 +173,8 @@ public class AI_Manager : MonoBehaviour
     private void GiveOrderToSettler(CivilianUnitType settler, HexCell position)
     {
         HexCell bestCellForCity = GetBestCellForSettler();
+        targetedPositions.Add(bestCellForCity.offsetCoordinates);
+
         Debug.Log("need to go to : " + bestCellForCity.offsetCoordinates);
         UnitManager.instance.QueueUnitMovement(position, bestCellForCity, UnitType.UnitCategory.civilian, null);
     }
@@ -197,6 +242,7 @@ public class AI_Manager : MonoBehaviour
 
                 if (cell == null) continue;
                 if (CityManager.instance.tileToCity.ContainsKey(o)) continue;
+                if (targetedPositions.Contains(cell.offsetCoordinates)) return -1;
 
                 if(cell.building != null)
                 {
@@ -216,12 +262,12 @@ public class AI_Manager : MonoBehaviour
 }
 
 [Serializable]
-public class UnactiveUnit
+public class AIUnit
 {
     public HexCell cell;
     public Unit unit;
 
-    public UnactiveUnit(HexCell cell, Unit unit)
+    public AIUnit(HexCell cell, Unit unit)
     {
         this.cell = cell;
         this.unit = unit;
