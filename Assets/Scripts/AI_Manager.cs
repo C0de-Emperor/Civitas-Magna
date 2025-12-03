@@ -176,7 +176,7 @@ public class AI_Manager : MonoBehaviour
         targetedPositions.Add(bestCellForCity.offsetCoordinates);
 
         Debug.Log("need to go to : " + bestCellForCity.offsetCoordinates);
-        UnitManager.instance.QueueUnitMovement(position, bestCellForCity, UnitType.UnitCategory.civilian, null);
+        UnitManager.instance.QueueUnitMovement(position, bestCellForCity, UnitType.UnitCategory.civilian, null, true);
     }
 
     private HexCell GetBestCellForSettler()

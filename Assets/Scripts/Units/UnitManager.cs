@@ -468,7 +468,7 @@ public class UnitManager : MonoBehaviour
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && IsCellTraversable(path[1], unit.unitType) && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count>1 && IsCellTraversable(path[1], unit.unitType, false) && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -486,7 +486,7 @@ public class UnitManager : MonoBehaviour
         unit.movesDone += pathCost;
         dataToReturn.unitCell = path[0];
 
-        if (path.Count <= 1 || !IsCellTraversable(path[1], unit.unitType))
+        if (path.Count <= 1 || !IsCellTraversable(path[1], unit.unitType, false))
         {
             dataToReturn.movementFinished = true;
             return dataToReturn; // si on est arrivés à destination, on arrête le déplacement
@@ -496,7 +496,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // ajouter à la liste d'attente un déplacement d'unité
-    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory, Action unitAction)
+    public HexCell QueueUnitMovement(HexCell unitCell, HexCell destCell, UnitType.UnitCategory unitCategory, Action unitAction, bool isAI)
     {
         queuedMovementData movementData = new queuedMovementData();
         movementData.attacksACity = false;
@@ -520,7 +520,7 @@ public class UnitManager : MonoBehaviour
             unit = unitCell.civilianUnit;
         }
 
-        List<HexCell> path = GetShortestPath(unitCell, destCell, unit.unitType);
+        List<HexCell> path = GetShortestPath(unitCell, destCell, unit.unitType, isAI);
         if (path == null)
         {
             return null;
@@ -602,90 +602,6 @@ public class UnitManager : MonoBehaviour
         Destroy(unit.unitTransform.gameObject); // supprimer l'instance de l'unité
     }
 
-    // ajouter un type d'unité à une case
-    /*
-    public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
-    {
-        if(unitType.unitCategory == UnitType.UnitCategory.military)
-        {
-            if(cell.militaryUnit == null && IsCellTraversable(cell, unitType))
-            {
-                Transform unitTransform = Instantiate( // instancier l'unité sur la case
-                    unitType.unitPrefab.transform,
-                    new Vector3(cell.tile.transform.position.x, cell.terrainHigh, cell.tile.position.z),
-                    new Quaternion(0, 0, 0, 1), 
-                    unitContainer);
-                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
-
-                UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
-
-                if (master == PlayerManager.instance.player)
-                {
-                    grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
-                }
-
-                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
-
-                if (!cell.isRevealed || !cell.isActive)
-                {
-                    unitTransform.GetComponentInChildren<Renderer>().enabled = false;
-                    unitPin.gameObject.SetActive(false);
-                }
-
-                cell.militaryUnit = unit;
-                units.Add(unit.id, unit);
-
-                CheckCellUnitsConflict(cell);
-
-                return unit;
-            }
-            else
-            {
-                Debug.Log(cell.militaryUnit);
-                Debug.LogError("trying to add a military unit on an already occupied tile");
-            }
-        }
-        else
-        {
-            if (cell.civilianUnit == null && IsCellTraversable(cell, unitType))
-            {
-                Transform unitTransform = Instantiate( // instancier l'unité sur la case
-                    unitType.unitPrefab.transform,
-                    new Vector3(cell.tile.transform.position.x, cell.terrainHigh, cell.tile.position.z),
-                    new Quaternion(0, 0, 0, 1),
-                    unitContainer);
-                Transform unitPinTransform = Instantiate(unitPinPrefab.transform, unitPinCanvas); // instancier le pin de l'unité sur l'unité
-
-                UnitPin unitPin = unitPinTransform.GetComponent<UnitPin>();
-
-                if (master == PlayerManager.instance.player)
-                {
-                    grid.RevealTilesInRadius(cell.offsetCoordinates, unitType.sightRadius, SelectionManager.instance.showOverlay, true);
-                }
-
-                if (!cell.isRevealed || !cell.isActive)
-                {
-                    unitTransform.GetComponentInChildren<Renderer>().enabled = false;
-                    unitPin.gameObject.SetActive(false);
-                }
-
-                Unit unit = new Unit(unitTransform, unitType, unitPin, master); // créer l'instance de la classe unit associée à l'unité
-
-                cell.civilianUnit = unit;
-                units.Add(unit.id, unit);
-
-                CheckCellUnitsConflict(cell);
-
-                return unit;
-            }
-            else
-            {
-                Debug.LogError("trying to add a support unit on an already occupied tile");
-            }
-        }
-        return null;
-    }
-    */
     public Unit AddUnit(UnitType unitType, HexCell cell, Player master)
     {
         bool isMilitary = unitType.unitCategory == UnitType.UnitCategory.military;
@@ -699,7 +615,7 @@ public class UnitManager : MonoBehaviour
             return null;
         }
 
-        if (!IsCellTraversable(cell, unitType))
+        if (!IsCellTraversable(cell, unitType, master!=PlayerManager.instance.player))
         {
             Debug.LogError($"Trying to add unit {unitType.name} on non-traversable tile.");
             return null;
@@ -743,7 +659,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // renvoie une liste de cases qui correspond au chemin le plus court entre deux cases
-    public List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, UnitType unitType)
+    public List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, UnitType unitType, bool isAI = false, int use = 0)
     {
         bool endCellFound = false;
         List<HexCell> pathCoordinates = new List<HexCell>();
@@ -754,7 +670,7 @@ public class UnitManager : MonoBehaviour
 
         CellData currentCellData = null;
 
-        if (!IsCellTraversable(finishCell, unitType)) { return null; }
+        if (!IsCellTraversable(finishCell, unitType, isAI)) { return null; }
 
         //System.DateTime startTime = System.DateTime.Now;
 
@@ -762,7 +678,7 @@ public class UnitManager : MonoBehaviour
         while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
         {
             currentCellData = cellsToVisit[0];
-            AddNewCellData(currentCellData, visitedCells); // choisit la case avec le coût le plus faible
+            AddNewCellData(currentCellData, visitedCells, use); // choisit la case avec le coût le plus faible
             cellsToVisit.RemoveAt(0);
 
             for (int i = 0; i < 6; i++) // cycle dans les voisins de la case actuelle
@@ -776,28 +692,28 @@ public class UnitManager : MonoBehaviour
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType)) // si la case est traversable non révélée
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType, isAI)) // si la case est traversable non révélée
                 {
                     CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
-                    if (isCellDataVisited == -1)
+                    if (isCellDataVisited < 0)
                     {
                         int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases à visiter
-                        if (isCellDataInToVisit == -1)
+                        if (isCellDataInToVisit < 0)
                         {
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit, use); // ajouter le voisin dans les cases à visiter
                         }
                         else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
                         {
                             cellsToVisit.RemoveAt(isCellDataInToVisit);
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre à jour le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit, use); // mettre à jour le voisin dans les cases à visiter
                         }
                     }
                     else if (currentCellNeighboursData.FCost < visitedCells[isCellDataVisited].FCost)
                     {
                         visitedCells.RemoveAt(isCellDataVisited);
-                        AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
+                        AddNewCellData(currentCellNeighboursData, visitedCells, use); // mettre à jour le voisin dans les cases visitées
                     }
                     
                 }
@@ -830,9 +746,76 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // rajoute un élément à une liste triée     A ADAPTER AVEC BINARYSEARCH
-    private void AddNewCellData(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
+    private class CellDataComparer : IComparer<CellData>
     {
+        public int Compare(CellData a, CellData b)
+        {
+            if(a.FCost < b.FCost)
+            {
+                return -1;
+            }
+            else if(a.FCost > b.FCost)
+            {
+                return 1;
+            }
+            else
+            {
+                if(a.HCost < b.HCost)
+                {
+                    return -1;
+                }
+                if(a.HCost > b.HCost)
+                {
+                    return 1;
+                }
+                return 0;
+            }
+        }
+    }
+
+    private void AddNewCellData3(CellData cellData, List<CellData> cellDataList)
+    {
+        cellDataList.Add(cellData);
+        cellDataList.Sort(new CellDataComparer());
+    }
+
+    private void AddNewCellData2(CellData cellData,  List<CellData> cellDataList)
+    {
+        int index = cellDataList.BinarySearch(cellData, new CellDataComparer());
+
+        if (index >= 0)
+        {
+            cellDataList.Insert(index, cellData);
+        }
+        else
+        {
+            index = ~index;
+
+            if (index >= cellDataList.Count)
+            {
+                cellDataList.Add(cellData);
+            }
+            else
+            {
+                cellDataList.Insert(index, cellData);
+            }
+        }
+    }
+
+    // rajoute un élément à une liste triée     A ADAPTER AVEC BINARYSEARCH
+    private void AddNewCellData(CellData cellData, List<CellData> cellDataList, int use) // A REFAIRE EN DICHOTOMIE
+    {
+        if (use == 2)
+        {
+            AddNewCellData2(cellData, cellDataList);
+            return;
+        }
+        if (use == 3)
+        {
+            AddNewCellData3(cellData, cellDataList);
+            return;
+        }
+
         int i = 0;
         while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost)
         {
@@ -861,8 +844,8 @@ public class UnitManager : MonoBehaviour
         return;
     }
 
-    // recherche séquentielle d'un élément dans une liste triée   A DEGAGER ET UTILISER BINARYSEARCH
-    private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
+    // recherche séquentielle d'un élément dans une liste triée
+    private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList)
     {
         for (int i = 0; i < cellDataList.Count; i++)
         {
@@ -897,9 +880,9 @@ public class UnitManager : MonoBehaviour
     }
 
     // renvoie si la case est traversable par l'unité ou non
-    public bool IsCellTraversable(HexCell cell, UnitType unitType)
+    public bool IsCellTraversable(HexCell cell, UnitType unitType, bool isAI)
     {
-        if (!cell.isRevealed)
+        if (!cell.isRevealed && !isAI)
         {
             return true;
         }
@@ -958,24 +941,63 @@ public class UnitManager : MonoBehaviour
 
                 System.DateTime startTime = System.DateTime.Now;
 
-                List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"));
+                List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 1);
 
                 System.DateTime endTime = System.DateTime.Now;
                 string timeElapsed = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
                 result.timeElapsed = timeElapsed;
 
+                startTime = System.DateTime.Now;
+
+                List<HexCell> path2 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 2);
+
+                endTime = System.DateTime.Now;
+                string timeElapsed2 = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
+                result.timeElapsed2 = timeElapsed2;
+
+                startTime = System.DateTime.Now;
+
+                List<HexCell> path3 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 3);
+
+                endTime = System.DateTime.Now;
+                string timeElapsed3 = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
+                result.timeElapsed3 = timeElapsed3;
+
                 float pathCost = 0;
-                foreach(var cell in path)
+                if (path != null)
                 {
-                    pathCost += cell.terrainType.terrainCost;
+                    foreach (var cell in path)
+                    {
+                        pathCost += cell.terrainType.terrainCost;
+                    }
                 }
                 result.pathCost = pathCost;
+
+                float pathCost2 = 0;
+                if (path2 != null)
+                {
+                    foreach (var cell in path2)
+                    {
+                        pathCost2 += cell.terrainType.terrainCost;
+                    }
+                }
+                result.pathCost2 = pathCost2;
+
+                float pathCost3 = 0;
+                if (path3 != null)
+                {
+                    foreach (var cell in path3)
+                    {
+                        pathCost3 += cell.terrainType.terrainCost;
+                    }
+                }
+                result.pathCost3 = pathCost3;
 
                 results.Add(result);
 
                 if (printResults)
                 {
-                    resultString += ", [" + i + ", " + j + ", " + timeElapsed + ", " + pathCost + "]";
+                    resultString += ", [" + i + ", " + j + ", " + timeElapsed + ", " + timeElapsed2 + ", " + timeElapsed3 + ", " + pathCost + ", " + pathCost2 + ", " + pathCost3 + "]";
                 }
             }
         }
@@ -1012,112 +1034,6 @@ public class UnitManager : MonoBehaviour
     }
 }
 
-// classe qui stocke les données d'une unité
-public class Unit
-{
-    public readonly int id; // id
-    public Transform unitTransform; // le transform de l'unité
-    public Vector3 unitOffset = Vector3.zero;
-    public readonly UnitType unitType; // le type d'unité (classe générale)
-    public Player master; // le maître de l'unité (le joueur ou l'IA)
-    public readonly UnitPin unitPin; // le pin de l'unité (pour le repérer sur la carte)
-
-
-    //public Transform unitCanvaTransform;
-
-
-    public string unitName; // le nom de l'unité (personnalisable)
-
-    private MilitaryUnitType militaryUnitType; // type de l'unité spécial militaire
-    private CivilianUnitType civilianUnitType; // type de l'unité spécial civil
-    public float currentHealth = 0; // vie actuelle de l'unité
-
-    public float movesDone = 0; // le nombre de déplacements effectués ce tour
-    public int lastDamagingTurn = -1; // le dernier où l'unité a subi des dégats
-    public int chargesLeft = 0;
-
-    // constructeur de la classe
-    public Unit(Transform unitTransform, UnitType unitType, UnitPin unitPin, Player master)
-    {
-        this.id = UnitManager.instance.nextAvailableId;
-        UnitManager.instance.nextAvailableId++;
-
-        this.unitTransform = unitTransform;
-        this.unitType = unitType;
-        this.unitPin = unitPin;
-        this.master = master;
-
-        this.movesDone = 0;
-        this.lastDamagingTurn = -1;
-        this.unitName = UnitManager.instance.NAMES_LIST[UnityEngine.Random.Range(0, UnitManager.instance.NAMES_LIST.Length - 1)];
-
-        unitPin.InitializePin(this.unitType.unitIcon, this.master.livery, UnitManager.instance.lastDistance);
-        unitPin.worldTarget = this.unitTransform;
-
-        if (unitType.unitCategory == UnitType.UnitCategory.military)
-        {
-            this.militaryUnitType = unitType as MilitaryUnitType;
-            this.currentHealth = this.militaryUnitType.MaxHealth;
-        }
-        else
-        {
-            this.civilianUnitType = unitType as CivilianUnitType;
-            this.chargesLeft = this.civilianUnitType.actionCharges;
-        }
-    }
-
-    // prendre des dégats
-    public void TakeDamage(float damage)
-    {
-        this.currentHealth -= damage;
-        this.unitPin.UpdateHealth(this.currentHealth, this.militaryUnitType.MaxHealth);
-        lastDamagingTurn = TurnManager.instance.currentTurn;
-    }
-
-    // se soigner
-    public void Heal(float healAmount)
-    {
-        this.currentHealth += healAmount;
-        
-        if(this.currentHealth >= this.militaryUnitType.MaxHealth)
-        {
-            this.currentHealth = this.militaryUnitType.MaxHealth;
-        }
-
-        this.unitPin.UpdateHealth(this.currentHealth, this.militaryUnitType.MaxHealth);
-    }
-
-    // l'unité est-elle en vie
-    public bool IsAlive()
-    {
-        return this.currentHealth >= 0;
-    }
-
-    // obtenir les données militaires de l'unité
-    public MilitaryUnitType GetUnitMilitaryData()
-    {
-        return this.militaryUnitType;
-    }
-
-    public CivilianUnitType GetUnitCivilianData()
-    {
-        return this.civilianUnitType;
-    }
-
-    public bool ConsumeCharge()
-    {
-        this.chargesLeft -= 1;
-        this.movesDone = this.unitType.MoveReach;
-        return this.chargesLeft <= 0;
-    }
-
-    public void ApplyNewOffset(Vector3 newOffset)
-    {
-        this.unitTransform.position += newOffset - this.unitOffset;
-        this.unitOffset = newOffset;
-    }
-}
-
 // struct pour enregistrer les éléments du mouvement d'une unité
 [Serializable]
 public struct queuedMovementData
@@ -1140,5 +1056,10 @@ public struct BenchMarkResult
     public float heuristicScaling;
 
     public string timeElapsed;
+    public string timeElapsed2;
+    public string timeElapsed3;
+
     public float pathCost;
+    public float pathCost2;
+    public float pathCost3;
 }

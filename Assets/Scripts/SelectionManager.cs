@@ -162,6 +162,8 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
+                    grid.RevealTilesInRadius(currentCell.offsetCoordinates, 100, false, false);
+
                     HandleCellClick(currentCell, coord);
 
                     selectedCell = currentCell;
@@ -176,7 +178,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     if (selectedUnit != null)
                     {
-                        HexCell unitCell = UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory, null);
+                        HexCell unitCell = UnitManager.instance.QueueUnitMovement(selectedCell, currentCell, selectedUnit.unitType.unitCategory, delegate { }, false);
                         if (unitCell != null)
                         {
                             selectedCell = unitCell;

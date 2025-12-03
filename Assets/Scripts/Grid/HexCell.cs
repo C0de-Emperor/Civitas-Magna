@@ -28,9 +28,7 @@ public class HexCell
     [field: SerializeField] public TileOverlay tileOverlay { get; set; }
 
     [Header("Units")]
-
     [field: SerializeField] public Unit militaryUnit = null;
-
     [field: SerializeField] public Unit civilianUnit = null;
 
 
