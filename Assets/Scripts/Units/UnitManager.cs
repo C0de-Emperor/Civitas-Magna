@@ -260,12 +260,11 @@ public class UnitManager : MonoBehaviour
 
         foreach (var unitId in finishedMovements)
         {
-            queuedUnitMovements[unitId].unitAction.Invoke();
             queuedUnitMovements.Remove(unitId); // enlever l'unité de la liste d'attente de déplacements
         }
     }
 
-    public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack)
+    public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack, bool finishedMovement)
     {
         HexCell lastCell = nextMoves.Dequeue();
         HexCell nextCell = lastCell;
@@ -437,6 +436,11 @@ public class UnitManager : MonoBehaviour
             }
 
             UpdateActionPanel(lastCell);
+        
+
+        if (finishedMovement)
+        {
+            queuedUnitMovements[unit.id].unitAction.Invoke();
         }
 
         movingUnitsCount--;
@@ -474,23 +478,26 @@ public class UnitManager : MonoBehaviour
             path.RemoveAt(0);
         }
 
-        if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
-        {
-            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1])); // faire le déplacement et attaquer l'unité ennemie
-        }
-        else
-        {
-            StartCoroutine(MoveUnit(nextMoves, unit, null)); // faire le déplacement
-        }
-        unit.movesDone += pathCost;
-        dataToReturn.unitCell = path[0];
-
         if (path.Count <= 1 || !IsCellTraversable(path[1], unit.unitType, false))
         {
             dataToReturn.movementFinished = true;
-            return dataToReturn; // si on est arrivés à destination, on arrête le déplacement
         }
-        dataToReturn.movementFinished = false;
+        else
+        {
+            dataToReturn.movementFinished = false;
+        }
+
+        if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
+        {
+            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], dataToReturn.movementFinished)); // faire le déplacement et attaquer l'unité ennemie
+        }
+        else
+        {
+            StartCoroutine(MoveUnit(nextMoves, unit, null, dataToReturn.movementFinished)); // faire le déplacement
+        }
+        unit.movesDone += pathCost;
+        dataToReturn.unitCell = path[0];
+        
         return dataToReturn;
     }
 
