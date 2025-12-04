@@ -8,7 +8,7 @@
     * Ouvrir le dépot cloné
 * Lancer le projet
 
-# Consignes d'installation
+# Consignes pour jouer
 
 * Se rendre sur ce dépot github : [Civitas-Magna-Builds](https://github.com/ggglllkkk/Civitas-Magna-Builds) 
      * Cloner le dépot

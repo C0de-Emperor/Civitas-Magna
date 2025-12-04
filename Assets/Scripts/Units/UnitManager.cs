@@ -248,19 +248,10 @@ public class UnitManager : MonoBehaviour
                 }
             }
         }
-
-        List<int> finishedMovements = new List<int>();
+        
         foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
         {
-            if (MoveQueuedUnit(unitId).movementFinished) // déplace l'unité
-            {
-                finishedMovements.Add(unitId); // s'il faut arrêter le mouvement, ajoute l'id de l'unité dans la liste des unités à arrêter de déplacer
-            }
-        }
-
-        foreach (var unitId in finishedMovements)
-        {
-            queuedUnitMovements.Remove(unitId); // enlever l'unité de la liste d'attente de déplacements
+            MoveQueuedUnit(unitId); // déplace l'unité
         }
     }
 
@@ -441,6 +432,7 @@ public class UnitManager : MonoBehaviour
         if (finishedMovement)
         {
             queuedUnitMovements[unit.id].unitAction.Invoke();
+            queuedUnitMovements.Remove(unit.id); // enlever l'unité de la liste d'attente de déplacements
         }
 
         movingUnitsCount--;
