@@ -139,7 +139,6 @@ public class HexCell
 
         if(building.buildingName == Building.BuildingNames.City)
         {
-            Debug.Log("e");
             CityManager.instance.cities[offsetCoordinates].ShowModel();
         }
 

@@ -118,9 +118,9 @@ public class CityBorders : MonoBehaviour
     {
         float r = Random.value;
 
-        if (r < 0.6f) return 1;      // 60%
-        else if (r < 0.9f) return 2; // 30%
-        else return 3;               // 10%
+        if (r < 0.8f) return 1;      // 80%
+        else if (r < 0.95f) return 2; // 15%
+        else return 3;               // 5%
     }
 
     private static HexCell GetRandomBorderTile(City city)
