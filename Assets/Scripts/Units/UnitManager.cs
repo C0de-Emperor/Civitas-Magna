@@ -595,6 +595,9 @@ public class UnitManager : MonoBehaviour
             unitActionsPanel.gameObject.SetActive(false);
         }
 
+        if(unit.master == AI_Manager.instance.AI_Player)
+            AI_Manager.instance.RemoveAIUnit(unit);
+
         units.Remove(unit.id);
         Destroy(unit.unitPin.gameObject);
         Destroy(unit.unitTransform.gameObject); // supprimer l'instance de l'unité

@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 
 public class AI_Manager : MonoBehaviour
@@ -19,6 +19,7 @@ public class AI_Manager : MonoBehaviour
     [HideInInspector] public List<City> cities = new List<City>();
 
     [Header("Research")]
+    private List<Research> sources = new List<Research>();
     public Research currentResearch;
     public float currentResearchProgress = 0f;
     public List<Research> researched = new List<Research>();
@@ -47,6 +48,20 @@ public class AI_Manager : MonoBehaviour
     private void Start()
     {
         TurnManager.instance.OnTurnChange += () => StartCoroutine(DoActions());
+
+        // Trouver toutes les sources de notre graphe de recherche
+
+        sources.Clear();
+        sources = ResearchManager.instance.allResearches.ToList();
+
+        foreach (Research research in ResearchManager.instance.allResearches)
+        {
+            foreach (Dependency dep in research.dependencies)
+            {
+                if(sources.Contains(dep.research))
+                    sources.Remove(dep.research);
+            }
+        }
     }
 
     private void OnLoadSave(SaveData data)
@@ -118,6 +133,8 @@ public class AI_Manager : MonoBehaviour
 
         ProcessResearch();
 
+        // update relation
+
         /*
         Get All Informations
         -------------
@@ -143,7 +160,69 @@ public class AI_Manager : MonoBehaviour
         if(currentResearch == null)
         {
             // trouver la prochaine recherche à realiser
+
+
+            // la recherche X est en relation avec Y (X -> Y) si X a besoin que Y soit recherché pour être recherché
+            /*
+            D = on part des sources, c'est à dire les recherches qui ne debloque rien.
+
+            on prend un element A de D,
+
+
+            si A n'est pas recherché
+            
+                si toutes les dependances de A sont recherché :
+                    on ajoute A à la liste des recherches possibles
+                
+                sinon
+                    on ajoute les dependances de A a D
+
+
+            si A recherché
+                rien
+            */
+            List<Research> availableResearches = new List<Research>();
+            List<Research> toVisit = new List<Research>();
+            toVisit = sources;
+
+            while (toVisit.Count > 0)
+            {
+                Research visited = toVisit[0];
+                toVisit.RemoveAt(0);
+
+                if (!researched.Contains(visited))
+                {
+                    if (AreAllDependenciesResearched(visited.dependencies))
+                    {
+                        availableResearches.Add(visited);
+                    }
+                    else
+                    {
+                        foreach (Dependency dep in visited.dependencies)
+                        {
+                            if(!researched.Contains(dep.research))
+                                toVisit.Add(dep.research);
+                        }
+                    }
+                }
+            }
+
+            if(availableResearches.Count > 0)
+                currentResearch = availableResearches[0];
         }
+    }
+
+    private bool AreAllDependenciesResearched(Dependency[] dependencies)
+    {
+        foreach (Dependency dependency in dependencies)
+        {
+            if (!researched.Contains(dependency.research))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void ProcessCities()
@@ -158,28 +237,48 @@ public class AI_Manager : MonoBehaviour
     {
         foreach (AIUnit AIUnit in units)
         {
-            if (AIUnit.unit.unitType is CivilianUnitType civil)
+            if (IsUnitInactive(AIUnit.unit))
             {
-                switch (civil.job)
+                if (AIUnit.unit.unitType is CivilianUnitType civil)
                 {
-                    case CivilianUnitType.CivilianJob.Settler:
-                        GiveOrderToSettler(civil, AIUnit.cell);
-                        break;
+                    switch (civil.job)
+                    {
+                        case CivilianUnitType.CivilianJob.Settler:
+                            GiveOrderToSettler(civil, AIUnit.cell, AIUnit.unit.master);
+                            break;
+                    }
                 }
             }
         }
     }
 
-    private void GiveOrderToSettler(CivilianUnitType settler, HexCell position)
+    private void GiveOrderToSettler(CivilianUnitType settler, HexCell position, Player master)
     {
-        HexCell bestCellForCity = GetBestCellForSettler();
+        HexCell bestCellForCity = GetBestCellForSettler(position);
         targetedPositions.Add(bestCellForCity.offsetCoordinates);
 
         Debug.Log("need to go to : " + bestCellForCity.offsetCoordinates);
-        UnitManager.instance.QueueUnitMovement(position, bestCellForCity, UnitType.UnitCategory.civilian, null, true);
+
+        UnitManager.instance.QueueUnitMovement(
+            position, 
+            bestCellForCity, 
+            UnitType.UnitCategory.civilian, 
+            () =>
+            {
+                UnitManager.instance.CivilianUnitAction(bestCellForCity, Building.BuildingNames.City);
+                targetedPositions.Remove(bestCellForCity.offsetCoordinates);
+            }, 
+            true
+        );
+
     }
 
-    private HexCell GetBestCellForSettler()
+    private bool IsUnitInactive(Unit unit)
+    {
+        return !UnitManager.instance.queuedUnitMovements.ContainsKey(unit.id);
+    }
+
+    private HexCell GetBestCellForSettler(HexCell position)
     {
         float bestValue = float.MinValue;
         Vector2Int bestCoord = new Vector2Int(-9999, -9999);
@@ -199,6 +298,9 @@ public class AI_Manager : MonoBehaviour
                 if (!grid.GetTile(coord).terrainType.build.Contains(Building.BuildingNames.City))
                     continue;
 
+                if (UnitManager.instance.GetShortestPath(position, grid.GetTile(coord), UnitManager.instance.GetUnitType("Settler")) == null)
+                    continue;
+
                 float value = EvaluateCellForCity(coord);
 
                 if (value > bestValue)
@@ -212,6 +314,18 @@ public class AI_Manager : MonoBehaviour
         return (bestCoord.x >= 0)
             ? grid.GetTile(bestCoord)
             : null;
+    }
+
+    public void RemoveAIUnit(Unit unit)
+    {
+        foreach(AIUnit AIUnit in units)
+        {
+            if(AIUnit.unit == unit)
+            {
+                units.Remove(AIUnit);
+                return;
+            }
+        }
     }
 
     private float EvaluateCellForCity(Vector2Int offset)
