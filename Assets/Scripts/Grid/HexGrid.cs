@@ -13,6 +13,7 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int batchSize { get; private set; }
 
     public TerrainType[] terrainTypes;
+    public Building[] buildings;
 
     [field: SerializeField] public GameObject undiscoveredTilePrefab { get; private set; }
     [field: SerializeField] public float undiscoveredTileHigh { get; private set; }
@@ -55,6 +56,19 @@ public class HexGrid : MonoBehaviour
         TurnManager.instance.OnTurnChange += UpdateActiveTiles;
 
         terrainTypes = Resources.LoadAll<TerrainType>("TerrainType");
+        buildings = Resources.LoadAll<Building>("Buildings");
+    }
+
+    public Building GetBuilding(Building.BuildingNames buildingName)
+    {
+        foreach(var building in buildings)
+        {
+            if (building.buildingName == buildingName)
+            {
+                return building;
+            }
+        }
+        return null;
     }
 
     public void InitGrid(GridSize _gridSize)

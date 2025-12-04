@@ -16,6 +16,8 @@ public class UnitManager : MonoBehaviour
     public MilitaryUnitType[] militaryUnits;
     public CivilianUnitType[] civilianUnits;
 
+    public Building[] buildings;
+
     [HideInInspector] public int nextAvailableId = 1;
     public Dictionary<int, Unit> units { get; private set; }
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
@@ -196,7 +198,7 @@ public class UnitManager : MonoBehaviour
         unitActionsPanel.gameObject.SetActive(false);
     }
 
-    public void CivilianUnitAction(HexCell cell, Building building)
+    public void CivilianUnitAction(HexCell cell, Building.BuildingNames buildingName)
     {
         if(cell.civilianUnit == null)
         {
@@ -204,7 +206,7 @@ public class UnitManager : MonoBehaviour
             return;
         }
 
-        if (cell.CreateBuilding(building, cell.civilianUnit))
+        if (cell.CreateBuilding(grid.GetBuilding(buildingName), cell.civilianUnit))
         {
             if (cell.civilianUnit.ConsumeCharge())
             {
@@ -672,8 +674,6 @@ public class UnitManager : MonoBehaviour
 
         if (!IsCellTraversable(finishCell, unitType, isAI)) { return null; }
 
-        //System.DateTime startTime = System.DateTime.Now;
-
         int iterations = 0;
         while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
         {
@@ -687,14 +687,14 @@ public class UnitManager : MonoBehaviour
                 {
                     continue;
                 }
-                else if (currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates)
+                else if (currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates) // si la case est celle de fin
                 {
                     endCellFound = true;
                     break;
                 }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType, isAI)) // si la case est traversable non révélée
+                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType, isAI)) // si la case est traversable
                 {
-                    CellData currentCellNeighboursData = new CellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
+                    CellData currentCellNeighboursData = new CellData(currentCellData, currentCellData.cell.neighbours[i], finishCell); // nouveau CellData pour le voisin actuel
                     
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
                     if (isCellDataVisited < 0)
@@ -733,15 +733,10 @@ public class UnitManager : MonoBehaviour
             }
             pathCoordinates.Insert(0, startCell);
 
-            System.DateTime endTime = System.DateTime.Now;
-            //Debug.Log("FOUND PATH FROM " + startCell.offsetCoordinates + " TO " + finishCell.offsetCoordinates + " IN " + endTime.Subtract(startTime) + "s AND " + iterations + " iterations");
-            
             return pathCoordinates;
         }
         else
         {
-            System.DateTime endTime = System.DateTime.Now;
-            //Debug.Log("NO PATH FOUND FROM " + startCell.offsetCoordinates + " TO " + finishCell.offsetCoordinates + " IN " + endTime.Subtract(startTime) + "s AND " + iterations + " iterations");
             return null;
         }
     }
@@ -817,7 +812,7 @@ public class UnitManager : MonoBehaviour
         }
 
         int i = 0;
-        while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost)
+        while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost) // trie par F_cost croissants
         {
             i++;
         }
@@ -829,7 +824,7 @@ public class UnitManager : MonoBehaviour
         }
         else if (cellData.FCost == cellDataList[i].FCost)
         {
-            while (i < cellDataList.Count && cellDataList[i].FCost == cellData.FCost && cellDataList[i].HCost < cellData.HCost)
+            while (i < cellDataList.Count && cellDataList[i].FCost == cellData.FCost && cellDataList[i].HCost < cellData.HCost) // trie secondairement par H_cost croissants
             {
                 i++;
             }
@@ -841,6 +836,7 @@ public class UnitManager : MonoBehaviour
             return;
         }
         cellDataList.Insert(i, cellData);
+
         return;
     }
 
@@ -849,7 +845,7 @@ public class UnitManager : MonoBehaviour
     {
         for (int i = 0; i < cellDataList.Count; i++)
         {
-            if (cellDataList[i].cell.offsetCoordinates == cellData.cell.offsetCoordinates)
+            if (cellDataList[i].cell.offsetCoordinates == cellData.cell.offsetCoordinates) // cherche la case avec ses coordonnées
             {
                 return i;
             }
@@ -868,20 +864,20 @@ public class UnitManager : MonoBehaviour
     // renvoie si la case est traversable par l'unité ou non
     public bool IsCellTraversable(HexCell cell, UnitType unitType, bool isAI)
     {
-        if (!cell.isRevealed && !isAI)
+        if (!cell.isRevealed && !isAI) // si la case n'est pas révélée et que le joueur appelle la fonction
         {
             return true;
         }
         if(unitType.unitCategory == UnitType.UnitCategory.military)
         {
-            if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id))
+            if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id)) // si la case n'est pas occupée par une unité statique
             {
                 return false;
             }
         }
         else
         {
-            if (cell.civilianUnit != null && !queuedUnitMovements.ContainsKey(cell.civilianUnit.id))
+            if (cell.civilianUnit != null && !queuedUnitMovements.ContainsKey(cell.civilianUnit.id)) // si la case n'est pas occupée par une unité statique
             {
                 return false;
             }
@@ -893,16 +889,16 @@ public class UnitManager : MonoBehaviour
     // renvoie si le type de terrain est traversable par l'unité ou non
     public bool IsTerrainTypeTraversable(TerrainType terrainType, UnitType unitType)
     {
-        if (unitType.speciallyAccessibleTerrains.Contains(terrainType))
+        if (unitType.speciallyAccessibleTerrains.Contains(terrainType)) // si l'unité peut spécifiquement accéder à ce terrain
         {
             return true;
         }
 
-        if (terrainType.terrainCost > unitType.MoveReach)
+        if (terrainType.terrainCost > unitType.MoveReach) // si le terrain coute plus en déplacement que ce que dispose l'unité par tour
         {
             return false;
         }
-        if ((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat))
+        if ((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat)) // si le terrain est aquatique ou si l'unité est un bateau
         {
             return false;
         }
@@ -1016,11 +1012,6 @@ public class UnitManager : MonoBehaviour
 
             this.cell = cell;
             this.parentCellData = parentCellData;
-        }
-
-        public string GetCellDataInfo()
-        {
-            return this.cell.offsetCoordinates.ToString() + " " + this.GCost.ToString() + " " + HCost.ToString() + " " + this.FCost.ToString();
         }
     }
 }

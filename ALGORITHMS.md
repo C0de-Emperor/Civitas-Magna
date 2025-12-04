@@ -34,6 +34,21 @@ private class CellData
     public readonly float FCost; // cout de déplacement total
     public readonly HexCell cell; // case
     public readonly CellData parentCellData; // case prédécésseure
+
+    // constructeur de la classe
+    public CellData(CellData parentCellData, HexCell cell, HexCell destCell)
+    {
+        this.GCost = cell.terrainType.terrainCost;
+        if (!cell.isRevealed)
+        {
+            this.GCost = 1000;
+        }
+        this.HCost = UnitManager.instance.GetDistance(cell, destCell) * UnitManager.instance.heuristicScaling;
+        this.FCost = GCost + HCost * UnitManager.instance.heuristicFactor;
+
+        this.cell = cell;
+        this.parentCellData = parentCellData;
+    }
 }
 ```
 
@@ -45,60 +60,61 @@ currentCellData = cellsToVisit[0];
 ```
 * Cycler dans chaque voisin de la case choisie :
     * Vérifier que ce voisin existe et qu'il n'est pas la case d'arrivée
-    * Si la case est traversable par l'unité (=accessible),  on lui crée son `CellData` et:
-        * si elle n'a pas déjà été visitée, on l'ajoute à la liste de case à visiter
+    * Si la case est traversable par l'unité (=accessible), on lui crée son `CellData` et:
+        * si elle n'a pas déjà été visitée, on l'ajoute à la liste de cases à visiter
         * si elle a déjà été visitée, on met à jour sa valeur dans la liste de cases visitées
 ```csharp
 for (int i = 0; i < 6; i++) // cycle dans les voisins de la case actuelle
+{
+    if (currentCellData.cell.neighbours[i] == null)
+    {
+        continue;
+    }
+    else if (currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates) // si la case est celle de fin
+    {
+        endCellFound = true;
+        break;
+    }
+    else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType)) // si la case est traversable
+    {
+        CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell); // nouveau CellData pour le voisin actuel
+        
+        int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
+        if (isCellDataVisited == -1)
+        {
+            int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases à visiter
+            if (isCellDataInToVisit == -1)
             {
-                if (currentCellData.cell.neighbours[i] == null)
-                {
-                    continue;
-                }
-                else if (currentCellData.cell.neighbours[i].offsetCoordinates == finishCell.offsetCoordinates)
-                {
-                    endCellFound = true;
-                    break;
-                }
-                else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType)) // si la case est traversable non révélée
-                {
-                    CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
-                    
-                    int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
-                    if (isCellDataVisited == -1)
-                    {
-                        int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases à visiter
-                        if (isCellDataInToVisit == -1)
-                        {
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases à visiter
-                        }
-                        else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
-                        {
-                            cellsToVisit.RemoveAt(isCellDataInToVisit);
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre à jour le voisin dans les cases à visiter
-                        }
-                    }
-                    else if (currentCellNeighboursData.FCost < visitedCells[isCellDataVisited].FCost)
-                    {
-                        visitedCells.RemoveAt(isCellDataVisited);
-                        AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
-                    }
-                    
-                }
+                AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases à visiter
             }
+            else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
+            {
+                cellsToVisit.RemoveAt(isCellDataInToVisit);
+                AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre à jour le voisin dans les cases à visiter
+            }
+        }
+        else if (currentCellNeighboursData.FCost < visitedCells[isCellDataVisited].FCost)
+        {
+            visitedCells.RemoveAt(isCellDataVisited);
+            AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
+        }
+        
+    }
+}
 ```
 Les fonctions utilisées ici sont les suivantes :
 
 `AddNewCellData` permet d'ajouter une nouvelle `CellData` dans la liste triée donnée en paramètre à la bonne place.
 ```csharp
 // rajoute un élément à une liste triée
-private void AddNewCellData(CellData cellData,List<CellData> cellDataList) // A REFAIRE EN DICHOTOMIE
+private void AddNewCellData(CellData cellData,List<CellData> cellDataList)
 {
     int i = 0;
-    while (i < cellDataList.Count && cellDataList[i].FCost< cellData.FCost)
+    while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost) // trie par F_cost croissants
     {
         i++;
-    }
+    }   
+
     if (i == cellDataList.Count)
     {
         cellDataList.Add(cellData);
@@ -106,24 +122,26 @@ private void AddNewCellData(CellData cellData,List<CellData> cellDataList) // A 
     }
     else if (cellData.FCost == cellDataList[i].FCost)
     {
-        while (i < cellDataList.Count && cellDataList[i]FCost == cellData.FCost && cellDataList[i].HCost <cellData.HCost)
+        while (i < cellDataList.Count && cellDataList[i].FCost == cellData.FCost && cellDataList[i].HCost < cellData.HCost) // trie secondairement par H_cost croissants
         {
             i++;
         }
-    }
+    }   
+
     if (i == cellDataList.Count)
     {
         cellDataList.Add(cellData);
         return;
     }
     cellDataList.Insert(i, cellData);
+
     return;
 }
 ```
 
 `GetDistance` renvoie la distance entre deux cases dans la grille (1 -> cases adjacentes, 2 -> une case de distance).
 ```csharp
-// renvoie la distance entre deux cases (en nombre decases, pas distance brute)
+// renvoie la distance entre deux cases (en nombre de cases, pas la distance brute)
 public float GetDistance(HexCell cell1, HexCell cell2)
 {
     float euclideanDistance = Vector3.Distance(cell1cubeCoordinates, cell2.cubeCoordinates)/grid.hexSize;
@@ -135,40 +153,43 @@ public float GetDistance(HexCell cell1, HexCell cell2)
 `IsCellData` renvoie un booléen indiquant si la case est traversable (=accessible) par l'unité (idem pour `IsTerrainTypeTraversable`, mais cette dernière est moins générique).
 ```csharp
 // renvoie si la case est traversable par l'unité ou non
-public bool IsCellTraversable(HexCell cell, UnitTypeunitType)
+public bool IsCellTraversable(HexCell cell, UnitType unitType, bool isAI)
 {
-    if (!cell.isRevealed)
+    if (!cell.isRevealed && !isAI) // si la case n'est pas révélée et que le joueur appelle la fonction
     {
         return true;
     }
-    if(unitType.unitCategory == UnitType.UnitCategorymilitary)
+    if(unitType.unitCategory == UnitType.UnitCategory.military)
     {
-        if(cell.militaryUnit != null &&!queuedUnitMovements.ContainsKey(cell.militaryUnitid))
+        if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id)) // si la case n'est pas occupée par une unité statique
         {
             return false;
         }
     }
     else
     {
-        if (cell.civilianUnit != null &&!queuedUnitMovements.ContainsKey(cell.civilianUnitid))
+        if (cell.civilianUnit != null && !queuedUnitMovements.ContainsKey(cell.civilianUnit.id)) // si la case n'est pas occupée par une unité statique
         {
             return false;
         }
     }
-    return IsTerrainTypeTraversable(cell.terrainType,unitType);
+
+    return IsTerrainTypeTraversable(cell.terrainType, unitType);
 }
-// renvoie si le type de terrain est traversable parl'unité ou non
-public bool IsTerrainTypeTraversable(TerrainTypeterrainType, UnitType unitType)
+
+// renvoie si le type de terrain est traversable par l'unité ou non
+public bool IsTerrainTypeTraversable(TerrainType terrainType, UnitType unitType)
 {
-    if (unitType.speciallyAccessibleTerrains.Contain(terrainType))
+    if (unitType.speciallyAccessibleTerrains.Contains(terrainType)) // si l'unité peut spécifiquement accéder à ce terrain
     {
         return true;
     }
-    if (terrainType.terrainCost > unitType.MoveReach)
+
+    if (terrainType.terrainCost > unitType.MoveReach) // si le terrain coute plus en déplacement que ce que dispose l'unité par tour
     {
         return false;
     }
-    if ((terrainType.isWater && !unitType.IsABoat) ||(!terrainType.isWater && unitType.IsABoat))
+    if ((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat)) // si le terrain est aquatique ou si l'unité est un bateau
     {
         return false;
     }
@@ -178,15 +199,13 @@ public bool IsTerrainTypeTraversable(TerrainTypeterrainType, UnitType unitType)
 
 Une fois la boucle terminée, on rembobine les prédécesseurs pour trouver le chemin le plus rapide :
 ```csharp
-currentCellData = CreateCellData(currentCellData, finishCell, finishCell);
-while (currentCellData.cell.offsetCoordinates startCell.offsetCoordinates) // refaire le chemen sens inverse avec les cases précédentes
+currentCellData = new CellData(currentCellData, finishCell, finishCell);
+while (currentCellData.cell.offsetCoordinates != startCell.offsetCoordinates) // refaire le chemin en sens inverse avec les cases précédentes
 {
-    pathCoordinates.Insert(0, currentCellDacell);
-    currentCellData = currentCellDaparentCellData;
+    pathCoordinates.Insert(0, currentCellData.cell);
+    currentCellData = currentCellData.parentCellData;
 }
-pathCoordinates.Insert(0, startCell
-System.DateTime endTime = System.DateTime.Now;
-//Debug.Log("FOUND PATH FROM " + startCeoffsetCoordinates + " TO " + finishCeoffsetCoordinates + " IN " + endTime.Subtr(startTime) + "s AND " + iterations +iterations");
+pathCoordinates.Insert(0, startCell);
 
 return pathCoordinates;
 ```
