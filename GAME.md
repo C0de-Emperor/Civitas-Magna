@@ -23,7 +23,7 @@ Le joueur contrôle une civilisation, explore la carte, construit des bâtiments
 ### Génération de la carte
 
 - Grille hexagonale.
-- Système de bruit (Perlin / Simplex) pour :
+- Système de bruit (Perlin Noise) pour :
     * altitude,
     * continents,
     * ressources.
