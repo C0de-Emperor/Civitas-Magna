@@ -333,7 +333,7 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitOffset = nextCellOffset;
 
-                    if(unit.master == PlayerManager.instance.player)
+                    if (unit.master == PlayerManager.instance.player)
                     {
                         grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
                         grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
@@ -421,7 +421,7 @@ public class UnitManager : MonoBehaviour
                     }
                     unit.unitOffset = nextCellOffset;
 
-                    if(PlayerManager.instance.player == unit.master)
+                    if (PlayerManager.instance.player == unit.master)
                     {
                         grid.UpdateActiveTiles(); // mettre à jour les cases découvertes par l'unité
                         grid.RevealTilesInRadius(nextCell.offsetCoordinates, unit.unitType.sightRadius, SelectionManager.instance.showOverlay, true); // révéler les cases "découvertes" par l'unité
@@ -436,7 +436,7 @@ public class UnitManager : MonoBehaviour
             }
 
             UpdateActionPanel(lastCell);
-        
+        }
 
         if (finishedMovement)
         {
@@ -602,6 +602,9 @@ public class UnitManager : MonoBehaviour
 
             unitActionsPanel.gameObject.SetActive(false);
         }
+
+        if(unit.master == AI_Manager.instance.AI_Player)
+            AI_Manager.instance.RemoveAIUnit(unit);
 
         units.Remove(unit.id);
         Destroy(unit.unitPin.gameObject);
