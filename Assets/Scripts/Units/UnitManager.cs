@@ -663,7 +663,7 @@ public class UnitManager : MonoBehaviour
     {
         bool endCellFound = false;
         List<HexCell> pathCoordinates = new List<HexCell>();
-        CellData startCellData = CreateCellData(null, startCell, finishCell);
+        CellData startCellData = new CellData(null, startCell, finishCell);
 
         List<CellData> visitedCells = new List<CellData>();
         List<CellData> cellsToVisit = new List<CellData>() { startCellData };
@@ -694,7 +694,7 @@ public class UnitManager : MonoBehaviour
                 }
                 else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType, isAI)) // si la case est traversable non révélée
                 {
-                    CellData currentCellNeighboursData = CreateCellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
+                    CellData currentCellNeighboursData = new CellData(currentCellData, currentCellData.cell.neighbours[i], finishCell);
                     
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
                     if (isCellDataVisited < 0)
@@ -725,7 +725,7 @@ public class UnitManager : MonoBehaviour
 
         if (endCellFound)
         {
-            currentCellData = CreateCellData(currentCellData, finishCell, finishCell);
+            currentCellData = new CellData(currentCellData, finishCell, finishCell);
             while (currentCellData.cell.offsetCoordinates != startCell.offsetCoordinates) // refaire le chemin en sens inverse avec les cases précédentes
             {
                 pathCoordinates.Insert(0, currentCellData.cell);
@@ -802,8 +802,8 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // rajoute un élément à une liste triée     A ADAPTER AVEC BINARYSEARCH
-    private void AddNewCellData(CellData cellData, List<CellData> cellDataList, int use) // A REFAIRE EN DICHOTOMIE
+    // rajoute un élément à une liste triée
+    private void AddNewCellData(CellData cellData, List<CellData> cellDataList, int use)
     {
         if (use == 2)
         {
@@ -844,7 +844,7 @@ public class UnitManager : MonoBehaviour
         return;
     }
 
-    // recherche séquentielle d'un élément dans une liste triée
+    // recherche séquentielle d'un élément dans une liste
     private int GetCellDataIndex(CellData cellData, List<CellData> cellDataList)
     {
         for (int i = 0; i < cellDataList.Count; i++)
@@ -863,20 +863,6 @@ public class UnitManager : MonoBehaviour
         float euclideanDistance = Vector3.Distance(cell1.cubeCoordinates, cell2.cubeCoordinates)/grid.hexSize;
         float realDistance = euclideanDistance/Mathf.Sqrt(2);
         return Mathf.Round(realDistance * 100) / 100;
-    }
-
-    // renvoie un CellData complet    A REMPLACER PAR LE CONSTRUCTEUR DE CELLDATA
-    private CellData CreateCellData(CellData parentCellData, HexCell cell, HexCell destCell)
-    {
-        float GCost = cell.terrainType.terrainCost;
-        if (!cell.isRevealed)
-        {
-            GCost = 1000;
-        }
-        float HCost = GetDistance(cell, destCell) * heuristicScaling;
-        float FCost = GCost + HCost * heuristicFactor;
-
-        return new CellData(GCost, HCost, FCost, cell, parentCellData);
     }
 
     // renvoie si la case est traversable par l'unité ou non
@@ -1018,11 +1004,16 @@ public class UnitManager : MonoBehaviour
         public readonly CellData parentCellData; // case prédécésseure
 
         // constructeur de la classe
-        public CellData(float GCost, float HCost, float FCost, HexCell cell, CellData parentCellData)
+        public CellData(CellData parentCellData, HexCell cell, HexCell destCell)
         {
-            this.GCost = GCost;
-            this.HCost = HCost;
-            this.FCost = FCost;
+            this.GCost = cell.terrainType.terrainCost;
+            if (!cell.isRevealed)
+            {
+                this.GCost = 1000;
+            }
+            this.HCost = UnitManager.instance.GetDistance(cell, destCell) * UnitManager.instance.heuristicScaling;
+            this.FCost = GCost + HCost * UnitManager.instance.heuristicFactor;
+
             this.cell = cell;
             this.parentCellData = parentCellData;
         }
