@@ -1798,8 +1798,8 @@ MonoBehaviour:
     width: 106
     height: 66
   - description: Titan
-    width: 500
-    height: 500
+    width: 200
+    height: 200
   animator: {fileID: 831400462}
   fadePanel: {fileID: 831400459}
 --- !u!114 &498375549

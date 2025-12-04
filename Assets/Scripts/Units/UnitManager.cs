@@ -174,7 +174,7 @@ public class UnitManager : MonoBehaviour
             actionButton.building = building;
 
             actionButton.icon.sprite = building.buildingSprite;
-            actionButton.button.onClick.AddListener(delegate { CivilianUnitAction(building); UpdateActionPanel(cell); });
+            actionButton.button.onClick.AddListener(delegate { CivilianUnitAction(SelectionManager.instance.selectedCell, building); UpdateActionPanel(cell); });
         }
 
         UpdateActionPanel(cell);
@@ -196,21 +196,21 @@ public class UnitManager : MonoBehaviour
         unitActionsPanel.gameObject.SetActive(false);
     }
 
-    public void CivilianUnitAction(Building building)
+    public void CivilianUnitAction(HexCell cell, Building building)
     {
-        if(SelectionManager.instance.selectedUnit == null)
+        if(cell.civilianUnit == null)
         {
             Debug.LogError("trying to execute action with no selected unit ?!");
             return;
         }
 
-        if (SelectionManager.instance.selectedCell.CreateBuilding(building, SelectionManager.instance.selectedUnit))
+        if (cell.CreateBuilding(building, cell.civilianUnit))
         {
-            if (SelectionManager.instance.selectedUnit.ConsumeCharge())
+            if (cell.civilianUnit.ConsumeCharge())
             {
-                RemoveUnit(UnitType.UnitCategory.civilian, SelectionManager.instance.selectedCell);
-                CheckCellUnitsConflict(SelectionManager.instance.selectedCell);
-                SelectionManager.instance.selectedUnit = null;
+                RemoveUnit(UnitType.UnitCategory.civilian, cell);
+                CheckCellUnitsConflict(cell);
+                cell.civilianUnit = null;
             }
         }
     }
