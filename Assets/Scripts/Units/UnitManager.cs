@@ -1,10 +1,7 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UnitManager : MonoBehaviour
 {
@@ -176,7 +173,7 @@ public class UnitManager : MonoBehaviour
             actionButton.building = building;
 
             actionButton.icon.sprite = building.buildingSprite;
-            actionButton.button.onClick.AddListener(delegate { CivilianUnitAction(SelectionManager.instance.selectedCell, building); UpdateActionPanel(cell); });
+            actionButton.button.onClick.AddListener(delegate { CivilianUnitAction(SelectionManager.instance.selectedCell, building.buildingName); UpdateActionPanel(cell); });
         }
 
         UpdateActionPanel(cell);
