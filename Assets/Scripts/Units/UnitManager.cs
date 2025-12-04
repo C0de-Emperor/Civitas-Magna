@@ -657,7 +657,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // renvoie une liste de cases qui correspond au chemin le plus court entre deux cases
-    public List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, UnitType unitType, bool isAI = false, int use = 0)
+    public List<HexCell> GetShortestPath(HexCell startCell, HexCell finishCell, UnitType unitType, bool isAI = false)
     {
         bool endCellFound = false;
         List<HexCell> pathCoordinates = new List<HexCell>();
@@ -674,7 +674,7 @@ public class UnitManager : MonoBehaviour
         while (!endCellFound && cellsToVisit.Count > 0 && iterations < maxIterations) // tant qu'il reste des cases à visiter et qu'on a pas trouvé la case de fin
         {
             currentCellData = cellsToVisit[0];
-            AddNewCellData(currentCellData, visitedCells, use); // choisit la case avec le coût le plus faible
+            AddNewCellData(currentCellData, visitedCells); // choisit la case avec le coût le plus faible
             cellsToVisit.RemoveAt(0);
 
             for (int i = 0; i < 6; i++) // cycle dans les voisins de la case actuelle
@@ -698,18 +698,18 @@ public class UnitManager : MonoBehaviour
                         int isCellDataInToVisit = GetCellDataIndex(currentCellNeighboursData, cellsToVisit); // l'indice du voisin actuel dans les cases à visiter
                         if (isCellDataInToVisit < 0)
                         {
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit, use); // ajouter le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // ajouter le voisin dans les cases à visiter
                         }
                         else if (currentCellNeighboursData.FCost < cellsToVisit[isCellDataInToVisit].FCost)
                         {
                             cellsToVisit.RemoveAt(isCellDataInToVisit);
-                            AddNewCellData(currentCellNeighboursData, cellsToVisit, use); // mettre à jour le voisin dans les cases à visiter
+                            AddNewCellData(currentCellNeighboursData, cellsToVisit); // mettre à jour le voisin dans les cases à visiter
                         }
                     }
                     else if (currentCellNeighboursData.FCost < visitedCells[isCellDataVisited].FCost)
                     {
                         visitedCells.RemoveAt(isCellDataVisited);
-                        AddNewCellData(currentCellNeighboursData, visitedCells, use); // mettre à jour le voisin dans les cases visitées
+                        AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
                     }
                     
                 }
@@ -764,49 +764,9 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    private void AddNewCellData3(CellData cellData, List<CellData> cellDataList)
-    {
-        cellDataList.Add(cellData);
-        cellDataList.Sort(new CellDataComparer());
-    }
-
-    private void AddNewCellData2(CellData cellData,  List<CellData> cellDataList)
-    {
-        int index = cellDataList.BinarySearch(cellData, new CellDataComparer());
-
-        if (index >= 0)
-        {
-            cellDataList.Insert(index, cellData);
-        }
-        else
-        {
-            index = ~index;
-
-            if (index >= cellDataList.Count)
-            {
-                cellDataList.Add(cellData);
-            }
-            else
-            {
-                cellDataList.Insert(index, cellData);
-            }
-        }
-    }
-
     // rajoute un élément à une liste triée
-    private void AddNewCellData(CellData cellData, List<CellData> cellDataList, int use)
+    private void AddNewCellData(CellData cellData, List<CellData> cellDataList)
     {
-        if (use == 2)
-        {
-            AddNewCellData2(cellData, cellDataList);
-            return;
-        }
-        if (use == 3)
-        {
-            AddNewCellData3(cellData, cellDataList);
-            return;
-        }
-
         int i = 0;
         while (i < cellDataList.Count && cellDataList[i].FCost < cellData.FCost) // trie par F_cost croissants
         {
@@ -919,7 +879,7 @@ public class UnitManager : MonoBehaviour
 
                 System.DateTime startTime = System.DateTime.Now;
 
-                List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 1);
+                List<HexCell> path = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true);
 
                 System.DateTime endTime = System.DateTime.Now;
                 string timeElapsed = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
@@ -927,7 +887,7 @@ public class UnitManager : MonoBehaviour
 
                 startTime = System.DateTime.Now;
 
-                List<HexCell> path2 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 2);
+                List<HexCell> path2 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true);
 
                 endTime = System.DateTime.Now;
                 string timeElapsed2 = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");
@@ -935,7 +895,7 @@ public class UnitManager : MonoBehaviour
 
                 startTime = System.DateTime.Now;
 
-                List<HexCell> path3 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true, 3);
+                List<HexCell> path3 = GetShortestPath(startCell, endCell, GetUnitType("Warrior"), true);
 
                 endTime = System.DateTime.Now;
                 string timeElapsed3 = endTime.Subtract(startTime).TotalMilliseconds.ToString().Replace(",", ".");

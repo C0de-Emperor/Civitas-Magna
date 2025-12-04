@@ -20,7 +20,7 @@ Chaque case a une propriété `HexCell.neighbours` où sont stockées les cases 
 
 ### Algorithme
 
-L'algorithme A* est la méthode `UnitManager.GetShortestPath`. Elle prend en paramètre la case de départ `startCell`, la case d'arrivée `finishCell` et le type d'unité qui se déplace `unitType`.
+L'algorithme A* est la méthode `UnitManager.GetShortestPath`. Elle prend en paramètre la case de départ `startCell`, la case d'arrivée `finishCell`, le type d'unité qui se déplace `unitType` et `isAI`, si c'est l'IA qui demande le chemin (elle a accès à toutes les cases, révélées ou non).
 
 L'algorithme A* utilise une structure de données stockant le coût physique, heuristique, total de la case et sa case prédécesseure, ainsi que deux listes : une liste de cases déjà visitées `visitedCells`, une liste de cases adjacentes aux cases déjà visitées `cellsToVisit`.
 
@@ -211,4 +211,4 @@ return pathCoordinates;
 ```
 
 ### Performances
-Des tests de vitesse nous donnent qu'en moyenne l'algorithme découvre 60 à 70 cases du chemin optimal par milliseconde, ce qui demande donc généralement moins d'une milliseconde pour calculer tout chemin de moins de 50 cases (compatible avec le fait que le jeu s'actualise tous les 60ièmes de seconde).
+Des tests de vitesse nous donnent qu'en moyenne l'algorithme découvre 30 à 40 cases du chemin optimal par milliseconde, ce qui demande donc généralement moins d'une milliseconde pour calculer tout chemin de moins de 50 cases (compatible avec le fait que le jeu s'actualise tous les 60ièmes de seconde).

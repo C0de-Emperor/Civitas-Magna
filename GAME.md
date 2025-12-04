@@ -13,7 +13,7 @@ Le joueur contrôle une civilisation, explore la carte, construit des bâtiments
 ### **Le jeu met l'accent sur :**
 - Une génération procédurale de carte variée (continents, reliefs, ressources).
 - Un système de progression complexe :
-    * Développement des citées
+    * Développement de cités
     * Système d'arbre technologique
     * Gestion de la production
 - Un système de sauvegarde et chargement JSON.
