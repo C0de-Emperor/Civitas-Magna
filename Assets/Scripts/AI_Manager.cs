@@ -12,7 +12,9 @@ public class AI_Manager : MonoBehaviour
     [Header("Global")]
     [HideInInspector] public Player AI_Player;
     public AI_Diplomacy diplomacy;
+    public int turnsSinceOffensive;
     public bool isWorking = false;
+    public int nonAgressionTurnsNumber = 10;
 
     [Header("Units")]
     [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
@@ -134,6 +136,8 @@ public class AI_Manager : MonoBehaviour
         isWorking = true;
 
         yield return new WaitForSeconds(1f);
+
+        ProcessDiplomacy();
 
         ProcessUnits();
 
@@ -298,6 +302,21 @@ public class AI_Manager : MonoBehaviour
 
     private void ProcessUnits() // differencier les actives des inactives ; inactives = nouvel ordre ; active = verification de l'objectif et control
     {
+        List<HexCell> targetsCells = new List<HexCell>();
+        foreach (var cell in grid.cells.Values)
+        {
+            if (cell.militaryUnit != null && cell.militaryUnit.master == PlayerManager.instance.player)
+            {
+                targetsCells.Add(cell);
+            }
+        }
+
+        List<HexCell> controlledCells = new List<HexCell>();
+        foreach(var city in cities)
+        {
+            controlledCells.AddRange(city.controlledTiles.Values);
+        }
+
         foreach (AIUnit AIUnit in units)
         {
             if (IsUnitInactive(AIUnit.unit))
@@ -309,6 +328,49 @@ public class AI_Manager : MonoBehaviour
                         case CivilianUnitType.CivilianJob.Settler:
                             GiveOrderToSettler(civil, AIUnit.cell, AIUnit.unit.master);
                             break;
+                    }
+                }
+                else
+                {
+                    if(diplomacy == AI_Diplomacy.Neutral)
+                    {
+                        if (!controlledCells.Contains(AIUnit.cell))
+                        {
+                            HexCell closestControlledCell = null;
+                            float shortestPathCost = 0;
+                            foreach(var cell in controlledCells)
+                            {
+                                if (cell.militaryUnit == null)
+                                {
+                                    float pathCost = Mathf.Infinity;
+                                    List<HexCell> path = UnitManager.instance.GetShortestPath(AIUnit.cell, cell, AIUnit.unit.unitType, true);
+                                    if (path != null)
+                                    {
+                                        foreach (var pathCell in path)
+                                        {
+                                            pathCost += pathCell.terrainType.terrainCost;
+                                        }
+                                    }
+
+                                    if (pathCost < shortestPathCost)
+                                    {
+                                        shortestPathCost = pathCost;
+                                        closestControlledCell = cell;
+                                    }
+                                }
+                            }
+
+                            if(closestControlledCell != null)
+                            {
+                                UnitManager.instance.QueueUnitMovement(AIUnit.cell, closestControlledCell, UnitType.UnitCategory.military, delegate { }, true);
+                                controlledCells.Remove(closestControlledCell);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
+                        targetsCells.RemoveAt(0);
                     }
                 }
             }
@@ -440,6 +502,39 @@ public class AI_Manager : MonoBehaviour
     private void AILog(string msg)
     {
         Debug.Log($"<color=#00BBFF><b>[AI]</b></color> {msg}");
+    }
+
+    public void ProcessDiplomacy()
+    {
+        foreach(var city in cities)
+        {
+            foreach(var cell in city.controlledTiles.Values)
+            {
+                if (cell.militaryUnit.master == PlayerManager.instance.player || cell.civilianUnit.master == PlayerManager.instance.player)
+                {
+                    diplomacy = AI_Diplomacy.Offensive;
+                    turnsSinceOffensive = 0;
+                }
+            }
+        }
+
+        foreach(var AI_unit in units)
+        {
+            if (AI_unit.unit.lastDamagingTurn >= TurnManager.instance.currentTurn-1)
+            {
+                diplomacy = AI_Diplomacy.Offensive;
+                turnsSinceOffensive = 0;
+            }
+        }
+
+        if(diplomacy == AI_Diplomacy.Offensive)
+        {
+            turnsSinceOffensive++;
+        }
+        if(turnsSinceOffensive >= nonAgressionTurnsNumber)
+        {
+            diplomacy = AI_Diplomacy.Neutral;
+        }
     }
 }
 

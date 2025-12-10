@@ -29,7 +29,7 @@ public class HexGrid : MonoBehaviour
     public event Action<float> OnCellBatchGenerated;
     public event Action OnCellInstancesGenerated;
 
-    private Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
+    public Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
     private Vector3 gridOrigin;
     public readonly uint defaultLayer = 1;
     public readonly uint unactiveLayer = 2;

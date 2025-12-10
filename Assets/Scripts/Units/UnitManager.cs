@@ -270,6 +270,11 @@ public class UnitManager : MonoBehaviour
 
                 if (nextCell.militaryUnit == null || queuedUnitMovements.ContainsKey(nextCell.militaryUnit.id))
                 {
+                    if(nextCell.civilianUnit != null && nextCell.civilianUnit.master != unit.master)
+                    {
+                        RemoveUnit(UnitType.UnitCategory.civilian, nextCell);
+                    }
+
                     nextCell.militaryUnit = unit;
                     lastCell.militaryUnit = null;
 
@@ -439,26 +444,26 @@ public class UnitManager : MonoBehaviour
     }
 
     // déplacement d'une unité, renvoie [si il faut arrêter le déplacement] (booléen)
-    public FirstMovementData MoveQueuedUnit(int unitId)
+    public HexCell MoveQueuedUnit(int unitId)
     {
         queuedMovementData movementData = queuedUnitMovements[unitId];
         List<HexCell> path = movementData.path;
         Unit unit = units[unitId];
 
-        FirstMovementData dataToReturn = new FirstMovementData();
-        dataToReturn.unitCell = path[0];
+        HexCell dataToReturn = path[0];
+        bool movementFinished = false;
 
         Queue<HexCell> nextMoves = new Queue<HexCell>();
         nextMoves.Enqueue(path[0]);
 
         if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
         {
-            dataToReturn.movementFinished = true;
+            movementFinished = true;
             return dataToReturn;
         }
         if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
         {
-            dataToReturn.movementFinished = true;
+            movementFinished = true;
             return dataToReturn;
         }
 
@@ -472,25 +477,24 @@ public class UnitManager : MonoBehaviour
 
         if (path.Count <= 1 || !IsCellTraversable(path[1], unit.unitType, false))
         {
-            dataToReturn.movementFinished = true;
+            movementFinished = true;
         }
         else
         {
-            dataToReturn.movementFinished = false;
+            movementFinished = false;
         }
 
         if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], dataToReturn.movementFinished)); // faire le déplacement et attaquer l'unité ennemie
+            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], movementFinished)); // faire le déplacement et attaquer l'unité ennemie
         }
         else
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, null, dataToReturn.movementFinished)); // faire le déplacement
+            StartCoroutine(MoveUnit(nextMoves, unit, null, movementFinished)); // faire le déplacement
         }
         unit.movesDone += pathCost;
-        dataToReturn.unitCell = path[0];
-        
-        return dataToReturn;
+
+        return path[0];
     }
 
     // ajouter à la liste d'attente un déplacement d'unité
@@ -544,16 +548,9 @@ public class UnitManager : MonoBehaviour
         }
 
         float beforeMoving = unit.movesDone;
-        FirstMovementData newUnitCell = MoveQueuedUnit(unit.id);
-        if (newUnitCell.movementFinished)
-        {
-            queuedUnitMovements.Remove(unit.id); // si le mouvement était instantané, on retire de la liste d'attente ce qu'on vient d'y rajouter
-        }
-        if(beforeMoving != unit.movesDone) // si il y a eu mouvement, on l'indique au selectionManager
-        {
-            return newUnitCell.unitCell;
-        }
-        return newUnitCell.unitCell;
+        HexCell newUnitCell = MoveQueuedUnit(unit.id);
+
+        return newUnitCell;
     }
 
     // combat entre les unités de deux cases
