@@ -431,6 +431,8 @@ public class AI_Manager : MonoBehaviour
         {
             controlledCells.AddRange(city.controlledTiles.Values);
             controlledCells.Remove(city.occupiedCell);
+
+            targetsCells.Add(city.occupiedCell);
         }
 
         foreach (AIUnit AIUnit in units)
