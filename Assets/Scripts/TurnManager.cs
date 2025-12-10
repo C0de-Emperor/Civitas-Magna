@@ -44,7 +44,7 @@ public class TurnManager : MonoBehaviour
 
     public void ChangeTurn()
     {
-        if (!canChangeTurn || UnitManager.instance.movingUnitsCount > 0)
+        if (!canChangeTurn || UnitManager.instance.movingUnitsCount > 0 || AI_Manager.instance.isWorking)
             return;
 
         canChangeTurn = false;

@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class AI_Manager : MonoBehaviour
 {
+    [Header("References")]
     public HexGrid grid;
-    public bool isWorking = false;
 
+    [Header("Global")]
     [HideInInspector] public Player AI_Player;
+    public AI_Diplomacy diplomacy;
+    public bool isWorking = false;
 
     [Header("Units")]
     [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
@@ -29,6 +32,7 @@ public class AI_Manager : MonoBehaviour
 
     [Header("AI Parameters")]
     private int cityEvaluationRadius = 2;
+    private int waitingTurn = 2;
 
     public static AI_Manager instance;
     private void Awake()
@@ -76,6 +80,7 @@ public class AI_Manager : MonoBehaviour
     {
         AI_Player = data.AI_Player;
         goldStock = 0f;
+        diplomacy = AI_Diplomacy.Neutral;
     }
 
     internal void ResearchComplete()
@@ -123,6 +128,9 @@ public class AI_Manager : MonoBehaviour
 
     private IEnumerator DoActions()
     {
+        if (TurnManager.instance.currentTurn <= waitingTurn)
+            yield break;
+
         isWorking = true;
 
         yield return new WaitForSeconds(1f);
@@ -157,7 +165,7 @@ public class AI_Manager : MonoBehaviour
 
     private void ProcessResearch()
     {
-        if(currentResearch == null)
+        if (currentResearch == null)
         {
             // trouver la prochaine recherche à realiser
 
@@ -181,56 +189,111 @@ public class AI_Manager : MonoBehaviour
             si A recherché
                 rien
             */
+            if (currentResearch != null)
+                return;
+
             List<Research> availableResearches = new List<Research>();
-            List<Research> toVisit = new List<Research>();
-            toVisit = sources;
+
+            List<Research> toVisit = new List<Research>(sources);
+
+            HashSet<Research> visitedSet = new HashSet<Research>();
 
             while (toVisit.Count > 0)
             {
-                Research visited = toVisit[0];
+                Research r = toVisit[0];
                 toVisit.RemoveAt(0);
 
-                if (!researched.Contains(visited))
+                if (visitedSet.Contains(r))
+                    continue;
+
+                visitedSet.Add(r);
+
+                if (!researched.Contains(r))
                 {
-                    if (AreAllDependenciesResearched(visited.dependencies))
+                    if (AreAllDependenciesResearched(r.dependencies))
                     {
-                        availableResearches.Add(visited);
+                        availableResearches.Add(r);
                     }
                     else
                     {
-                        foreach (Dependency dep in visited.dependencies)
+                        foreach (Dependency dep in r.dependencies)
                         {
-                            if(!researched.Contains(dep.research))
+                            if (!researched.Contains(dep.research))
                                 toVisit.Add(dep.research);
                         }
                     }
                 }
             }
 
-            if(availableResearches.Count > 0)
-                currentResearch = availableResearches[0];
+            if (availableResearches.Count > 0)
+            {
+                currentResearch = availableResearches[
+                    UnityEngine.Random.Range(0, availableResearches.Count)
+                ];
+
+                AILog("New research started: " + currentResearch.researchName);
+            }
         }
     }
 
     private bool AreAllDependenciesResearched(Dependency[] dependencies)
     {
-        foreach (Dependency dependency in dependencies)
-        {
-            if (!researched.Contains(dependency.research))
-            {
+        if (dependencies == null || dependencies.Length == 0)
+            return true;
+
+        foreach (var dep in dependencies)
+            if (!researched.Contains(dep.research))
                 return false;
-            }
-        }
 
         return true;
     }
 
     private void ProcessCities()
     {
+        List<BuildingProductionItem> choosenBuildings = new List<BuildingProductionItem>();
+
         foreach(City city in cities)
         {
-            // assigner la production
+            /*
+            faire une liste des choix fait par les autres villes,
+            evaluer la situation de l'IA pour chaque production -> ici on ne considere pas une prod en batiment comme le joueur mais directement une augmentation d'une des stats de la ville
+            => tenir compte des productions decidées de l'ia pour les autres villes a ce tour ci
+
+            choisir la position avantageuse
+
+             faire comme ça : 
+            - avantage : on peut avoir une super profondeur d'arbre au tour par tour
+            -desavantage : colle moins au gameplay du joueur
+
+
+             */
+
+            GetBestBuilding(choosenBuildings);
+
+            //BuildingProductionItem i = new BuildingProductionItem
+            //{
+            //    ID = -1,
+            //    costInGoldPerTurn = 0,
+
+            //    bonusFood = 0,
+            //    bonusGold = 0,
+            //    bonusHealth = 0,
+            //    bonusProduction = 0,
+            //    bonusScience = 0,
+
+            //    buildingRequierments = new List<BuildingProductionItem>()
+            //};
         }
+    }
+
+    private void GetBestBuilding(List<BuildingProductionItem> choosenBuildings)
+    {
+        // generer un arbre alterné (player, AI)
+    }
+
+    private void EvaluateNode()
+    {
+
     }
 
     private void ProcessUnits() // differencier les actives des inactives ; inactives = nouvel ordre ; active = verification de l'objectif et control
@@ -257,7 +320,7 @@ public class AI_Manager : MonoBehaviour
         HexCell bestCellForCity = GetBestCellForSettler(position);
         targetedPositions.Add(bestCellForCity.offsetCoordinates);
 
-        Debug.Log("need to go to : " + bestCellForCity.offsetCoordinates);
+        AILog($"Settler need to go to : {bestCellForCity.offsetCoordinates}");
 
         UnitManager.instance.QueueUnitMovement(
             position, 
@@ -373,7 +436,14 @@ public class AI_Manager : MonoBehaviour
 
         return score;
     }
+
+    private void AILog(string msg)
+    {
+        Debug.Log($"<color=#00BBFF><b>[AI]</b></color> {msg}");
+    }
 }
+
+public enum AI_Diplomacy {Neutral, Offensive}
 
 [Serializable]
 public class AIUnit
@@ -386,4 +456,18 @@ public class AIUnit
         this.cell = cell;
         this.unit = unit;
     }
+}
+
+[Serializable]
+public class BuildingTree
+{
+    public Dictionary<BuildingTreeNode, List<BuildingTreeNode>> nodes;
+}
+
+[Serializable]
+public class BuildingTreeNode
+{
+    public float score;
+    public Player player;
+    public BuildingProductionItem item;
 }
