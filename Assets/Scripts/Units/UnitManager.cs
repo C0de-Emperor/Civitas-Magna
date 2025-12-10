@@ -24,7 +24,7 @@ public class UnitManager : MonoBehaviour
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
     private int maxIterations = 10000;
-    private float unitMoveSpeed = 4f;
+    private float unitMoveSpeed = 200; //4f;
     private float unitRotationSpeed =540f;
     private float coUnitsScaleFactor = 0.7f;
     private Vector3 coUnitsOffset = new Vector3(0.4f, 0, 0);
@@ -56,6 +56,7 @@ public class UnitManager : MonoBehaviour
         "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse", 
         "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", 
         "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
+    public Research canBoatResearch; 
 
     [Header("UI")]
     public Transform unitActionsPanel;
@@ -839,11 +840,18 @@ public class UnitManager : MonoBehaviour
             }
         }
 
-        return IsTerrainTypeTraversable(cell.terrainType, unitType);
+        if (isAI)
+        {
+            return IsTerrainTypeTraversable(cell.terrainType, unitType, AI_Manager.instance.researched.Contains(canBoatResearch));
+        }
+        else
+        {
+            return IsTerrainTypeTraversable(cell.terrainType, unitType, ResearchManager.instance.researched.Contains(canBoatResearch));
+        }
     }
 
     // renvoie si le type de terrain est traversable par l'unité ou non
-    public bool IsTerrainTypeTraversable(TerrainType terrainType, UnitType unitType)
+    public bool IsTerrainTypeTraversable(TerrainType terrainType, UnitType unitType, bool canBoat)
     {
         if (unitType.speciallyAccessibleTerrains.Contains(terrainType)) // si l'unité peut spécifiquement accéder à ce terrain
         {
@@ -854,7 +862,7 @@ public class UnitManager : MonoBehaviour
         {
             return false;
         }
-        if ((terrainType.isWater && !unitType.IsABoat) || (!terrainType.isWater && unitType.IsABoat)) // si le terrain est aquatique ou si l'unité est un bateau
+        if ((terrainType.isWater && !unitType.IsABoat && !canBoat) || (!terrainType.isWater && unitType.IsABoat)) // si le terrain est aquatique ou si l'unité est un bateau
         {
             return false;
         }

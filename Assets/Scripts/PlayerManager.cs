@@ -76,7 +76,7 @@ public class PlayerManager : MonoBehaviour
             List<TerrainType> forbiddenTerrainTypes = new List<TerrainType>();
             foreach(var terrainType in grid.terrainTypes)
             {
-                if (!UnitManager.instance.IsTerrainTypeTraversable(terrainType, settler) || !UnitManager.instance.IsTerrainTypeTraversable(terrainType, warrior))
+                if (!UnitManager.instance.IsTerrainTypeTraversable(terrainType, settler, ResearchManager.instance.researched.Contains(UnitManager.instance.canBoatResearch)) || !UnitManager.instance.IsTerrainTypeTraversable(terrainType, warrior, ResearchManager.instance.researched.Contains(UnitManager.instance.canBoatResearch)))
                 {
                     forbiddenTerrainTypes.Add(terrainType);
                 }

@@ -112,7 +112,7 @@ public class AI_Manager : MonoBehaviour
             List<TerrainType> forbiddenTerrainTypes = new List<TerrainType>();
             foreach (var terrainType in grid.terrainTypes)
             {
-                if (!UnitManager.instance.IsTerrainTypeTraversable(terrainType, settler) || !UnitManager.instance.IsTerrainTypeTraversable(terrainType, warrior))
+                if (!UnitManager.instance.IsTerrainTypeTraversable(terrainType, settler, researched.Contains(UnitManager.instance.canBoatResearch)) || !UnitManager.instance.IsTerrainTypeTraversable(terrainType, warrior, researched.Contains(UnitManager.instance.canBoatResearch)))
                 {
                     forbiddenTerrainTypes.Add(terrainType);
                 }
@@ -449,15 +449,18 @@ public class AI_Manager : MonoBehaviour
                 {
                     if(diplomacy == AI_Diplomacy.Neutral)
                     {
-                        if (!controlledCells.Contains(AIUnit.cell))
+                        if (!controlledCells.Contains(AIUnit.cell) && controlledCells != null)
                         {
                             HexCell closestControlledCell = null;
-                            float shortestPathCost = 0;
+                            float shortestPathCost = Mathf.Infinity;
+
+                            Debug.Log(controlledCells.Count);
+
                             foreach(var cell in controlledCells)
                             {
                                 if (cell.militaryUnit == null)
                                 {
-                                    float pathCost = Mathf.Infinity;
+                                    float pathCost = 0;
                                     List<HexCell> path = UnitManager.instance.GetShortestPath(AIUnit.cell, cell, AIUnit.unit.unitType, true);
                                     if (path != null)
                                     {
@@ -466,7 +469,7 @@ public class AI_Manager : MonoBehaviour
                                             pathCost += pathCell.terrainType.terrainCost;
                                         }
                                     }
-
+                                    Debug.Log(pathCost + " " + cell.offsetCoordinates);
                                     if (pathCost < shortestPathCost)
                                     {
                                         shortestPathCost = pathCost;
@@ -479,6 +482,8 @@ public class AI_Manager : MonoBehaviour
                             {
                                 UnitManager.instance.QueueUnitMovement(AIUnit.cell, closestControlledCell, UnitType.UnitCategory.military, delegate { }, true);
                                 controlledCells.Remove(closestControlledCell);
+
+                                AILog("warrior started moving to "+closestControlledCell.offsetCoordinates);
                             }
                         }
                     }
@@ -625,16 +630,8 @@ public class AI_Manager : MonoBehaviour
         {
             foreach(HexCell cell in city.controlledTiles.Values)
             {
-                if (cell.militaryUnit != null || cell.civilianUnit.master == PlayerManager.instance.player)
+                if ((cell.militaryUnit != null && cell.militaryUnit.master != AI_Player) || (cell.civilianUnit != null && cell.civilianUnit.master != AI_Player))
                 {
-                    if(cell.militaryUnit.master == PlayerManager.instance.player)
-
-
-
-
-
-
-
                     diplomacy = AI_Diplomacy.Offensive;
                     turnsSinceOffensive = 0;
                 }

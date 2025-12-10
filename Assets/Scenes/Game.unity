@@ -3753,6 +3753,7 @@ MonoBehaviour:
   <hexSize>k__BackingField: 1
   <batchSize>k__BackingField: 200
   terrainTypes: []
+  buildings: []
   <undiscoveredTilePrefab>k__BackingField: {fileID: 4969734262045406440, guid: fbd44e8005e00654ea3b8de9c1092ae9, type: 3}
   <undiscoveredTileHigh>k__BackingField: 1
   <tileContainer>k__BackingField: {fileID: 1327948545}
@@ -4200,6 +4201,7 @@ MonoBehaviour:
   unitContainer: {fileID: 1873286444}
   militaryUnits: []
   civilianUnits: []
+  buildings: []
   nextAvailableId: 0
   lastDistance: 1
   movingUnitsCount: 0
@@ -4625,6 +4627,7 @@ MonoBehaviour:
   - Yvonnick
   - Zacharie
   - "Z\xE9phirin"
+  canBoatResearch: {fileID: 11400000, guid: dc23ec56203f81e42a5daf40a7cce2b4, type: 2}
   unitActionsPanel: {fileID: 1232123677}
   unitActionsContainer: {fileID: 578903348}
   unitActionsButtonTemplate: {fileID: 2218908466999057739, guid: 96a48dfb09f8a5245877f6c76ecb3d77, type: 3}
@@ -8916,6 +8919,16 @@ MonoBehaviour:
     livery:
       backgroundColor: {r: 0, g: 0, b: 0, a: 0}
       spriteColor: {r: 0, g: 0, b: 0, a: 0}
+  diplomacy: 0
+  turnsSinceOffensive: 0
+  isWorking: 0
+  nonAgressionTurnsNumber: 10
+  units: []
+  cities: []
+  currentResearch: {fileID: 0}
+  currentResearchProgress: 0
+  researched: []
+  goldStock: 0
 --- !u!4 &1413470252
 Transform:
   m_ObjectHideFlags: 0
