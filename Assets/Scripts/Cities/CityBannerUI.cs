@@ -53,9 +53,29 @@ public class CityBannerUI : MonoBehaviour
 
     }
 
-    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn, bool isActive)
+    public void UpdateInfo(string name, int level, int turns, float damage, float maxHealth, Sprite prodIcon, int prodturn, bool isActive, Player player)
     {
         cityNameText.text = name;
+
+        healthBar.maxValue = maxHealth;
+        healthBar.minValue = 0f;
+
+        healthBar.value = maxHealth - damage;
+
+        if (player == AI_Manager.instance.AI_Player)
+        {
+            healthBar.gameObject.SetActive(true);
+            cityNameText.gameObject.SetActive(true);
+
+            levelText.gameObject.SetActive(false);
+            turnText.gameObject.SetActive(false);
+            currentProd.gameObject.SetActive(false);
+            currentProdTurn.gameObject.SetActive(false);
+
+            return;
+        }
+
+
         levelText.text = level.ToString();
 
         if (turns < 0)
@@ -73,11 +93,6 @@ public class CityBannerUI : MonoBehaviour
             turnText.color = Color.black;
             turnText.text = "--";
         }
-
-        healthBar.maxValue = maxHealth;
-        healthBar.minValue = 0f;
-
-        healthBar.value = maxHealth - damage;
 
         if(prodIcon != null)
         {

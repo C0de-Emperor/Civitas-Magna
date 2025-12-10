@@ -321,16 +321,15 @@ public class AI_Manager : MonoBehaviour
             {
                 // on produit un batiment renforçant la production de nourriture
                 AILog("Production d'un Building");
-                return new BuildingProductionItem
-                {
-                    bonusFood = UnityEngine.Random.Range(0.1f, 0.6f),
-                    bonusGold = 0,
-                    bonusHealth = 0,
-                    bonusProduction = 0,
-                    bonusScience = 0,
-
-                    costInProduction = 10
-                };
+                return CreateNewItem(
+                
+                    UnityEngine.Random.Range(0.1f, 0.6f),
+                    0,
+                    0,
+                    0,
+                    0,
+                    10
+                );
             }
         }
 
@@ -368,51 +367,59 @@ public class AI_Manager : MonoBehaviour
         if(AI_Player.sciencePower <= player.sciencePower * scienceFactor)
         {
             AILog("Production d'un Building Scientifique");
-            return new BuildingProductionItem
-            {
-                bonusFood = 0,
-                bonusGold = 0,
-                bonusHealth = 0,
-                bonusProduction = 0,
-                bonusScience = UnityEngine.Random.Range(0.1f, 0.3f),
-
-                costInProduction = 10
-            };
+            return CreateNewItem(
+                0,
+                0,
+                0,
+                0,
+                UnityEngine.Random.Range(0.1f, 0.3f),
+                10
+            );
         }
 
         if (AI_Player.ressourcesPower <= player.ressourcesPower * ressourceFactor)
         {
             AILog("Production d'un Building généraliste");
-            return new BuildingProductionItem
-            {
-                bonusFood = UnityEngine.Random.Range(0.1f, 0.2f),
-                bonusGold = UnityEngine.Random.Range(0.1f, 0.2f),
-                bonusHealth = UnityEngine.Random.Range(1, 5),
-                bonusProduction = UnityEngine.Random.Range(0.1f, 0.5f),
-                bonusScience = 0,
-
-                costInProduction = 10
-            };
+            return CreateNewItem(
+                UnityEngine.Random.Range(0.1f, 0.2f),
+                UnityEngine.Random.Range(0.1f, 0.2f),
+                UnityEngine.Random.Range(1, 5),
+                UnityEngine.Random.Range(0.1f, 0.5f),
+                0,
+                10
+            );
         }
 
         // si on arrive ici c'est que l'IA est en retard dans aucun domaine
         if(UnityEngine.Random.Range(0f, 1f) <= advantageFactor)
         {
             AILog("Production d'un Building généraliste");
-            return new BuildingProductionItem
-            {
-                bonusFood = UnityEngine.Random.Range(0.05f, 0.15f),
-                bonusGold = UnityEngine.Random.Range(0.05f, 0.10f),
-                bonusHealth = UnityEngine.Random.Range(1, 3),
-                bonusProduction = UnityEngine.Random.Range(0.05f, 0.2f),
-                bonusScience = UnityEngine.Random.Range(0.05f, 0.15f),
-
-                costInProduction = 10
-            };
+            return CreateNewItem(
+                UnityEngine.Random.Range(0.05f, 0.15f),
+                UnityEngine.Random.Range(0.05f, 0.10f),
+                UnityEngine.Random.Range(1, 3),
+                UnityEngine.Random.Range(0.05f, 0.2f),
+                UnityEngine.Random.Range(0.05f, 0.15f),
+                10
+            );
         }
 
 
         return null;
+    }
+
+    private BuildingProductionItem CreateNewItem(float food, float gold, int health, float prod, float science, float cost)
+    {
+        BuildingProductionItem item = ScriptableObject.CreateInstance<BuildingProductionItem>();
+
+        item.bonusFood = food;
+        item.bonusGold = gold;
+        item.bonusHealth = health;
+        item.bonusProduction = prod;
+        item.bonusScience = science;
+        item.costInProduction = cost;
+
+        return item;
     }
 
     private void ProcessUnits() // differencier les actives des inactives ; inactives = nouvel ordre ; active = verification de l'objectif et control
@@ -456,8 +463,6 @@ public class AI_Manager : MonoBehaviour
                         {
                             HexCell closestControlledCell = null;
                             float shortestPathCost = Mathf.Infinity;
-
-                            Debug.Log(controlledCells.Count);
 
                             foreach(var cell in controlledCells)
                             {

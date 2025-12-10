@@ -193,7 +193,8 @@ public class City : MonoBehaviour
                 GetCityMaxHealth(), 
                 currentProduction.icon, 
                 CityManager.instance.GetTurnsToProduce(currentProduction, this),
-                occupiedCell.isActive
+                occupiedCell.isActive,
+                master
             );
         else
             bannerUI.UpdateInfo(
@@ -204,7 +205,8 @@ public class City : MonoBehaviour
                 GetCityMaxHealth(), 
                 null, 
                 -1,
-                occupiedCell.isActive
+                occupiedCell.isActive,
+                master
             );
     }
 

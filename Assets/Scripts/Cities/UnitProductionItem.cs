@@ -7,7 +7,7 @@ public class UnitProductionItem : CityProductionItem
 
     public override void OnProductionComplete(City city)
     {
-        UnitManager.instance.AddUnit(unit, city.occupiedCell, PlayerManager.instance.player);
+        UnitManager.instance.AddUnit(unit, city.occupiedCell, city.master);
 
         Debug.Log($"{city.cityName} a entraîné {itemName}");
     }
