@@ -44,7 +44,7 @@ public class ProductionButton : MonoBehaviour
 
         var manager = BuildButtonManager.instance;
 
-        (int value, Sprite icon)[] bonuses =
+        (float value, Sprite icon)[] bonuses =
         {
         (building.bonusFood, manager.food),
         (building.bonusProduction, manager.prod),

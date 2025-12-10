@@ -35,8 +35,17 @@ public class AI_Manager : MonoBehaviour
     [Header("AI Parameters")]
     private int cityEvaluationRadius = 2;
     private int waitingTurn = 2;
+    private int maxSettlerAount = 1;
+
+    private float expansionFactor = 1f;
+    private float combatFactor = 1f;
+    private float scienceFactor = 1f;
+    private float ressourceFactor = 1f;
+    [Range(0f, 1f)] private float advantageFactor = 0.75f;
 
     public static AI_Manager instance;
+    
+
     private void Awake()
     {
         if (instance != null)
@@ -254,50 +263,156 @@ public class AI_Manager : MonoBehaviour
 
     private void ProcessCities()
     {
-        List<BuildingProductionItem> choosenBuildings = new List<BuildingProductionItem>();
+        List<CityProductionItem> choosenItems = new List<CityProductionItem>();
 
-        foreach(City city in cities)
+        
+
+        foreach (City city in cities)
         {
-            /*
-            faire une liste des choix fait par les autres villes,
-            evaluer la situation de l'IA pour chaque production -> ici on ne considere pas une prod en batiment comme le joueur mais directement une augmentation d'une des stats de la ville
-            => tenir compte des productions decidées de l'ia pour les autres villes a ce tour ci
+            if (city.currentProduction != null)
+                continue;
 
-            choisir la position avantageuse
+            AILog("Started");
+            CityProductionItem item = GetBestProductionItem(choosenItems);
+            choosenItems.Add(item);
 
-             faire comme ça : 
-            - avantage : on peut avoir une super profondeur d'arbre au tour par tour
-            -desavantage : colle moins au gameplay du joueur
-
-
-             */
-
-            GetBestBuilding(choosenBuildings);
-
-            //BuildingProductionItem i = new BuildingProductionItem
-            //{
-            //    ID = -1,
-            //    costInGoldPerTurn = 0,
-
-            //    bonusFood = 0,
-            //    bonusGold = 0,
-            //    bonusHealth = 0,
-            //    bonusProduction = 0,
-            //    bonusScience = 0,
-
-            //    buildingRequierments = new List<BuildingProductionItem>()
-            //};
+            
+            city.SetProduction(item);
         }
     }
 
-    private void GetBestBuilding(List<BuildingProductionItem> choosenBuildings)
+    private CityProductionItem GetBestProductionItem(List<CityProductionItem> choosenItems)
     {
-        // generer un arbre alterné (player, AI)
-    }
+        Player player = PlayerManager.instance.player;
 
-    private void EvaluateNode()
-    {
+        if (AI_Player.expansionPower <= player.expansionPower * expansionFactor)
+        {
+            // determiner me nombre de settler en production
+            int settlerAmount = 0;
+            foreach(CityProductionItem item in choosenItems)
+            {
+                if(item is UnitProductionItem unitItem)
+                {
+                    if(unitItem.unit is CivilianUnitType civilianUnit)
+                    {
+                        if (civilianUnit.job == CivilianUnitType.CivilianJob.Settler)
+                            settlerAmount++;
+                    }
+                }
+            }
 
+            // compter les settler présent sur le plateau
+            foreach(AIUnit AIUnit in units)
+            {
+                if (AIUnit.unit.unitType is CivilianUnitType civilianUnit)
+                {
+                    if (civilianUnit.job == CivilianUnitType.CivilianJob.Settler)
+                        settlerAmount++;
+                }
+            }
+
+            if(settlerAmount <= maxSettlerAount)
+            {
+                // on produit un settler
+                AILog("Production d'un Settler");
+                return BuildButtonManager.instance.GetSettlerProductionItem();
+            }
+            else
+            {
+                // on produit un batiment renforçant la production de nourriture
+                AILog("Production d'un Building");
+                return new BuildingProductionItem
+                {
+                    bonusFood = UnityEngine.Random.Range(0.1f, 0.6f),
+                    bonusGold = 0,
+                    bonusHealth = 0,
+                    bonusProduction = 0,
+                    bonusScience = 0,
+
+                    costInProduction = 10
+                };
+            }
+        }
+
+        if (AI_Player.combatPower <= player.combatPower * combatFactor)
+        {
+            // plus il y a d'unité en cours de prod plus on baisse la proba de lancer une nouvelle unit
+            // determiner me nombre d'unité de combat en production
+            int militaryUnitAmount = 0;
+            foreach (CityProductionItem item in choosenItems)
+            {
+                if (item is UnitProductionItem unitItem)
+                {
+                    if (unitItem.unit is MilitaryUnitType)
+                    {
+                        militaryUnitAmount++;
+                    }
+                }
+            }
+
+            if(militaryUnitAmount > 0)
+            {
+                if(UnityEngine.Random.Range(0f, 1f) <= 1 / militaryUnitAmount)
+                {
+                    AILog("Production d'une Unité Militaire");
+                    return BuildButtonManager.instance.GetRandomMilitaryUnit();
+                }
+            }
+            else
+            {
+                AILog("Production d'une Unité Militaire");
+                return BuildButtonManager.instance.GetRandomMilitaryUnit();
+            }
+        }
+
+        if(AI_Player.sciencePower <= player.sciencePower * scienceFactor)
+        {
+            AILog("Production d'un Building Scientifique");
+            return new BuildingProductionItem
+            {
+                bonusFood = 0,
+                bonusGold = 0,
+                bonusHealth = 0,
+                bonusProduction = 0,
+                bonusScience = UnityEngine.Random.Range(0.1f, 0.3f),
+
+                costInProduction = 10
+            };
+        }
+
+        if (AI_Player.ressourcesPower <= player.ressourcesPower * ressourceFactor)
+        {
+            AILog("Production d'un Building généraliste");
+            return new BuildingProductionItem
+            {
+                bonusFood = UnityEngine.Random.Range(0.1f, 0.2f),
+                bonusGold = UnityEngine.Random.Range(0.1f, 0.2f),
+                bonusHealth = UnityEngine.Random.Range(1, 5),
+                bonusProduction = UnityEngine.Random.Range(0.1f, 0.5f),
+                bonusScience = 0,
+
+                costInProduction = 10
+            };
+        }
+
+        // si on arrive ici c'est que l'IA est en retard dans aucun domaine
+        if(UnityEngine.Random.Range(0f, 1f) <= advantageFactor)
+        {
+            AILog("Production d'un Building généraliste");
+            return new BuildingProductionItem
+            {
+                bonusFood = UnityEngine.Random.Range(0.05f, 0.15f),
+                bonusGold = UnityEngine.Random.Range(0.05f, 0.10f),
+                bonusHealth = UnityEngine.Random.Range(1, 3),
+                bonusProduction = UnityEngine.Random.Range(0.05f, 0.2f),
+                bonusScience = UnityEngine.Random.Range(0.05f, 0.15f),
+
+                costInProduction = 10
+            };
+        }
+
+
+        return null;
     }
 
     private void ProcessUnits() // differencier les actives des inactives ; inactives = nouvel ordre ; active = verification de l'objectif et control
@@ -506,12 +621,20 @@ public class AI_Manager : MonoBehaviour
 
     public void ProcessDiplomacy()
     {
-        foreach(var city in cities)
+        foreach(City city in cities)
         {
-            foreach(var cell in city.controlledTiles.Values)
+            foreach(HexCell cell in city.controlledTiles.Values)
             {
-                if (cell.militaryUnit.master == PlayerManager.instance.player || cell.civilianUnit.master == PlayerManager.instance.player)
+                if (cell.militaryUnit != null || cell.civilianUnit.master == PlayerManager.instance.player)
                 {
+                    if(cell.militaryUnit.master == PlayerManager.instance.player)
+
+
+
+
+
+
+
                     diplomacy = AI_Diplomacy.Offensive;
                     turnsSinceOffensive = 0;
                 }
@@ -551,18 +674,4 @@ public class AIUnit
         this.cell = cell;
         this.unit = unit;
     }
-}
-
-[Serializable]
-public class BuildingTree
-{
-    public Dictionary<BuildingTreeNode, List<BuildingTreeNode>> nodes;
-}
-
-[Serializable]
-public class BuildingTreeNode
-{
-    public float score;
-    public Player player;
-    public BuildingProductionItem item;
 }

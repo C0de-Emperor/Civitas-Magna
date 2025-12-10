@@ -123,11 +123,23 @@ public class Player
         get
         {
             float value = 0;
-            foreach (var research in ResearchManager.instance.researched)
+            if(this == PlayerManager.instance.player)
             {
-                value += research.researchValue;
+                foreach (var research in ResearchManager.instance.researched)
+                {
+                    value += research.researchValue;
+                }
+                return value;
             }
-            return value;
+            if(this == AI_Manager.instance.AI_Player)
+            {
+                foreach (var research in AI_Manager.instance.researched)
+                {
+                    value += research.researchValue;
+                }
+                return value;
+            }
+            return -1f;
         }
         private set { }
     }

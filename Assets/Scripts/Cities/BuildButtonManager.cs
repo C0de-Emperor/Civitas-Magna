@@ -159,4 +159,34 @@ public class BuildButtonManager : MonoBehaviour
             contentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
         }
     }
+
+    public UnitProductionItem GetSettlerProductionItem()
+    {
+        foreach(UnitProductionItem item in allUnits)
+        {
+            if (item.unit is CivilianUnitType civilianUnit)
+            {
+                if (civilianUnit.job == CivilianUnitType.CivilianJob.Settler)
+                    return item;
+            }
+        }
+
+        throw new Exception("Settler not in allUnits");
+    }
+
+    internal UnitProductionItem GetRandomMilitaryUnit()
+    {
+        List<UnitProductionItem> items = new List<UnitProductionItem>();
+
+        foreach(UnitProductionItem item in allUnits)
+        {
+            if (item.unit is MilitaryUnitType militaryUnit)
+            {
+                if(militaryUnit.IsABoat == false)
+                    items.Add(item);
+            }
+        }
+
+        return items[UnityEngine.Random.Range(0, items.Count)];
+    }
 }
