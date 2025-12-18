@@ -224,6 +224,11 @@ public class UnitManager : MonoBehaviour
         float cellDistance = GetDistance(unitCell, cityCell);
         City city = CityManager.instance.cities[cityCell.offsetCoordinates];
 
+        if (unitCell.militaryUnit.hasAttacked)
+        {
+            return;
+        }
+
         if (cityCell.militaryUnit != null && cellDistance <= cityCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
             unitCell.militaryUnit.TakeDamage(cityCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité offensive prend des dégats si à portée de l'unité défensive
@@ -235,17 +240,14 @@ public class UnitManager : MonoBehaviour
         {
             ScheduleUnitRemoval(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
         }
+
+        unitCell.militaryUnit.hasAttacked = true;
     }
 
     // met à jour les unités à détruire
-    public IEnumerator UpdateScheduledToRemoveUnits()
+    public void UpdateScheduledToRemoveUnits()
     {
-        if(movingUnitsCount != 0)
-        {
-            yield return null;
-        }
-
-        foreach(var removeUnitData in unitsToRemove)
+        foreach (var removeUnitData in unitsToRemove)
         {
             RemoveUnit(removeUnitData.unitCategory, removeUnitData.cell);
         }
@@ -253,12 +255,25 @@ public class UnitManager : MonoBehaviour
         unitsToRemove.Clear();
     }
 
+    public IEnumerator UpdateScheduledToRemoveUnitsCoroutine()
+    {
+        if(movingUnitsCount != 0)
+        {
+            yield return null;
+        }
+
+        UpdateScheduledToRemoveUnits();
+    }
+
     // met à jour toutes les unités
     public void UpdateUnits()
     {
+        UpdateScheduledToRemoveUnits();
+
         foreach (var unit in units.Values)
         {
             unit.movesDone = 0; // réinitialise les mouvements réalisés
+            unit.hasAttacked = false;
 
             if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
             {
@@ -268,8 +283,10 @@ public class UnitManager : MonoBehaviour
                 }
             }
         }
-        
-        foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
+
+        List<int> unitIdsToMove = new List<int>(queuedUnitMovements.Keys);
+
+        foreach (var unitId in unitIdsToMove) // parcours la liste d'attente de déplacement d'unités
         {
             if (units.ContainsKey(unitId) && units[unitId].master != AI_Manager.instance.AI_Player)
             {
@@ -285,7 +302,7 @@ public class UnitManager : MonoBehaviour
             }
         }
 
-        StartCoroutine(UpdateScheduledToRemoveUnits());
+        StartCoroutine(UpdateScheduledToRemoveUnitsCoroutine());
     }
 
     public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack, bool finishedMovement)
@@ -592,6 +609,8 @@ public class UnitManager : MonoBehaviour
             AI_Manager.instance.GetAIUnit(unit.id).cell = newUnitCell;
         }
 
+        StartCoroutine(UpdateScheduledToRemoveUnitsCoroutine());
+
         return newUnitCell;
     }
 
@@ -600,7 +619,13 @@ public class UnitManager : MonoBehaviour
     {
         float cellDistance = GetDistance(attackerCell, defenderCell);
 
+        if (attackerCell.militaryUnit.hasAttacked)
+        {
+            return;
+        }
+
         defenderCell.militaryUnit.TakeDamage(attackerCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité défensive prend des dégats
+        attackerCell.militaryUnit.hasAttacked = true;
 
         if(cellDistance <= defenderCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
@@ -650,6 +675,11 @@ public class UnitManager : MonoBehaviour
 
         if(unit.master == AI_Manager.instance.AI_Player)
             AI_Manager.instance.RemoveAIUnit(unit);
+
+        if (queuedUnitMovements.ContainsKey(unit.id))
+        {
+            queuedUnitMovements.Remove(unit.id);
+        }
 
         units.Remove(unit.id);
         Destroy(unit.unitPin.gameObject);

@@ -22,7 +22,7 @@ MonoBehaviour:
   baseGoldCost: 0
   speciallyAccessibleTerrains: []
   unitCategory: 0
-  AttackPower: 10
+  AttackPower: 20
   DefensePower: 15
   MaxHealth: 100
   AttackRange: 1

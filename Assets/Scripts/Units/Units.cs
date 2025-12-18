@@ -1,4 +1,5 @@
 // classe qui stocke les données d'une unité
+using NUnit.Framework;
 using UnityEngine;
 
 public class Unit
@@ -19,6 +20,7 @@ public class Unit
     public float movesDone = 0; // le nombre de déplacements effectués ce tour
     public int lastDamagingTurn = -1; // le dernier où l'unité a subi des dégats
     public int chargesLeft = 0;
+    public bool hasAttacked = false;
 
     // constructeur de la classe
     public Unit(Transform unitTransform, UnitType unitType, UnitPin unitPin, Player master)
