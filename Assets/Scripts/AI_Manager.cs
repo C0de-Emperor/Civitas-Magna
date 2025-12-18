@@ -62,7 +62,7 @@ public class AI_Manager : MonoBehaviour
 
     private void Start()
     {
-        TurnManager.instance.OnTurnChange += () => StartCoroutine(DoActions());
+        TurnManager.instance.OnTurnChange += DoActions;
 
         // Trouver toutes les sources de notre graphe de recherche
 
@@ -120,31 +120,21 @@ public class AI_Manager : MonoBehaviour
 
             HexCell spawnCell = grid.GetRandomCell(false, forbiddenTerrainTypes);
 
-            units.Add(
-                new AIUnit 
-                ( 
-                    spawnCell,
-                    UnitManager.instance.AddUnit(settler, spawnCell, AI_Player)
-                ));
-            units.Add(
-                new AIUnit
-                (
-                    spawnCell,
-                    UnitManager.instance.AddUnit(warrior, spawnCell, AI_Player) 
-                ));
+            UnitManager.instance.AddUnit(settler, spawnCell, AI_Player);
+            UnitManager.instance.AddUnit(warrior, spawnCell, AI_Player);
 
             grid.UpdateActiveTiles();
         }
     }
 
-    private IEnumerator DoActions()
+    private void DoActions()
     {
-        if (TurnManager.instance.currentTurn <= waitingTurn)
-            yield break;
+        if(TurnManager.instance.currentTurn <= waitingTurn)
+        {
+            return;
+        }
 
         isWorking = true;
-
-        yield return new WaitForSeconds(1f);
 
         ProcessDiplomacy();
 
@@ -442,6 +432,7 @@ public class AI_Manager : MonoBehaviour
             targetsCells.Add(city.occupiedCell);
         }
 
+        Debug.Log(units.Count);
         foreach (AIUnit AIUnit in units)
         {
             if (IsUnitInactive(AIUnit.unit))
@@ -459,7 +450,7 @@ public class AI_Manager : MonoBehaviour
                 {
                     if(diplomacy == AI_Diplomacy.Neutral)
                     {
-                        if (!controlledCells.Contains(AIUnit.cell) && controlledCells != null)
+                        if (!controlledCells.Contains(AIUnit.cell) && controlledCells.Count != 0)
                         {
                             HexCell closestControlledCell = null;
                             float shortestPathCost = Mathf.Infinity;
@@ -477,7 +468,6 @@ public class AI_Manager : MonoBehaviour
                                             pathCost += pathCell.terrainType.terrainCost;
                                         }
                                     }
-                                    Debug.Log(pathCost + " " + cell.offsetCoordinates);
                                     if (pathCost < shortestPathCost)
                                     {
                                         shortestPathCost = pathCost;
@@ -497,6 +487,7 @@ public class AI_Manager : MonoBehaviour
                     }
                     else
                     {
+                        AILog("attacking from "+AIUnit.cell.offsetCoordinates+" to " + targetsCells[0].offsetCoordinates);
                         UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
                         targetsCells.RemoveAt(0);
                     }
@@ -526,7 +517,7 @@ public class AI_Manager : MonoBehaviour
 
     }
 
-    private bool IsUnitInactive(Unit unit)
+    public bool IsUnitInactive(Unit unit)
     {
         return !UnitManager.instance.queuedUnitMovements.ContainsKey(unit.id);
     }
@@ -571,13 +562,10 @@ public class AI_Manager : MonoBehaviour
 
     public void RemoveAIUnit(Unit unit)
     {
-        foreach(AIUnit AIUnit in units)
+        AIUnit AI_unit = GetAIUnit(unit.id);
+        if(AI_unit != null)
         {
-            if(AIUnit.unit == unit)
-            {
-                units.Remove(AIUnit);
-                return;
-            }
+            units.Remove(AI_unit);
         }
     }
 
@@ -640,6 +628,7 @@ public class AI_Manager : MonoBehaviour
             {
                 if ((cell.militaryUnit != null && cell.militaryUnit.master != AI_Player) || (cell.civilianUnit != null && cell.civilianUnit.master != AI_Player))
                 {
+                    AILog("diplomacy became offensive");
                     diplomacy = AI_Diplomacy.Offensive;
                     turnsSinceOffensive = 0;
                 }
@@ -650,6 +639,7 @@ public class AI_Manager : MonoBehaviour
         {
             if (AI_unit.unit.lastDamagingTurn >= TurnManager.instance.currentTurn-1)
             {
+                AILog("diplomacy became offensive");
                 diplomacy = AI_Diplomacy.Offensive;
                 turnsSinceOffensive = 0;
             }
@@ -661,8 +651,22 @@ public class AI_Manager : MonoBehaviour
         }
         if(turnsSinceOffensive >= nonAgressionTurnsNumber)
         {
+            AILog("diplomacy became neutral");
             diplomacy = AI_Diplomacy.Neutral;
         }
+    }
+
+    public  AIUnit GetAIUnit(int unitId)
+    {
+        foreach(var AI_unit in units)
+        {
+            if (AI_unit.unit.id == unitId)
+            {
+                return AI_unit;
+            }
+        }
+
+        return null;
     }
 }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class UnitManager : MonoBehaviour
@@ -252,7 +253,18 @@ public class UnitManager : MonoBehaviour
         
         foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
         {
-            MoveQueuedUnit(unitId); // déplace l'unité
+            if (units[unitId].master != AI_Manager.instance.AI_Player)
+            {
+                MoveQueuedUnit(unitId); // déplace l'unité
+            }
+        }
+
+        foreach(var AI_Unit in AI_Manager.instance.units)
+        {
+            if (!AI_Manager.instance.IsUnitInactive(AI_Unit.unit))
+            {
+                AI_Unit.cell = MoveQueuedUnit(AI_Unit.unit.id);
+            }
         }
     }
 
@@ -487,7 +499,7 @@ public class UnitManager : MonoBehaviour
 
         if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], movementFinished)); // faire le déplacement et attaquer l'unité ennemie
+            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], false)); // faire le déplacement et attaquer l'unité ennemie
         }
         else
         {
@@ -508,6 +520,7 @@ public class UnitManager : MonoBehaviour
         Unit unit;
         if (unitCategory == UnitType.UnitCategory.military)
         {
+            Debug.Assert(unitCell.militaryUnit != null);
             unit = unitCell.militaryUnit;
             if (destCell.building.buildingName == Building.BuildingNames.City && CityManager.instance.cities[destCell.offsetCoordinates].master != unitCell.militaryUnit.master)
             {
@@ -520,6 +533,7 @@ public class UnitManager : MonoBehaviour
         }
         else
         {
+            Debug.Assert(unitCell.civilianUnit != null);
             unit = unitCell.civilianUnit;
         }
 
@@ -550,6 +564,11 @@ public class UnitManager : MonoBehaviour
 
         float beforeMoving = unit.movesDone;
         HexCell newUnitCell = MoveQueuedUnit(unit.id);
+
+        if (isAI)
+        {
+            AI_Manager.instance.GetAIUnit(unit.id).cell = newUnitCell;
+        }
 
         return newUnitCell;
     }
@@ -652,6 +671,11 @@ public class UnitManager : MonoBehaviour
 
         units.Add(unit.id, unit);
 
+        if (master == AI_Manager.instance.AI_Player)
+        {
+            AI_Manager.instance.units.Add(new AIUnit(cell, unit));
+        }
+
         CheckCellUnitsConflict(cell);
 
         return unit;
@@ -692,7 +716,7 @@ public class UnitManager : MonoBehaviour
                 else if (IsCellTraversable(currentCellData.cell.neighbours[i], unitType, isAI)) // si la case est traversable
                 {
                     CellData currentCellNeighboursData = new CellData(currentCellData, currentCellData.cell.neighbours[i], finishCell); // nouveau CellData pour le voisin actuel
-                    
+
                     int isCellDataVisited = GetCellDataIndex(currentCellNeighboursData, visitedCells); // l'indice du voisin actuel dans les cases visitées
                     if (isCellDataVisited < 0)
                     {
@@ -712,13 +736,13 @@ public class UnitManager : MonoBehaviour
                         visitedCells.RemoveAt(isCellDataVisited);
                         AddNewCellData(currentCellNeighboursData, visitedCells); // mettre à jour le voisin dans les cases visitées
                     }
-                    
+
                 }
             }
 
             iterations++;
         }
-        
+
 
         if (endCellFound)
         {
@@ -735,33 +759,6 @@ public class UnitManager : MonoBehaviour
         else
         {
             return null;
-        }
-    }
-
-    private class CellDataComparer : IComparer<CellData>
-    {
-        public int Compare(CellData a, CellData b)
-        {
-            if(a.FCost < b.FCost)
-            {
-                return -1;
-            }
-            else if(a.FCost > b.FCost)
-            {
-                return 1;
-            }
-            else
-            {
-                if(a.HCost < b.HCost)
-                {
-                    return -1;
-                }
-                if(a.HCost > b.HCost)
-                {
-                    return 1;
-                }
-                return 0;
-            }
         }
     }
 
@@ -824,20 +821,6 @@ public class UnitManager : MonoBehaviour
         if (!cell.isRevealed && !isAI) // si la case n'est pas révélée et que le joueur appelle la fonction
         {
             return true;
-        }
-        if(unitType.unitCategory == UnitType.UnitCategory.military)
-        {
-            if(cell.militaryUnit != null && !queuedUnitMovements.ContainsKey(cell.militaryUnit.id)) // si la case n'est pas occupée par une unité statique
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (cell.civilianUnit != null && !queuedUnitMovements.ContainsKey(cell.civilianUnit.id)) // si la case n'est pas occupée par une unité statique
-            {
-                return false;
-            }
         }
 
         if (isAI)
