@@ -201,8 +201,7 @@ public class MapGenerator : MonoBehaviour
             Task.Run(generateAction);
         }
         else
-        {
-            
+        { 
             generateAction.Invoke();
         }
     }

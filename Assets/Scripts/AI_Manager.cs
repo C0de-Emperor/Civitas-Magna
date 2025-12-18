@@ -8,14 +8,11 @@ public class AI_Manager : MonoBehaviour
 {
     [Header("References")]
     public HexGrid grid;
+    public Transform aiWonText;
 
     [Header("Global")]
     [HideInInspector] public Player AI_Player;
-    public AI_Diplomacy diplomacy;
-    public int turnsSinceOffensive;
     public bool isWorking = false;
-    public int nonAgressionTurnsNumber = 10;
-    public Transform aiWonText;
 
     [Header("Units")]
     [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
@@ -34,9 +31,12 @@ public class AI_Manager : MonoBehaviour
     public float goldStock;
 
     [Header("AI Parameters")]
+    public AI_Diplomacy diplomacy;
+    public int turnsSinceOffensive;
     private int cityEvaluationRadius = 2;
     private int waitingTurn = 2;
     private int maxSettlerAount = 1;
+    public int nonAgressionTurnsNumber = 10;
 
     private float expansionFactor = 1f;
     private float combatFactor = 1f;
@@ -44,9 +44,8 @@ public class AI_Manager : MonoBehaviour
     private float ressourceFactor = 1f;
     [Range(0f, 1f)] private float advantageFactor = 0.75f;
 
-    public static AI_Manager instance;
-    
 
+    public static AI_Manager instance;
     private void Awake()
     {
         if (instance != null)
@@ -85,7 +84,30 @@ public class AI_Manager : MonoBehaviour
         if (data == null)
             throw new Exception("SaveData is null");
 
-        //unactiveUnits = data. ...
+        AI_Player = data.AIdata.AIPlayerD;
+        goldStock = data.AIdata.goldD;
+
+        units = data.AIdata.unitsD;
+        targetedPositions = data.AIdata.targetedPositionsD;
+
+        cities = data.AIdata.citiesD;
+
+        currentResearch = data.AIdata.currentResearchD;
+        currentResearchProgress = data.AIdata.currentResearchProgressD;
+        researched = data.AIdata.researchedD;
+
+        diplomacy = data.AIdata.diplomacyD;
+        turnsSinceOffensive = data.AIdata.turnsSinceOffensiveD;
+        cityEvaluationRadius = data.AIdata.cityEvaluationRadiusD;
+        waitingTurn = data.AIdata.waitingTurnD;
+        maxSettlerAount = data.AIdata.maxSettlerAountD;
+        nonAgressionTurnsNumber = data.AIdata.nonAgressionTurnsNumberD;
+
+        expansionFactor = data.AIdata.expansionFactorD;
+        combatFactor = data.AIdata.combatFactorD;
+        scienceFactor = data.AIdata.scienceFactorD;
+        ressourceFactor = data.AIdata.ressourceFactorD;
+        advantageFactor = data.AIdata.advantageFactorD;
     }
 
     private void OnStartNewGame(NewGameData data)
@@ -699,6 +721,36 @@ public class AI_Manager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public AIData GetDataForSave()
+    {
+        return new AIData
+        {
+            AIPlayerD = AI_Player,
+            goldD = goldStock,
+
+            unitsD = units,
+            targetedPositionsD = targetedPositions,
+            citiesD = cities,
+
+            currentResearchD = currentResearch,
+            currentResearchProgressD = currentResearchProgress,
+            researchedD = researched,
+
+            diplomacyD = diplomacy,
+            turnsSinceOffensiveD = turnsSinceOffensive,
+            cityEvaluationRadiusD = cityEvaluationRadius,
+            waitingTurnD = waitingTurn,
+            maxSettlerAountD = maxSettlerAount,
+            nonAgressionTurnsNumberD = nonAgressionTurnsNumber,
+
+            expansionFactorD = expansionFactor,
+            combatFactorD = combatFactor,
+            scienceFactorD = scienceFactor,
+            ressourceFactorD = ressourceFactor,
+            advantageFactorD = advantageFactor
+        };
     }
 }
 

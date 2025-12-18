@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System;
+using System.Collections.Generic;
 
 public class SaveManager : MonoBehaviour
 {
@@ -68,6 +69,7 @@ public class SaveManager : MonoBehaviour
             ResearchManager researchM = ResearchManager.instance;
             UnitManager unitM = UnitManager.instance;
             PlayerManager playerM = PlayerManager.instance;
+            AI_Manager AI_Manager = AI_Manager.instance;
 
             AllCellData allCellData = grid.GetAllCellData();
 
@@ -92,7 +94,9 @@ public class SaveManager : MonoBehaviour
                 currentResearchProgress = researchM.currentResearchProgress,
                 researched = researchM.researched.ToArray(),
 
-                units = allCellData.unitData
+                units = allCellData.unitData,
+
+                AIdata = AI_Manager.GetDataForSave()
             };
 
             string json = JsonUtility.ToJson(data, true);
@@ -159,6 +163,9 @@ public class SaveData
 
     [Header("Units")]
     public UnitData[] units;
+
+    [Header("AI")]
+    public AIData AIdata;
 }
 
 [Serializable]
@@ -222,4 +229,39 @@ public class UnitData
 
     public queuedMovementData queuedMovementData;
 
+}
+
+[Serializable]
+public class AIData
+{
+    public Player AIPlayerD;
+
+    [Header("Units")]
+    public List<AIUnit> unitsD = new List<AIUnit>();
+    public List<Vector2Int> targetedPositionsD = new List<Vector2Int>();
+
+    [Header("Cities")]
+    public List<City> citiesD = new List<City>();
+
+    [Header("Research")]
+    public Research currentResearchD;
+    public float currentResearchProgressD = 0f;
+    public List<Research> researchedD = new List<Research>();
+
+    [Header("Gold")]
+    public float goldD;
+
+    [Header("AI Parameters")]
+    public AI_Diplomacy diplomacyD;
+    public int turnsSinceOffensiveD;
+    public int cityEvaluationRadiusD;
+    public int waitingTurnD;
+    public int maxSettlerAountD;
+    public int nonAgressionTurnsNumberD;
+
+    public float expansionFactorD;
+    public float combatFactorD;
+    public float scienceFactorD;
+    public float ressourceFactorD;
+    public float advantageFactorD;
 }
