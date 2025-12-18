@@ -21,44 +21,44 @@ public class UnitManager : MonoBehaviour
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
     public float lastDistance = 1;
     public int movingUnitsCount = 0;
-    public List<RemoveUnitData> unitsToRemove = new List<RemoveUnitData>();
 
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
     private int maxIterations = 10000;
     private float unitMoveSpeed = 200; //4f;
-    private float unitRotationSpeed =540f;
+    private float unitRotationSpeed = 540f;
     private float coUnitsScaleFactor = 0.7f;
     private Vector3 coUnitsOffset = new Vector3(0.4f, 0, 0);
-    [HideInInspector] public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex", 
-        "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa", 
+    [HideInInspector]
+    public string[] NAMES_LIST = { "Abel", "Achille", "Adam", "Adolphe", "Adrien", "Aimable", "Aimé", "Alain", "Alan", "Alban", "Albert", "Albin", "Alex",
+        "Alexandre", "Alexis", "Alfred", "Aliaume", "Alix", "Aloïs", "Alphonse", "Amaury", "Ambroise", "Amédée", "Amour", "Ananie", "Anastase", "Anatole", "André", "Andréa",
         "Ange", "Anicet", "Anselme", "Antelme", "Anthelme", "Anthony", "Antoine", "Antonin", "Apollinaire", "Ariel", "Aristide", "Armand", "Armel", "Arnaud", "Arsène", "Arthur",
-        "Aubin", "Auguste", "Augustin", "Aurélien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "Barnabé", "Barnard", "Barthélémy", "Basile", "Bastien", 
-        "Baudouin", "Benjamin", "Benoît", "Bérenger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille", 
-        "Casimir", "Cédric", "Céleste", "Célestin", "César", "Charles", "Charlie", "Christian", "Christophe", "Claude", "Clément", "Clovis", "Colin", "Côme", "Constant", 
-        "Constantin", "Corentin", "Crépin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "Désiré", "Didier", "Dimitri", "Dominique", 
-        "Donald", "Donatien", "Dorian", "Eden", "Edgar", "Edgard", "Edmond", "Edouard", "Elias", "Elie", "Eloi", "Emile", "Emilien", "Emmanuel", "Eric", "Ernest", "Erwan", 
-        "Erwann", "Etienne", "Eudes", "Eugène", "Evrard", "abien", "Fabrice", "Faustin", "Félicien", "Félix", "Ferdinand", "Fernand", "Fiacre", "Fidèle", "Firmin", "Flavien", 
-        "Florent", "Florentin", "Florian", "Floribert", "Fortuné", "Francis", "Franck", "François", "Frédéric", "Fulbert", "Gabin", "Gabriel", "Gaël", "Gaétan", "Gaëtan", 
+        "Aubin", "Auguste", "Augustin", "Aurélien", "Axel", "Aymard", "Aymeric", "Balthazar", "Baptiste", "Baptistin", "Barnabé", "Barnard", "Barthélémy", "Basile", "Bastien",
+        "Baudouin", "Benjamin", "Benoît", "Bérenger", "Bernard", "Bernardin", "Bertrand", "Bienvenu", "Blaise", "Boris", "Briac", "Brice", "Bruno", "Calixte", "Camille",
+        "Casimir", "Cédric", "Céleste", "Célestin", "César", "Charles", "Charlie", "Christian", "Christophe", "Claude", "Clément", "Clovis", "Colin", "Côme", "Constant",
+        "Constantin", "Corentin", "Crépin", "Cyprien", "Cyril", "Cyrille", "Damien", "Daniel", "Dany", "David", "Davy", "Denis", "Désiré", "Didier", "Dimitri", "Dominique",
+        "Donald", "Donatien", "Dorian", "Eden", "Edgar", "Edgard", "Edmond", "Edouard", "Elias", "Elie", "Eloi", "Emile", "Emilien", "Emmanuel", "Eric", "Ernest", "Erwan",
+        "Erwann", "Etienne", "Eudes", "Eugène", "Evrard", "abien", "Fabrice", "Faustin", "Félicien", "Félix", "Ferdinand", "Fernand", "Fiacre", "Fidèle", "Firmin", "Flavien",
+        "Florent", "Florentin", "Florian", "Floribert", "Fortuné", "Francis", "Franck", "François", "Frédéric", "Fulbert", "Gabin", "Gabriel", "Gaël", "Gaétan", "Gaëtan",
         "Gaspard", "Gaston", "Gatien", "Gauthier", "Gautier", "Geoffroy", "Georges", "Gérald", "Gérard", "Géraud", "Germain", "Gervais", "Ghislain", "Gilbert", "Gildas",
-        "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "Grégoire", "Gregory", "Guénolé", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain", 
-        "Gwenaël", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "Hervé", "Hippolythe", "Honoré", "Honorin", "Horace", "Hubert", 
+        "Gilles", "Godefroy", "Goeffrey", "Gontran", "Gonzague", "Gratien", "Grégoire", "Gregory", "Guénolé", "Guilain", "Guilem", "Guillaume", "Gustave", "Guy", "Guylain",
+        "Gwenaël", "Gwendal", "Habib", "Hadrien", "Hector", "Henri", "Herbert", "Hercule", "Hermann", "Hervé", "Hippolythe", "Honoré", "Honorin", "Horace", "Hubert",
         "Hugo", "Hugues", "Hyacinthe", "Ignace", "Igor", "Isidore", "Ismaël", "Jacky", "Jacob", "Jacques", "Jean", "Jérémie", "Jérémy", "Jérôme", "Joachim", "Jocelyn",
         "Joël", "Johan", "Jonas", "Jonathan", "Jordan", "José", "Joseph", "Joshua", "Josselin", "Josué", "Judicaël", "Jules", "Julian", "Julien", "Juste", "Justin",
-        "Kévin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "Léandre", "Léger", "Léo", "Léon", "Léonard", "Léonce", "Léopold", "Lilian", "Lionel", 
-        "Loan", "Loïc", "Loïck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "Maël", "Mahé", "Maixent", "Malo", "Manuel", 
-        "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "Matéo", "Mathéo", "Mathias", "Mathieu", 
-        "Mathis", "Mathurin", "Mathys", "Mattéo", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "Médard", "Melchior", "Merlin", 
-        "Michel", "Milo", "Modeste", "Morgan", "Naël", "Narcisse", "Nathan", "Nathanaël", "Nestor", "Nicolas", "Noa", "Noah", "Noé", "Noël", "Norbert", 
-        "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "Pacôme", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval", 
-        "Philémon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "Rafaël", "Raoul", "Raphaël", "Raymond", "Réginald", "Régis", 
+        "Kévin", "Lambert", "Lancelot", "Landry", "Laurent", "Lazare", "Léandre", "Léger", "Léo", "Léon", "Léonard", "Léonce", "Léopold", "Lilian", "Lionel",
+        "Loan", "Loïc", "Loïck", "Loris", "Louis", "Louison", "Loup", "Luc", "Luca", "Lucas", "Lucien", "Ludovic", "Maël", "Mahé", "Maixent", "Malo", "Manuel",
+        "Marc", "Marceau", "Marcel", "Marcelin", "Marcellin", "Marin", "Marius", "Martial", "Martin", "Martinien", "Matéo", "Mathéo", "Mathias", "Mathieu",
+        "Mathis", "Mathurin", "Mathys", "Mattéo", "Matthias", "Matthieu", "Maurice", "Maxence", "Maxime", "Maximilien", "Médard", "Melchior", "Merlin",
+        "Michel", "Milo", "Modeste", "Morgan", "Naël", "Narcisse", "Nathan", "Nathanaël", "Nestor", "Nicolas", "Noa", "Noah", "Noé", "Noël", "Norbert",
+        "Octave", "Octavien", "Odilon", "Olivier", "Omer", "Oscar", "Pacôme", "Parfait", "Pascal", "Patrice", "Patrick", "Paul", "Paulin", "Perceval",
+        "Philémon", "Philibert", "Philippe", "Pierre", "Pierrick", "Prosper", "Quentin", "Rafaël", "Raoul", "Raphaël", "Raymond", "Réginald", "Régis",
         "Rémi", "Rémy", "Renaud", "René", "Reynald", "Richard", "Robert", "Robin", "Rodolphe", "Rodrigue", "Roger", "Roland", "Romain", "Romaric", "Roméo",
         "Romuald", "Ronan", "Sacha", "Salomon", "Sam", "Sami", "Samson", "Samuel", "Samy", "Sasha", "Saturnin", "Sébastien", "Séraphin", "Serge", "Séverin",
-        "Sidoine", "Siméon", "Simon", "Sixte", "Stanislas", "Stéphane", "Sylvain", "Sylvère", "Sylvestre", "Tancrède", "Tanguy", "Théo", "Théodore", "Théophane", 
-        "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse", 
-        "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid", 
+        "Sidoine", "Siméon", "Simon", "Sixte", "Stanislas", "Stéphane", "Sylvain", "Sylvère", "Sylvestre", "Tancrède", "Tanguy", "Théo", "Théodore", "Théophane",
+        "Théophile", "Thibaud", "Thibaut", "Thierry", "Thilbault", "Thomas", "Tibère", "Timéo", "Timothé", "Timothée", "Titouan", "Tristan", "Tyméo", "Ulrich", "Ulysse",
+        "Urbain", "Uriel", "Valentin", "Valère", "Valérien", "Valéry", "Valmont", "Venceslas", "Vianney", "Victor", "Victorien", "Vincent", "Virgile", "Vivien", "Wilfrid",
         "William", "Xavier", "Yaël", "Yanis", "Yann", "Yannick", "Yohan", "Yves", "Yvon", "Yvonnick", "Zacharie", "Zéphirin" };
-    public Research canBoatResearch; 
+    public Research canBoatResearch;
 
     [Header("UI")]
     public Transform unitActionsPanel;
@@ -97,7 +97,7 @@ public class UnitManager : MonoBehaviour
     public void UpdatePinsScale(float newDistance)
     {
         lastDistance = newDistance;
-        foreach(var unit in units.Values)
+        foreach (var unit in units.Values)
         {
             unit.unitPin.UpdateScale(newDistance);
         }
@@ -105,7 +105,7 @@ public class UnitManager : MonoBehaviour
 
     private void CheckCellUnitsConflict(HexCell cell)
     {
-        if(cell.militaryUnit != null && cell.civilianUnit != null)
+        if (cell.militaryUnit != null && cell.civilianUnit != null)
         {
             cell.militaryUnit.unitTransform.localScale = Vector3.one * coUnitsScaleFactor;
             cell.civilianUnit.unitTransform.localScale = Vector3.one * coUnitsScaleFactor;
@@ -117,14 +117,14 @@ public class UnitManager : MonoBehaviour
 
     public UnitType GetUnitType(string unitTypeName)
     {
-        foreach(var unit in militaryUnits)
+        foreach (var unit in militaryUnits)
         {
             if (unit.name == unitTypeName)
             {
                 return unit;
             }
         }
-        foreach(var unit in civilianUnits)
+        foreach (var unit in civilianUnits)
         {
             if (unit.name == unitTypeName)
             {
@@ -141,7 +141,7 @@ public class UnitManager : MonoBehaviour
 
         if (data != null)
         {
-            foreach(var unitData in data.units)
+            foreach (var unitData in data.units)
             {
                 Unit unit = AddUnit(unitData.unitType, grid.GetTile(unitData.cellCoordinates), PlayerManager.instance.playerEntities[unitData.masterId]);
                 unit.currentHealth = unitData.currentHealth;
@@ -149,15 +149,15 @@ public class UnitManager : MonoBehaviour
                 unit.lastDamagingTurn = unitData.lastDamagingTurn;
                 unit.chargesLeft = unitData.chargesLeft;
 
-                if (unitData.queuedMovementData.path.Count > 1) 
+                if (unitData.queuedMovementData.path.Count > 1)
                 {
                     queuedMovementData movementData = unitData.queuedMovementData;
-                    for(int i = 0; i < movementData.path.Count; i++)
+                    for (int i = 0; i < movementData.path.Count; i++)
                     {
                         movementData.path[i] = grid.GetTile(movementData.path[i].offsetCoordinates);
                     }
 
-                    queuedUnitMovements.Add(unit.id, movementData); 
+                    queuedUnitMovements.Add(unit.id, movementData);
                 }
             }
         }
@@ -170,7 +170,7 @@ public class UnitManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach(Building building in type.buildableBuildings)
+        foreach (Building building in type.buildableBuildings)
         {
             BuildActionButton actionButton = Instantiate(unitActionsButtonTemplate, unitActionsContainer).GetComponent<BuildActionButton>();
             actionButton.building = building;
@@ -186,7 +186,7 @@ public class UnitManager : MonoBehaviour
 
     public void UpdateActionPanel(HexCell cell)
     {
-        foreach(Transform child in unitActionsContainer.transform)
+        foreach (Transform child in unitActionsContainer.transform)
         {
             BuildActionButton button = child.GetComponent<BuildActionButton>();
             button.UpdateButton(cell);
@@ -200,7 +200,7 @@ public class UnitManager : MonoBehaviour
 
     public void CivilianUnitAction(HexCell cell, Building.BuildingNames buildingName)
     {
-        if(cell.civilianUnit == null)
+        if (cell.civilianUnit == null)
         {
             Debug.LogError("trying to execute action with no selected unit ?!");
             return;
@@ -213,7 +213,6 @@ public class UnitManager : MonoBehaviour
                 RemoveUnit(UnitType.UnitCategory.civilian, cell);
                 CheckCellUnitsConflict(cell);
                 cell.civilianUnit = null;
-                SelectionManager.instance.selectedUnit = null;
             }
         }
     }
@@ -224,11 +223,6 @@ public class UnitManager : MonoBehaviour
         float cellDistance = GetDistance(unitCell, cityCell);
         City city = CityManager.instance.cities[cityCell.offsetCoordinates];
 
-        if (unitCell.militaryUnit.hasAttacked)
-        {
-            return;
-        }
-
         if (cityCell.militaryUnit != null && cellDistance <= cityCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
             unitCell.militaryUnit.TakeDamage(cityCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité offensive prend des dégats si à portée de l'unité défensive
@@ -238,42 +232,16 @@ public class UnitManager : MonoBehaviour
 
         if (!unitCell.militaryUnit.IsAlive())
         {
-            ScheduleUnitRemoval(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
         }
-
-        unitCell.militaryUnit.hasAttacked = true;
-    }
-
-    // met à jour les unités à détruire
-    public void UpdateScheduledToRemoveUnits()
-    {
-        foreach (var removeUnitData in unitsToRemove)
-        {
-            RemoveUnit(removeUnitData.unitCategory, removeUnitData.cell);
-        }
-
-        unitsToRemove.Clear();
-    }
-
-    public IEnumerator UpdateScheduledToRemoveUnitsCoroutine()
-    {
-        if(movingUnitsCount != 0)
-        {
-            yield return null;
-        }
-
-        UpdateScheduledToRemoveUnits();
     }
 
     // met à jour toutes les unités
     public void UpdateUnits()
     {
-        UpdateScheduledToRemoveUnits();
-
         foreach (var unit in units.Values)
         {
             unit.movesDone = 0; // réinitialise les mouvements réalisés
-            unit.hasAttacked = false;
 
             if (unit.unitType.unitCategory == UnitType.UnitCategory.military)
             {
@@ -294,15 +262,15 @@ public class UnitManager : MonoBehaviour
             }
         }
 
-        foreach(var AI_Unit in AI_Manager.instance.units)
+        List<AIUnit> unitList = new List<AIUnit>(AI_Manager.instance.units);
+
+        foreach (var AI_Unit in unitList)
         {
             if (units.ContainsKey(AI_Unit.unit.id) && !AI_Manager.instance.IsUnitInactive(AI_Unit.unit))
             {
                 AI_Unit.cell = MoveQueuedUnit(AI_Unit.unit.id);
             }
         }
-
-        StartCoroutine(UpdateScheduledToRemoveUnitsCoroutine());
     }
 
     public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack, bool finishedMovement)
@@ -320,9 +288,9 @@ public class UnitManager : MonoBehaviour
 
                 if (nextCell.militaryUnit == null || queuedUnitMovements.ContainsKey(nextCell.militaryUnit.id))
                 {
-                    if(nextCell.civilianUnit != null && nextCell.civilianUnit.master != unit.master)
+                    if (nextCell.civilianUnit != null && nextCell.civilianUnit.master != unit.master)
                     {
-                        ScheduleUnitRemoval(UnitType.UnitCategory.civilian, nextCell);
+                        RemoveUnit(UnitType.UnitCategory.civilian, nextCell);
                     }
 
                     nextCell.militaryUnit = unit;
@@ -506,13 +474,13 @@ public class UnitManager : MonoBehaviour
         Queue<HexCell> nextMoves = new Queue<HexCell>();
         nextMoves.Enqueue(path[0]);
 
-        if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
+        if (movementData.unitToAttackId != -1 && (path[path.Count - 1].militaryUnit == null || path[path.Count - 1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
         {
             queuedUnitMovements[unit.id].unitAction.Invoke();
             queuedUnitMovements.Remove(unit.id); // enlever l'unité de la liste d'attente de déplacements
             return dataToReturn;
         }
-        if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
+        if (movementData.attacksACity && CityManager.instance.cities[path[path.Count - 1].offsetCoordinates].master == unit.master)
         {
             queuedUnitMovements[unit.id].unitAction.Invoke();
             queuedUnitMovements.Remove(unit.id); // enlever l'unité de la liste d'attente de déplacements
@@ -520,7 +488,7 @@ public class UnitManager : MonoBehaviour
         }
 
         float pathCost = 0f;
-        while (path.Count>1 && IsCellTraversable(path[1], unit.unitType, false) && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach  || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId==-1 && !movementData.attacksACity)|| GetDistance(path[0], path[path.Count-1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
+        while (path.Count > 1 && IsCellTraversable(path[1], unit.unitType, false) && (unit.movesDone + pathCost + path[1].terrainType.terrainCost <= unit.unitType.MoveReach || unit.unitType.speciallyAccessibleTerrains.Contains(path[1].terrainType)) && ((movementData.unitToAttackId == -1 && !movementData.attacksACity) || GetDistance(path[0], path[path.Count - 1]) > unit.GetUnitMilitaryData().AttackRange)) // tant que l'unité peut se déplacer et qu'on n'est pas à portée de l'unité à attaquer
         {
             nextMoves.Enqueue(path[1]); // mettre dans la file la case sur laquelle on doit aller
             pathCost += path[1].terrainType.terrainCost;
@@ -538,7 +506,7 @@ public class UnitManager : MonoBehaviour
 
         if ((movementData.unitToAttackId != -1 && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange) || (movementData.attacksACity == true && GetDistance(path[0], path[path.Count - 1]) <= unit.GetUnitMilitaryData().AttackRange))
         {
-            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count-1], false)); // faire le déplacement et attaquer l'unité ennemie
+            StartCoroutine(MoveUnit(nextMoves, unit, path[path.Count - 1], false)); // faire le déplacement et attaquer l'unité ennemie
         }
         else
         {
@@ -609,8 +577,6 @@ public class UnitManager : MonoBehaviour
             AI_Manager.instance.GetAIUnit(unit.id).cell = newUnitCell;
         }
 
-        StartCoroutine(UpdateScheduledToRemoveUnitsCoroutine());
-
         return newUnitCell;
     }
 
@@ -619,36 +585,21 @@ public class UnitManager : MonoBehaviour
     {
         float cellDistance = GetDistance(attackerCell, defenderCell);
 
-        if (attackerCell.militaryUnit.hasAttacked)
-        {
-            return;
-        }
-
         defenderCell.militaryUnit.TakeDamage(attackerCell.militaryUnit.GetUnitMilitaryData().AttackPower); // l'unité défensive prend des dégats
-        attackerCell.militaryUnit.hasAttacked = true;
 
-        if(cellDistance <= defenderCell.militaryUnit.GetUnitMilitaryData().AttackRange)
+        if (cellDistance <= defenderCell.militaryUnit.GetUnitMilitaryData().AttackRange)
         {
             attackerCell.militaryUnit.TakeDamage(defenderCell.militaryUnit.GetUnitMilitaryData().DefensePower); // l'unité offensive prend des dégats si à portée de l'unité défensive
         }
 
         if (!attackerCell.militaryUnit.IsAlive())
         {
-            ScheduleUnitRemoval(UnitType.UnitCategory.military, attackerCell); // supprimer l'unité offensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, attackerCell); // supprimer l'unité offensive si morte
         }
         if (!defenderCell.militaryUnit.IsAlive())
         {
-            ScheduleUnitRemoval(UnitType.UnitCategory.military, defenderCell); // supprimer l'unité défensive si morte
+            RemoveUnit(UnitType.UnitCategory.military, defenderCell); // supprimer l'unité défensive si morte
         }
-    }
-
-    // enlister l'unité pour sa supression
-    public void ScheduleUnitRemoval(UnitType.UnitCategory unitCategory, HexCell unitCell)
-    {
-        RemoveUnitData removeUnitData;
-        removeUnitData.unitCategory = unitCategory;
-        removeUnitData.cell = unitCell;
-        unitsToRemove.Add(removeUnitData);
     }
 
     // enlever une unité de la case
@@ -668,18 +619,8 @@ public class UnitManager : MonoBehaviour
             unitActionsPanel.gameObject.SetActive(false);
         }
 
-        if(unit == null)
-        {
-            return;
-        }
-
-        if(unit.master == AI_Manager.instance.AI_Player)
+        if (unit.master == AI_Manager.instance.AI_Player)
             AI_Manager.instance.RemoveAIUnit(unit);
-
-        if (queuedUnitMovements.ContainsKey(unit.id))
-        {
-            queuedUnitMovements.Remove(unit.id);
-        }
 
         units.Remove(unit.id);
         Destroy(unit.unitPin.gameObject);
@@ -870,8 +811,8 @@ public class UnitManager : MonoBehaviour
     // renvoie la distance entre deux cases (en nombre de cases, pas distance brute)
     public float GetDistance(HexCell cell1, HexCell cell2)
     {
-        float euclideanDistance = Vector3.Distance(cell1.cubeCoordinates, cell2.cubeCoordinates)/grid.hexSize;
-        float realDistance = euclideanDistance/Mathf.Sqrt(2);
+        float euclideanDistance = Vector3.Distance(cell1.cubeCoordinates, cell2.cubeCoordinates) / grid.hexSize;
+        float realDistance = euclideanDistance / Mathf.Sqrt(2);
         return Mathf.Round(realDistance * 100) / 100;
     }
 
@@ -885,9 +826,9 @@ public class UnitManager : MonoBehaviour
 
         if (isAI)
         {
-            foreach(var city in AI_Manager.instance.cities)
+            foreach (var city in AI_Manager.instance.cities)
             {
-                if(cell == city.occupiedCell)
+                if (cell == city.occupiedCell)
                 {
                     return false;
                 }
@@ -924,7 +865,7 @@ public class UnitManager : MonoBehaviour
         List<BenchMarkResult> results = new List<BenchMarkResult>();
         string resultString = "[" + GetDistance(startCell, endCell).ToString().Replace(",", ".");
 
-        for (float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i+= (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
+        for (float i = heuristicFactorProperties[0]; i <= heuristicFactorProperties[1]; i += (heuristicFactorProperties[1] - heuristicFactorProperties[0]) / heuristicFactorProperties[2])
         {
             for (float j = heuristicScalingProperties[0]; j <= heuristicScalingProperties[1]; j += (heuristicScalingProperties[1] - heuristicScalingProperties[0]) / heuristicScalingProperties[2])
             {
@@ -1058,10 +999,4 @@ public struct BenchMarkResult
     public float pathCost;
     public float pathCost2;
     public float pathCost3;
-}
-
-public struct RemoveUnitData
-{
-    public UnitType.UnitCategory unitCategory;
-    public HexCell cell;
 }

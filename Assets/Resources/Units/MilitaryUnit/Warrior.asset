@@ -23,7 +23,7 @@ MonoBehaviour:
   speciallyAccessibleTerrains: []
   unitCategory: 0
   AttackPower: 20
-  DefensePower: 15
+  DefensePower: 10
   MaxHealth: 100
   AttackRange: 1
   HealthRegeneration: 5
