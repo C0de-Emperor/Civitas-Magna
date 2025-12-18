@@ -57,9 +57,9 @@ Le joueur contrôle une civilisation, explore la carte, construit des bâtiments
 Vous commencez la partie sur une carte hexagonale avec seulement deux unités : un colon, qui vous servira plus tard à créer votre première ville et un guerrier, utile pour défendre votre précieux colon.
 L'objectif est de conquérir toute ville que va construire l'IA adverse. Une fois votre première cité établie, le jeu commence pleinement. Grâce à la production de votre cité, vous allez pouvoir rechercher vos premières technologies et ainsi développer votre cité. Pour gagner, avancez dans les recherches pour prendre l'ascendant technologique sur votre adversaire puis écrasez le avec votre puissance militaire.
 
-
-
-
-
-
-
+## 4. Gameplay
+Les touches à utiliser sont les suivantes:
+- ZQSD pour se déplacer sur la carte (à la manière des touches fléchées)
+- p pour passer au tour suivant
+- clic gauche pour sélectionner une case (cliquer à nouveau pour sélectionner unité militaire, civile ou cité)
+- clic droit avec une unité de sélectionnée pour la faire aller à la case survolée par la souris
