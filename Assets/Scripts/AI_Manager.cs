@@ -572,14 +572,11 @@ public class AI_Manager : MonoBehaviour
                 if(cell.militaryUnit!=null || cell.civilianUnit!=null)
                     continue;
 
-                if (UnitManager.instance.GetShortestPath(position, cell, UnitManager.instance.GetUnitType("Settler")) == null)
-                    continue;
-
                 float value = EvaluateCellForCity(coord);
                 
                 if (value > bestValue)
                 {
-                    if (UnitManager.instance.GetShortestPath(position, tile, UnitManager.instance.GetUnitType("Settler")) == null)
+                    if (UnitManager.instance.GetShortestPath(position, cell, UnitManager.instance.GetUnitType("Settler")) == null)
                         continue;
 
                     bestValue = value;
