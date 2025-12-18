@@ -51,7 +51,7 @@ public class AI_Manager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de AI_Manager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de AI_Manager dans la scï¿½ne");
             return;
         }
         instance = this;
@@ -171,26 +171,26 @@ public class AI_Manager : MonoBehaviour
     {
         if (currentResearch == null)
         {
-            // trouver la prochaine recherche à realiser
+            // trouver la prochaine recherche ï¿½ realiser
 
 
-            // la recherche X est en relation avec Y (X -> Y) si X a besoin que Y soit recherché pour être recherché
+            // la recherche X est en relation avec Y (X -> Y) si X a besoin que Y soit recherchï¿½ pour ï¿½tre recherchï¿½
             /*
-            D = on part des sources, c'est à dire les recherches qui ne debloque rien.
+            D = on part des sources, c'est ï¿½ dire les recherches qui ne debloque rien.
 
             on prend un element A de D,
 
 
-            si A n'est pas recherché
+            si A n'est pas recherchï¿½
             
-                si toutes les dependances de A sont recherché :
-                    on ajoute A à la liste des recherches possibles
+                si toutes les dependances de A sont recherchï¿½ :
+                    on ajoute A ï¿½ la liste des recherches possibles
                 
                 sinon
                     on ajoute les dependances de A a D
 
 
-            si A recherché
+            si A recherchï¿½
                 rien
             */
             if (currentResearch != null)
@@ -291,7 +291,7 @@ public class AI_Manager : MonoBehaviour
                 }
             }
 
-            // compter les settler présent sur le plateau
+            // compter les settler prï¿½sent sur le plateau
             foreach(AIUnit AIUnit in units)
             {
                 if (AIUnit.unit.unitType is CivilianUnitType civilianUnit)
@@ -309,7 +309,7 @@ public class AI_Manager : MonoBehaviour
             }
             else
             {
-                // on produit un batiment renforçant la production de nourriture
+                // on produit un batiment renforï¿½ant la production de nourriture
                 AILog("Production d'un Building");
                 return CreateNewItem(
                 
@@ -325,8 +325,8 @@ public class AI_Manager : MonoBehaviour
 
         if (AI_Player.combatPower <= player.combatPower * combatFactor)
         {
-            // plus il y a d'unité en cours de prod plus on baisse la proba de lancer une nouvelle unit
-            // determiner me nombre d'unité de combat en production
+            // plus il y a d'unitï¿½ en cours de prod plus on baisse la proba de lancer une nouvelle unit
+            // determiner me nombre d'unitï¿½ de combat en production
             int militaryUnitAmount = 0;
             foreach (CityProductionItem item in choosenItems)
             {
@@ -343,13 +343,13 @@ public class AI_Manager : MonoBehaviour
             {
                 if(UnityEngine.Random.Range(0f, 1f) <= 1 / militaryUnitAmount)
                 {
-                    AILog("Production d'une Unité Militaire");
+                    AILog("Production d'une Unitï¿½ Militaire");
                     return BuildButtonManager.instance.GetRandomMilitaryUnit();
                 }
             }
             else
             {
-                AILog("Production d'une Unité Militaire");
+                AILog("Production d'une Unitï¿½ Militaire");
                 return BuildButtonManager.instance.GetRandomMilitaryUnit();
             }
         }
@@ -369,7 +369,7 @@ public class AI_Manager : MonoBehaviour
 
         if (AI_Player.ressourcesPower <= player.ressourcesPower * ressourceFactor)
         {
-            AILog("Production d'un Building généraliste");
+            AILog("Production d'un Building gï¿½nï¿½raliste");
             return CreateNewItem(
                 UnityEngine.Random.Range(0.1f, 0.2f),
                 UnityEngine.Random.Range(0.1f, 0.2f),
@@ -383,7 +383,7 @@ public class AI_Manager : MonoBehaviour
         // si on arrive ici c'est que l'IA est en retard dans aucun domaine
         if(UnityEngine.Random.Range(0f, 1f) <= advantageFactor)
         {
-            AILog("Production d'un Building généraliste");
+            AILog("Production d'un Building gï¿½nï¿½raliste");
             return CreateNewItem(
                 UnityEngine.Random.Range(0.05f, 0.15f),
                 UnityEngine.Random.Range(0.05f, 0.10f),
@@ -511,23 +511,30 @@ public class AI_Manager : MonoBehaviour
 
     private void GiveOrderToSettler(CivilianUnitType settler, HexCell position, Player master)
     {
-        HexCell bestCellForCity = GetBestCellForSettler(position);
-        targetedPositions.Add(bestCellForCity.offsetCoordinates);
+        //HexCell bestCellForCity = GetBestCellForSettler(position);
 
-        AILog($"Settler need to go to : {bestCellForCity.offsetCoordinates}");
-
-        UnitManager.instance.QueueUnitMovement(
-            position, 
-            bestCellForCity, 
-            UnitType.UnitCategory.civilian, 
-            () =>
+        StartCoroutine(GetBestCellForSettler(position, bestCellForCity =>
+        {
+            if (bestCellForCity != null)
             {
-                UnitManager.instance.CivilianUnitAction(bestCellForCity, Building.BuildingNames.City);
-                targetedPositions.Remove(bestCellForCity.offsetCoordinates);
-            }, 
-            true
-        );
+                targetedPositions.Add(bestCellForCity.offsetCoordinates);
 
+                AILog($"Settler need to go to : {bestCellForCity.offsetCoordinates}");
+
+                UnitManager.instance.QueueUnitMovement(
+                    position,
+                    bestCellForCity,
+                    UnitType.UnitCategory.civilian,
+                    () =>
+                    {
+                        UnitManager.instance.CivilianUnitAction(bestCellForCity, Building.BuildingNames.City);
+                        targetedPositions.Remove(bestCellForCity.offsetCoordinates);
+                    },
+                    true
+                );
+            }
+                
+        }));
     }
 
     public bool IsUnitInactive(Unit unit)
@@ -535,8 +542,10 @@ public class AI_Manager : MonoBehaviour
         return !UnitManager.instance.queuedUnitMovements.ContainsKey(unit.id);
     }
 
-    private HexCell GetBestCellForSettler(HexCell position)
+    private IEnumerator GetBestCellForSettler(HexCell position, Action<HexCell> callback)
     {
+        int i = 0;
+
         float bestValue = float.MinValue;
         Vector2Int bestCoord = new Vector2Int(-9999, -9999);
 
@@ -544,6 +553,9 @@ public class AI_Manager : MonoBehaviour
         {
             for (int x = 0; x < grid.gridSize.width; x++)
             {
+                if (i % 100 == 0)
+                    yield return new WaitForEndOfFrame();
+
                 Vector2Int coord = new Vector2Int(x, y);
 
                 HexCell cell = grid.GetTile(coord);
@@ -564,18 +576,23 @@ public class AI_Manager : MonoBehaviour
                     continue;
 
                 float value = EvaluateCellForCity(coord);
-
+                
                 if (value > bestValue)
                 {
+                    if (UnitManager.instance.GetShortestPath(position, tile, UnitManager.instance.GetUnitType("Settler")) == null)
+                        continue;
+
                     bestValue = value;
                     bestCoord = coord;
+
+                    i++;
                 }
             }
         }
 
-        return (bestCoord.x >= 0)
+        callback?.Invoke((bestCoord.x >= 0)
             ? grid.GetTile(bestCoord)
-            : null;
+            : null);
     }
 
     public void RemoveAIUnit(Unit unit)
