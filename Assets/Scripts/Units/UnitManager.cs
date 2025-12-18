@@ -635,12 +635,6 @@ public class UnitManager : MonoBehaviour
             return null;
         }
 
-        if (!IsCellTraversable(cell, unitType, master!=PlayerManager.instance.player))
-        {
-            Debug.LogError($"Trying to add unit {unitType.name} on non-traversable tile.");
-            return null;
-        }
-
         // Instantiation
         Transform unitTransform = Instantiate(
             unitType.unitPrefab.transform,

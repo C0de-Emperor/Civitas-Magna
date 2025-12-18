@@ -15,6 +15,7 @@ public class AI_Manager : MonoBehaviour
     public int turnsSinceOffensive;
     public bool isWorking = false;
     public int nonAgressionTurnsNumber = 10;
+    public Transform aiWonText;
 
     [Header("Units")]
     [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
@@ -421,14 +422,19 @@ public class AI_Manager : MonoBehaviour
                 targetsCells.Add(cell);
             }
         }
+        foreach (var city in CityManager.instance.cities.Values)
+        {
+            if(city.master == PlayerManager.instance.player)
+            {
+                targetsCells.Add(city.occupiedCell);
+            }
+        }
 
         List<HexCell> controlledCells = new List<HexCell>();
         foreach(var city in cities)
         {
             controlledCells.AddRange(city.controlledTiles.Values);
             controlledCells.Remove(city.occupiedCell);
-
-            targetsCells.Add(city.occupiedCell);
         }
 
         foreach (AIUnit AIUnit in units)
@@ -486,9 +492,17 @@ public class AI_Manager : MonoBehaviour
                     }
                     else
                     {
-                        AILog("attacking from "+AIUnit.cell.offsetCoordinates+" to " + targetsCells[0].offsetCoordinates);
-                        UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
-                        targetsCells.RemoveAt(0);
+                        if(targetsCells.Count == 0)
+                        {
+                            Debug.Log($"<color=#FF0000><b>AI WON</b></color>");
+                            aiWonText.gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            AILog("attacking from " + AIUnit.cell.offsetCoordinates + " to " + targetsCells[0].offsetCoordinates);
+                            UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
+                            targetsCells.RemoveAt(0);
+                        }
                     }
                 }
             }
@@ -532,16 +546,21 @@ public class AI_Manager : MonoBehaviour
             {
                 Vector2Int coord = new Vector2Int(x, y);
 
+                HexCell cell = grid.GetTile(coord);
+
                 if (CityManager.instance.tileToCity.ContainsKey(coord))
                     continue;
 
-                if (grid.GetTile(coord) == null)
+                if (cell == null)
                     continue;
 
-                if (!grid.GetTile(coord).terrainType.build.Contains(Building.BuildingNames.City))
+                if (!cell.terrainType.build.Contains(Building.BuildingNames.City))
                     continue;
 
-                if (UnitManager.instance.GetShortestPath(position, grid.GetTile(coord), UnitManager.instance.GetUnitType("Settler")) == null)
+                if(cell.militaryUnit!=null || cell.civilianUnit!=null)
+                    continue;
+
+                if (UnitManager.instance.GetShortestPath(position, cell, UnitManager.instance.GetUnitType("Settler")) == null)
                     continue;
 
                 float value = EvaluateCellForCity(coord);
