@@ -21,6 +21,7 @@ public class UnitManager : MonoBehaviour
     public Dictionary<int, queuedMovementData> queuedUnitMovements = new Dictionary<int, queuedMovementData>();
     public float lastDistance = 1;
     public int movingUnitsCount = 0;
+    public List<RemoveUnitData> unitsToRemove = new List<RemoveUnitData>();
 
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
@@ -212,6 +213,7 @@ public class UnitManager : MonoBehaviour
                 RemoveUnit(UnitType.UnitCategory.civilian, cell);
                 CheckCellUnitsConflict(cell);
                 cell.civilianUnit = null;
+                SelectionManager.instance.selectedUnit = null;
             }
         }
     }
@@ -231,8 +233,24 @@ public class UnitManager : MonoBehaviour
 
         if (!unitCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
+            ScheduleUnitRemoval(UnitType.UnitCategory.military, unitCell); // supprimer l'unité offensive si morte
         }
+    }
+
+    // met à jour les unités à détruire
+    public IEnumerator UpdateScheduledToRemoveUnits()
+    {
+        if(movingUnitsCount != 0)
+        {
+            yield return null;
+        }
+
+        foreach(var removeUnitData in unitsToRemove)
+        {
+            RemoveUnit(removeUnitData.unitCategory, removeUnitData.cell);
+        }
+
+        unitsToRemove.Clear();
     }
 
     // met à jour toutes les unités
@@ -266,6 +284,8 @@ public class UnitManager : MonoBehaviour
                 AI_Unit.cell = MoveQueuedUnit(AI_Unit.unit.id);
             }
         }
+
+        StartCoroutine(UpdateScheduledToRemoveUnits());
     }
 
     public IEnumerator MoveUnit(Queue<HexCell> nextMoves, Unit unit, HexCell cellToAttack, bool finishedMovement)
@@ -285,7 +305,7 @@ public class UnitManager : MonoBehaviour
                 {
                     if(nextCell.civilianUnit != null && nextCell.civilianUnit.master != unit.master)
                     {
-                        RemoveUnit(UnitType.UnitCategory.civilian, nextCell);
+                        ScheduleUnitRemoval(UnitType.UnitCategory.civilian, nextCell);
                     }
 
                     nextCell.militaryUnit = unit;
@@ -589,12 +609,21 @@ public class UnitManager : MonoBehaviour
 
         if (!attackerCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, attackerCell); // supprimer l'unité offensive si morte
+            ScheduleUnitRemoval(UnitType.UnitCategory.military, attackerCell); // supprimer l'unité offensive si morte
         }
         if (!defenderCell.militaryUnit.IsAlive())
         {
-            RemoveUnit(UnitType.UnitCategory.military, defenderCell); // supprimer l'unité défensive si morte
+            ScheduleUnitRemoval(UnitType.UnitCategory.military, defenderCell); // supprimer l'unité défensive si morte
         }
+    }
+
+    // enlister l'unité pour sa supression
+    public void ScheduleUnitRemoval(UnitType.UnitCategory unitCategory, HexCell unitCell)
+    {
+        RemoveUnitData removeUnitData;
+        removeUnitData.unitCategory = unitCategory;
+        removeUnitData.cell = unitCell;
+        unitsToRemove.Add(removeUnitData);
     }
 
     // enlever une unité de la case
@@ -612,6 +641,11 @@ public class UnitManager : MonoBehaviour
             unitCell.civilianUnit = null; // retirer l'unité de la case
 
             unitActionsPanel.gameObject.SetActive(false);
+        }
+
+        if(unit == null)
+        {
+            return;
         }
 
         if(unit.master == AI_Manager.instance.AI_Player)
@@ -994,4 +1028,10 @@ public struct BenchMarkResult
     public float pathCost;
     public float pathCost2;
     public float pathCost3;
+}
+
+public struct RemoveUnitData
+{
+    public UnitType.UnitCategory unitCategory;
+    public HexCell cell;
 }
