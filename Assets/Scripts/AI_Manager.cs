@@ -572,6 +572,8 @@ public class AI_Manager : MonoBehaviour
                 if(cell.militaryUnit!=null || cell.civilianUnit!=null)
                     continue;
 
+                i++;
+
                 float value = EvaluateCellForCity(coord);
                 
                 if (value > bestValue)
@@ -581,8 +583,6 @@ public class AI_Manager : MonoBehaviour
 
                     bestValue = value;
                     bestCoord = coord;
-
-                    i++;
                 }
             }
         }
