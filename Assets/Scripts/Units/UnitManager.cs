@@ -25,7 +25,7 @@ public class UnitManager : MonoBehaviour
     private float heuristicScaling = 1f;
     private float heuristicFactor = 1f;
     private int maxIterations = 10000;
-    private float unitMoveSpeed = 200; //4f;
+    private float unitMoveSpeed = 4f;
     private float unitRotationSpeed = 540f;
     private float coUnitsScaleFactor = 0.7f;
     private Vector3 coUnitsOffset = new Vector3(0.4f, 0, 0);

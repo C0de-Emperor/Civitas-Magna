@@ -15,7 +15,7 @@ MonoBehaviour:
   unitPrefab: {fileID: 4721491388033150390, guid: 2fb6333176e7b564f929090c372937ee, type: 3}
   unitSprite: {fileID: 21300000, guid: c574eb1e5bbc15a418df028da04f7342, type: 3}
   unitIcon: {fileID: 21300000, guid: 68a41922d3d138947b160134af160be9, type: 3}
-  MoveReach: 200
+  MoveReach: 2
   sightRadius: 2
   IsABoat: 0
   baseProductionCost: 0

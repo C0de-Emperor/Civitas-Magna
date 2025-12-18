@@ -162,7 +162,7 @@ public class SelectionManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    grid.RevealTilesInRadius(currentCell.offsetCoordinates, 100, false, false);
+                    //grid.RevealTilesInRadius(currentCell.offsetCoordinates, 100, false, false);
 
                     HandleCellClick(currentCell, coord);
 
@@ -209,8 +209,6 @@ public class SelectionManager : MonoBehaviour
             outlinedCell = null;
             selectionOutline.SetActive(false);
         }
-       
-        // DEBUG
 
         // Unselect
         if (Input.GetKeyDown(KeyCode.Q))
@@ -229,42 +227,9 @@ public class SelectionManager : MonoBehaviour
         DrawPathPreview(pathPreviewCoordinates, pathPreviewContainer, pathPreviewLine);
         DrawPathPreview(queuedPathPreviewCoordinates, queuedPathPreviewContainer, queuedPathPreviewLine);
 
-        // Debug Unit, à dégager
-        if (Input.GetKeyUp(KeyCode.U) && selectedCell!=null)
-        {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, PlayerManager.instance.player);
-        }
-        if (Input.GetKeyUp(KeyCode.I) && selectedCell != null)
-        {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[0], selectedCell, new Player("player2", new Livery( new Color(0, 255, 0), new Color(255, 255, 255) )));
-        }
-        if (Input.GetKeyUp(KeyCode.O) && selectedCell != null)
-        {
-            UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[1], selectedCell, new Player("player3", new Livery( new Color(0, 0, 0), new Color(255, 0, 255) )));
-        }
-		if (Input.GetKeyUp(KeyCode.J) && selectedCell != null)
-		{
-			UnitManager.instance.AddUnit(UnitManager.instance.GetUnitType("Galley"), selectedCell, PlayerManager.instance.player);
-		}
-		if (Input.GetKeyUp(KeyCode.K) && selectedCell != null)
-		{
-			UnitManager.instance.AddUnit(UnitManager.instance.militaryUnits[2], selectedCell, new Player("player3", new Livery( new Color(0, 123, 67), new Color(4, 89, 176) )));
-		}
-		if (Input.GetKeyUp(KeyCode.X) && selectedCell != null)
-		{
-			UnitManager.instance.AddUnit(UnitManager.instance.civilianUnits[0], selectedCell, PlayerManager.instance.player);
-		}
-        if (Input.GetKeyUp(KeyCode.C) && selectedCell != null)
-        {
-            UnitManager.instance.AddUnit(UnitManager.instance.civilianUnits[1], selectedCell, PlayerManager.instance.player);
-        }
         if (Input.GetKeyUp(KeyCode.P))
         {
             TurnManager.instance.ChangeTurn();
-        }
-        if (Input.GetKeyUp(KeyCode.N) && selectedCell != null)
-        {
-            CityManager.instance.CreateCity(selectedCell, AI_Manager.instance.AI_Player);
         }
     }
 
