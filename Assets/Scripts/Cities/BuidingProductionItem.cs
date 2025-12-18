@@ -20,6 +20,6 @@ public class BuildingProductionItem : CityProductionItem
     {
         city.builtBuildings.Add(this);
         city.UpdateBanner();
-        Debug.Log($"{city.cityName} a construit {itemName}");
+        //Debug.Log($"{city.cityName} a construit {itemName}");
     }
 }

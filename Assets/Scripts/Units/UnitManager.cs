@@ -253,7 +253,7 @@ public class UnitManager : MonoBehaviour
         
         foreach (var unitId in queuedUnitMovements.Keys) // parcours la liste d'attente de déplacement d'unités
         {
-            if (units[unitId].master != AI_Manager.instance.AI_Player)
+            if (units.ContainsKey(unitId) && units[unitId].master != AI_Manager.instance.AI_Player)
             {
                 MoveQueuedUnit(unitId); // déplace l'unité
             }
@@ -261,7 +261,7 @@ public class UnitManager : MonoBehaviour
 
         foreach(var AI_Unit in AI_Manager.instance.units)
         {
-            if (!AI_Manager.instance.IsUnitInactive(AI_Unit.unit))
+            if (units.ContainsKey(AI_Unit.unit.id) && !AI_Manager.instance.IsUnitInactive(AI_Unit.unit))
             {
                 AI_Unit.cell = MoveQueuedUnit(AI_Unit.unit.id);
             }
@@ -471,12 +471,14 @@ public class UnitManager : MonoBehaviour
 
         if (movementData.unitToAttackId!=-1 && (path[path.Count - 1].militaryUnit == null || path[path.Count-1].militaryUnit.id != movementData.unitToAttackId)) // si l'unité à attaquer a bougé, on annule le déplacement
         {
-            movementFinished = true;
+            queuedUnitMovements[unit.id].unitAction.Invoke();
+            queuedUnitMovements.Remove(unit.id); // enlever l'unité de la liste d'attente de déplacements
             return dataToReturn;
         }
         if(movementData.attacksACity && CityManager.instance.cities[path[path.Count-1].offsetCoordinates].master == unit.master)
         {
-            movementFinished = true;
+            queuedUnitMovements[unit.id].unitAction.Invoke();
+            queuedUnitMovements.Remove(unit.id); // enlever l'unité de la liste d'attente de déplacements
             return dataToReturn;
         }
 
@@ -825,6 +827,13 @@ public class UnitManager : MonoBehaviour
 
         if (isAI)
         {
+            foreach(var city in AI_Manager.instance.cities)
+            {
+                if(cell == city.occupiedCell)
+                {
+                    return false;
+                }
+            }
             return IsTerrainTypeTraversable(cell.terrainType, unitType, AI_Manager.instance.researched.Contains(canBoatResearch));
         }
         else

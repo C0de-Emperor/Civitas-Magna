@@ -137,7 +137,7 @@ public class SelectionManager : MonoBehaviour
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity)) // && !EventSystem.current.IsPointerOverGameObject())
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity) && !EventSystem.current.IsPointerOverGameObject())
         {
             Vector2 coord = HexMetrics.CoordinateToOffset(hit.point.x, hit.point.z, grid.hexSize, grid.orientation);
             HexCell currentCell = grid.GetTile(coord);

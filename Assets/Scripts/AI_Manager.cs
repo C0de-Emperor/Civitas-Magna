@@ -262,7 +262,6 @@ public class AI_Manager : MonoBehaviour
             if (city.currentProduction != null)
                 continue;
 
-            AILog("Started");
             CityProductionItem item = GetBestProductionItem(choosenItems);
             choosenItems.Add(item);
 
@@ -432,9 +431,9 @@ public class AI_Manager : MonoBehaviour
             targetsCells.Add(city.occupiedCell);
         }
 
-        Debug.Log(units.Count);
         foreach (AIUnit AIUnit in units)
         {
+            Debug.Log(AIUnit.unit.id + " " + IsUnitInactive(AIUnit.unit));
             if (IsUnitInactive(AIUnit.unit))
             {
                 if (AIUnit.unit.unitType is CivilianUnitType civil)
