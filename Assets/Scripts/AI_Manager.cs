@@ -497,23 +497,30 @@ public class AI_Manager : MonoBehaviour
 
     private void GiveOrderToSettler(CivilianUnitType settler, HexCell position, Player master)
     {
-        HexCell bestCellForCity = GetBestCellForSettler(position);
-        targetedPositions.Add(bestCellForCity.offsetCoordinates);
+        //HexCell bestCellForCity = GetBestCellForSettler(position);
 
-        AILog($"Settler need to go to : {bestCellForCity.offsetCoordinates}");
-
-        UnitManager.instance.QueueUnitMovement(
-            position, 
-            bestCellForCity, 
-            UnitType.UnitCategory.civilian, 
-            () =>
+        StartCoroutine(GetBestCellForSettler(position, bestCellForCity =>
+        {
+            if (bestCellForCity != null)
             {
-                UnitManager.instance.CivilianUnitAction(bestCellForCity, Building.BuildingNames.City);
-                targetedPositions.Remove(bestCellForCity.offsetCoordinates);
-            }, 
-            true
-        );
+                targetedPositions.Add(bestCellForCity.offsetCoordinates);
 
+                AILog($"Settler need to go to : {bestCellForCity.offsetCoordinates}");
+
+                UnitManager.instance.QueueUnitMovement(
+                    position,
+                    bestCellForCity,
+                    UnitType.UnitCategory.civilian,
+                    () =>
+                    {
+                        UnitManager.instance.CivilianUnitAction(bestCellForCity, Building.BuildingNames.City);
+                        targetedPositions.Remove(bestCellForCity.offsetCoordinates);
+                    },
+                    true
+                );
+            }
+                
+        }));
     }
 
     public bool IsUnitInactive(Unit unit)
@@ -521,8 +528,10 @@ public class AI_Manager : MonoBehaviour
         return !UnitManager.instance.queuedUnitMovements.ContainsKey(unit.id);
     }
 
-    private HexCell GetBestCellForSettler(HexCell position)
+    private IEnumerator GetBestCellForSettler(HexCell position, Action<HexCell> callback)
     {
+        int i = 0;
+
         float bestValue = float.MinValue;
         Vector2Int bestCoord = new Vector2Int(-9999, -9999);
 
@@ -530,33 +539,39 @@ public class AI_Manager : MonoBehaviour
         {
             for (int x = 0; x < grid.gridSize.width; x++)
             {
+                if (i % 100 == 0)
+                    yield return new WaitForEndOfFrame();
+
                 Vector2Int coord = new Vector2Int(x, y);
 
                 if (CityManager.instance.tileToCity.ContainsKey(coord))
                     continue;
 
-                if (grid.GetTile(coord) == null)
+                HexCell tile = grid.GetTile(coord);
+                if (tile == null)
                     continue;
 
-                if (!grid.GetTile(coord).terrainType.build.Contains(Building.BuildingNames.City))
-                    continue;
-
-                if (UnitManager.instance.GetShortestPath(position, grid.GetTile(coord), UnitManager.instance.GetUnitType("Settler")) == null)
+                if (!tile.terrainType.build.Contains(Building.BuildingNames.City))
                     continue;
 
                 float value = EvaluateCellForCity(coord);
-
+                
                 if (value > bestValue)
                 {
+                    if (UnitManager.instance.GetShortestPath(position, tile, UnitManager.instance.GetUnitType("Settler")) == null)
+                        continue;
+
                     bestValue = value;
                     bestCoord = coord;
+
+                    i++;
                 }
             }
         }
 
-        return (bestCoord.x >= 0)
+        callback?.Invoke((bestCoord.x >= 0)
             ? grid.GetTile(bestCoord)
-            : null;
+            : null);
     }
 
     public void RemoveAIUnit(Unit unit)
