@@ -15,6 +15,7 @@ public class AI_Manager : MonoBehaviour
     public int turnsSinceOffensive;
     public bool isWorking = false;
     public int nonAgressionTurnsNumber = 10;
+    public Transform aiWonText;
 
     [Header("Units")]
     [HideInInspector] public List<AIUnit> units = new List<AIUnit>();
@@ -50,7 +51,7 @@ public class AI_Manager : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance de AI_Manager dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance de AI_Manager dans la scï¿½ne");
             return;
         }
         instance = this;
@@ -170,26 +171,26 @@ public class AI_Manager : MonoBehaviour
     {
         if (currentResearch == null)
         {
-            // trouver la prochaine recherche à realiser
+            // trouver la prochaine recherche ï¿½ realiser
 
 
-            // la recherche X est en relation avec Y (X -> Y) si X a besoin que Y soit recherché pour être recherché
+            // la recherche X est en relation avec Y (X -> Y) si X a besoin que Y soit recherchï¿½ pour ï¿½tre recherchï¿½
             /*
-            D = on part des sources, c'est à dire les recherches qui ne debloque rien.
+            D = on part des sources, c'est ï¿½ dire les recherches qui ne debloque rien.
 
             on prend un element A de D,
 
 
-            si A n'est pas recherché
+            si A n'est pas recherchï¿½
             
-                si toutes les dependances de A sont recherché :
-                    on ajoute A à la liste des recherches possibles
+                si toutes les dependances de A sont recherchï¿½ :
+                    on ajoute A ï¿½ la liste des recherches possibles
                 
                 sinon
                     on ajoute les dependances de A a D
 
 
-            si A recherché
+            si A recherchï¿½
                 rien
             */
             if (currentResearch != null)
@@ -290,7 +291,7 @@ public class AI_Manager : MonoBehaviour
                 }
             }
 
-            // compter les settler présent sur le plateau
+            // compter les settler prï¿½sent sur le plateau
             foreach(AIUnit AIUnit in units)
             {
                 if (AIUnit.unit.unitType is CivilianUnitType civilianUnit)
@@ -308,7 +309,7 @@ public class AI_Manager : MonoBehaviour
             }
             else
             {
-                // on produit un batiment renforçant la production de nourriture
+                // on produit un batiment renforï¿½ant la production de nourriture
                 AILog("Production d'un Building");
                 return CreateNewItem(
                 
@@ -324,8 +325,8 @@ public class AI_Manager : MonoBehaviour
 
         if (AI_Player.combatPower <= player.combatPower * combatFactor)
         {
-            // plus il y a d'unité en cours de prod plus on baisse la proba de lancer une nouvelle unit
-            // determiner me nombre d'unité de combat en production
+            // plus il y a d'unitï¿½ en cours de prod plus on baisse la proba de lancer une nouvelle unit
+            // determiner me nombre d'unitï¿½ de combat en production
             int militaryUnitAmount = 0;
             foreach (CityProductionItem item in choosenItems)
             {
@@ -342,13 +343,13 @@ public class AI_Manager : MonoBehaviour
             {
                 if(UnityEngine.Random.Range(0f, 1f) <= 1 / militaryUnitAmount)
                 {
-                    AILog("Production d'une Unité Militaire");
+                    AILog("Production d'une Unitï¿½ Militaire");
                     return BuildButtonManager.instance.GetRandomMilitaryUnit();
                 }
             }
             else
             {
-                AILog("Production d'une Unité Militaire");
+                AILog("Production d'une Unitï¿½ Militaire");
                 return BuildButtonManager.instance.GetRandomMilitaryUnit();
             }
         }
@@ -368,7 +369,7 @@ public class AI_Manager : MonoBehaviour
 
         if (AI_Player.ressourcesPower <= player.ressourcesPower * ressourceFactor)
         {
-            AILog("Production d'un Building généraliste");
+            AILog("Production d'un Building gï¿½nï¿½raliste");
             return CreateNewItem(
                 UnityEngine.Random.Range(0.1f, 0.2f),
                 UnityEngine.Random.Range(0.1f, 0.2f),
@@ -382,7 +383,7 @@ public class AI_Manager : MonoBehaviour
         // si on arrive ici c'est que l'IA est en retard dans aucun domaine
         if(UnityEngine.Random.Range(0f, 1f) <= advantageFactor)
         {
-            AILog("Production d'un Building généraliste");
+            AILog("Production d'un Building gï¿½nï¿½raliste");
             return CreateNewItem(
                 UnityEngine.Random.Range(0.05f, 0.15f),
                 UnityEngine.Random.Range(0.05f, 0.10f),
@@ -421,14 +422,19 @@ public class AI_Manager : MonoBehaviour
                 targetsCells.Add(cell);
             }
         }
+        foreach (var city in CityManager.instance.cities.Values)
+        {
+            if(city.master == PlayerManager.instance.player)
+            {
+                targetsCells.Add(city.occupiedCell);
+            }
+        }
 
         List<HexCell> controlledCells = new List<HexCell>();
         foreach(var city in cities)
         {
             controlledCells.AddRange(city.controlledTiles.Values);
             controlledCells.Remove(city.occupiedCell);
-
-            targetsCells.Add(city.occupiedCell);
         }
 
         foreach (AIUnit AIUnit in units)
@@ -486,9 +492,17 @@ public class AI_Manager : MonoBehaviour
                     }
                     else
                     {
-                        AILog("attacking from "+AIUnit.cell.offsetCoordinates+" to " + targetsCells[0].offsetCoordinates);
-                        UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
-                        targetsCells.RemoveAt(0);
+                        if(targetsCells.Count == 0)
+                        {
+                            Debug.Log($"<color=#FF0000><b>AI WON</b></color>");
+                            aiWonText.gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            AILog("attacking from " + AIUnit.cell.offsetCoordinates + " to " + targetsCells[0].offsetCoordinates);
+                            UnitManager.instance.QueueUnitMovement(AIUnit.cell, targetsCells[0], UnitType.UnitCategory.military, delegate { }, true);
+                            targetsCells.RemoveAt(0);
+                        }
                     }
                 }
             }
@@ -544,14 +558,21 @@ public class AI_Manager : MonoBehaviour
 
                 Vector2Int coord = new Vector2Int(x, y);
 
+                HexCell cell = grid.GetTile(coord);
+
                 if (CityManager.instance.tileToCity.ContainsKey(coord))
                     continue;
 
-                HexCell tile = grid.GetTile(coord);
-                if (tile == null)
+                if (cell == null)
                     continue;
 
-                if (!tile.terrainType.build.Contains(Building.BuildingNames.City))
+                if (!cell.terrainType.build.Contains(Building.BuildingNames.City))
+                    continue;
+
+                if(cell.militaryUnit!=null || cell.civilianUnit!=null)
+                    continue;
+
+                if (UnitManager.instance.GetShortestPath(position, cell, UnitManager.instance.GetUnitType("Settler")) == null)
                     continue;
 
                 float value = EvaluateCellForCity(coord);
