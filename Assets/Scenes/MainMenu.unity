@@ -1756,6 +1756,7 @@ MonoBehaviour:
   newGameMenuButton: {fileID: 781603537}
   startNewGameButton: {fileID: 1520824197}
   loadGameButton: {fileID: 527784741}
+  creditsButton: {fileID: 1378909499}
   settingsButton: {fileID: 49538642}
   backSettingsButton: {fileID: 6565382631532481822}
   backStartNewGameButton: {fileID: 152764625}
@@ -3122,7 +3123,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Credtis
+  m_Text: 'Credits
 
 '
 --- !u!222 &1083765774
@@ -4196,7 +4197,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Credtis
+  m_Text: 'Credits
 
 '
 --- !u!222 &1472496784

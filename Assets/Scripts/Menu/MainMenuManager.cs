@@ -12,6 +12,7 @@ public class MainMenuManager : MonoBehaviour
     public Button newGameMenuButton;
     public Button startNewGameButton;
     public Button loadGameButton;
+    public Button creditsButton;
     public Button settingsButton;
     public Button backSettingsButton;
     public Button backStartNewGameButton;
@@ -53,6 +54,7 @@ public class MainMenuManager : MonoBehaviour
         startNewGameButton.onClick.AddListener(() => StartCoroutine(StartNewGameButton()));
         newGameMenuButton.onClick.AddListener(() => OpenNewGameMenuButton());
         settingsButton.onClick.AddListener(() => OpenSettingsMenu());
+        creditsButton.onClick.AddListener(() => Application.OpenURL("https://github.com/C0de-Emperor/Civitas-Magna"));
 
         backSettingsButton.onClick.AddListener(() => BackToMainMenu());
         backStartNewGameButton.onClick.AddListener(() => BackToMainMenu());
