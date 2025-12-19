@@ -213,6 +213,7 @@ public class UnitManager : MonoBehaviour
                 RemoveUnit(UnitType.UnitCategory.civilian, cell);
                 CheckCellUnitsConflict(cell);
                 cell.civilianUnit = null;
+                SelectionManager.instance.selectedUnit = null;
             }
         }
     }
