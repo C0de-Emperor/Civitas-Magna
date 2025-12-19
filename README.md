@@ -16,5 +16,7 @@
 
 ### Crédits
 modèles hexagonaux et villes : https://kaylousberg.itch.io/kaykit-medieval-hexagon
+
 icones et images d'unités et de production : https://civilization.fandom.com/fr/wiki/Wiki_Civilization:Wiki_Civilization
+
 fonds d'écran de démarrage : https://www.wallpaperflare.com/
