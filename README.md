@@ -13,3 +13,8 @@
 * Se rendre sur ce dépot github : [Civitas-Magna-Builds](https://github.com/ggglllkkk/Civitas-Magna-Builds) 
      * Cloner le dépot
 * Exécuter le fichier `Civitas Magna.exe`
+
+### Crédits
+modèles hexagonaux et villes : https://kaylousberg.itch.io/kaykit-medieval-hexagon
+icones et images d'unités et de production : https://civilization.fandom.com/fr/wiki/Wiki_Civilization:Wiki_Civilization
+fonds d'écran de démarrage : https://www.wallpaperflare.com/
